@@ -5,12 +5,14 @@ export PATH="/usr/local/stata15:$PATH"
 export PATH="$HOME/.emacs.d/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export POP_PLUGINS_PATH="$HOME/.local/share/pop-launcher/plugins"
-export FZF_DEFAULT_OPTS='--layout=reverse --border'
+export FZF_DEFAULT_COMMAND="fdfind --type file --follow --hidden --exclude .git --color=always"
+export FZF_DEFAULT_OPTS="--ansi --layout=reverse --border --preview 'batcat --color=always --style=header,grid --line-range :300 {}'"
 export LANG=en_US.UTF-8
 export EDITOR='emacsclient'
 
 # Aliases
 alias cat="batcat"
+alias fd="fdfind"
 
 # Critical external app setup
 # Oh-my-Zsh
