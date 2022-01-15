@@ -1,0 +1,17 @@
+#+TITLE: Readme
+
+This is my dotfiles, managed with [[https://www.gnu.org/software/stow/][GNU =stow=]].
+Some basic prerequisite in an Ubuntu-based distro:
+
+#+begin_src bash
+sudo apt install fd-find ripgrep git stow
+#+end_src
+
+Then the dotfiles can be setup all at once with:
+
+#+begin_src bash
+cd
+git clone https://github.com/hieutkt/dotfiles
+cd dotfiles
+stow --target=$HOME --restow */
+#+end_src
