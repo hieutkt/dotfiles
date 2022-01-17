@@ -11,8 +11,8 @@ export LANG=en_US.UTF-8
 export EDITOR='emacsclient'
 
 # Aliases
-alias cat="batcat"
-alias fd="fdfind"
+if which batcat &> /dev/null; then alias cat="batcat"; fi
+if which fdfind &> /dev/null; then alias  fd="fdfind"; fi
 
 # Critical external app setup
 # Oh-my-Zsh
