@@ -20,3 +20,8 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # fzf integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# spicetify
+if [ -d ~/spicetify-cli ]; then
+    export SPICETIFY_INSTALL="$HOME/spicetify-cli"
+    export PATH="$SPICETIFY_INSTALL:$PATH"
+fi
