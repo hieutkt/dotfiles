@@ -6,6 +6,7 @@ file="$(cd ~/Dropbox/Documents/ZotFile/ &&
     FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
         fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
         --phony -q "$1" \
+        --color=pointer:magenta,spinner:#87ff00,fg+:yellow,info:green\
         --bind "change:reload:$RG_PREFIX {q}" \
         "--preview-window="60%)" &&
     printf "Opening \033[0;34m$file" &&
