@@ -417,7 +417,8 @@ TODO abstract backend implementations."
 
 (use-package! ox-hugo
   :config
-  (setq org-hugo-use-code-for-kbd t))
+  (setq org-hugo-use-code-for-kbd t
+        org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt")))
 
 (use-package! org-agenda
   :config
