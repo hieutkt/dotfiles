@@ -206,6 +206,7 @@
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?: +\\)?\\(?:[ 	]*\\(\\(?:[-+]\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)\\(?:[ 	]+\\|$\\)\\)\\(?:\\[@\\(?:start:\\)?\\([0-9]+\\|[A-Za-z]\\)\\][ 	]*\\)?\\(?:\\(\\[[ X-]\\]\\)\\(?:[ 	]+\\|$\\)\\)?\\(?:\\(.*\\)[ 	]+::\\(?:[ 	]+\\|$\\)\\)?\\)?[[:upper:]]"
                              . 'org-list-dt)))
+  (font-lock-add-keywords 'org-mode '(("(\\?)" . 'error)))
   ;; Replace two consecutive hyphens with the em-dash
   (defun hp/org-mode-load-prettify-symbols ()
     (interactive)
@@ -233,7 +234,9 @@
               '("DONE" . "")
               '("PROJ" . "")
               '("REPEAT" . "")
-              '("REVIEW" . ""))
+              '("REVIEW" . "")
+              '("(?)" . "")
+              '("(?)." . "."))
     (prettify-symbols-mode 1))
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols))
