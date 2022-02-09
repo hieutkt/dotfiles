@@ -27,12 +27,6 @@
 (package! org-transclusion
   :recipe (:host github :repo "nobiot/org-transclusion"))
 
-(package! org-ol-tree
-  :recipe (:host github :repo "Townk/org-ol-tree"))
-
-(package! org-bars
-  :recipe (:host github :repo "tonyaldon/org-bars"))
-
 (package! ess-stata-mode
   :recipe (:host github :repo "emacs-ess/ess-stata-mode"))
 

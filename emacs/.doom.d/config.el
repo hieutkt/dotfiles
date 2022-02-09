@@ -226,17 +226,7 @@
     (setq org-ellipsis "")
     (pushnew! prettify-symbols-alist
               '("--" . "—")
-              '("TODO" . "")
-              '("HOLD" . "")
-              '("WAIT" . "")
-              '("NEXT" . "")
-              '("STOP" . "")
-              '("DONE" . "")
-              '("PROJ" . "")
-              '("REPEAT" . "")
-              '("REVIEW" . "")
-              '("(?)" . "")
-              '("(?)." . "."))
+              '("(?)" . "") '("(?)." . "") '("(?)," . ""))
     (prettify-symbols-mode 1))
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols))
@@ -246,14 +236,6 @@
   :config
   (setq org-superstar-headline-bullets-list '("⁖")
         org-superstar-cycle-headline-bullets nil))
-
-(use-package! org-bars
-  :after org
-  :hook (org-mode . org-bars-mode)
-  :init
-  (setq-default org-bars-color-options '(:desaturate-level-faces 30
-                                         :darken-level-faces 30)
-                org-bars-extra-pixels-height 5))
 
 (use-package! org-fancy-priorities
   :config
@@ -972,7 +954,6 @@ TODO abstract backend implementations."
   (add-hook 'prog-mode-hook (lambda () (page-break-lines-mode 1))))
 
 (use-package! clip2org)
-(use-package! org-ol-tree)
 
 (use-package! orderless
   :config
