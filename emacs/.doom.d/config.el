@@ -774,7 +774,7 @@ TODO abstract backend implementations."
   :config
   (setq org-roam-capture-templates
         `(("d" "default" plain "%?"
-           :if-new
+           :target
            (file+head "${slug}_%<%Y-%m-%d--%H-%M-%S>.org"
                       ,(string-join
                         '("#+title: ${title}"
@@ -798,7 +798,7 @@ TODO abstract backend implementations."
      ;; + '&hostname='
      ;; + encodeURIComponent(location.hostname)
      ("w" "webref" entry "* ${title} ([[${ref}][${hostname}]])\n%?"
-      :if-new
+      :target
       (file+head
        ,(concat org-roam-dailies-directory "%<%Y-%m>.org")
        ,(string-join
@@ -817,7 +817,7 @@ TODO abstract backend implementations."
   (setq org-roam-dailies-directory "journal/"
         org-roam-dailies-capture-templates
         '(("d" "daily" entry "* %?"
-           :if-new
+           :target
            (file+head "%<%Y-%m-%d>.org"
                       "#+title: %<%Y-%m-%d %a>\n#+filetags: journal\n#+startup: overview hideblocks\n#+created: %U\n\n")
            :immediate-finish t)))
