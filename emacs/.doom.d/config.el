@@ -636,8 +636,7 @@ TODO abstract backend implementations."
 (use-package! org-roam
   :after org
   :init
-  (setq +org-roam-open-buffer-on-find-file nil
-        org-roam-directory (concat org-directory "/Org-roam/")
+  (setq org-roam-directory (concat org-directory "/Org-roam/")
         org-roam-mode-section-functions
         (list #'org-roam-backlinks-section
               #'org-roam-reflinks-section
