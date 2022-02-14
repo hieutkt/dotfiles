@@ -46,7 +46,7 @@
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
-  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key)
+  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt)
   (setq mixed-pitch-set-height t))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
@@ -205,6 +205,9 @@
   ;; Custom keyword
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?: +\\)?\\(?:[ 	]*\\(\\(?:[-+]\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)\\(?:[ 	]+\\|$\\)\\)\\(?:\\[@\\(?:start:\\)?\\([0-9]+\\|[A-Za-z]\\)\\][ 	]*\\)?\\(?:\\(\\[[ X-]\\]\\)\\(?:[ 	]+\\|$\\)\\)?\\(?:\\(.*\\)[ 	]+::\\(?:[ 	]+\\|$\\)\\)?\\)?[[:upper:]]"
+                             . 'org-cite)))
+  (font-lock-add-keywords 'org-mode
+                          '(("^\\(?:[  ]*\\)\\(?:[-+]\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
                              . 'org-list-dt)))
   (font-lock-add-keywords 'org-mode '(("(\\?)" . 'error)))
   ;; Replace two consecutive hyphens with the em-dash
