@@ -204,11 +204,8 @@
       :height 1.5))
   ;; Custom keyword
   (font-lock-add-keywords 'org-mode
-                          '(("^\\(?: +\\)?\\(?:[ 	]*\\(\\(?:[-+]\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)\\(?:[ 	]+\\|$\\)\\)\\(?:\\[@\\(?:start:\\)?\\([0-9]+\\|[A-Za-z]\\)\\][ 	]*\\)?\\(?:\\(\\[[ X-]\\]\\)\\(?:[ 	]+\\|$\\)\\)?\\(?:\\(.*\\)[ 	]+::\\(?:[ 	]+\\|$\\)\\)?\\)?[[:upper:]]"
-                             . 'org-cite)))
-  (font-lock-add-keywords 'org-mode
-                          '(("^\\(?:[  ]*\\)\\(?:[-+]\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
-                             . 'org-list-dt)))
+                          '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
+                             . 'fixed-pitch)))
   (font-lock-add-keywords 'org-mode '(("(\\?)" . 'error)))
   ;; Replace two consecutive hyphens with the em-dash
   (defun hp/org-mode-load-prettify-symbols ()
@@ -238,6 +235,9 @@
 (use-package! org-superstar
   :config
   (setq org-superstar-headline-bullets-list '("⁖")
+        org-superstar-item-bullet-alist '((?+ . ?•)
+                                          (?* . ?∘)
+                                          (?- . ?–))
         org-superstar-cycle-headline-bullets nil))
 
 (use-package! org-fancy-priorities
