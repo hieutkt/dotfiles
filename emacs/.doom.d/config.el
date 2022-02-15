@@ -406,6 +406,7 @@ TODO abstract backend implementations."
 (use-package! ox-hugo
   :config
   (setq org-hugo-use-code-for-kbd t
+        org-hugo-paired-shortcodes "sidenote marginnote notice"
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt")))
 
 (use-package! org-agenda
@@ -505,8 +506,6 @@ TODO abstract backend implementations."
                "#+filetags: blog"
                "#+date: %(eval hp/ox-hugo-post--fdate)"
                "#+export_file_name: %(concat hp/ox-hugo-post--fname \".en.md\")"
-               "#+hugo_paired_shortcodes: <notice notice"
-               "#+macro: sidenote {{< sidenote >}}$1{{< /sidenote >}}"
                "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
                "#+hugo_section: ./posts/"
                "#+hugo_tags: %?"
@@ -528,8 +527,6 @@ TODO abstract backend implementations."
                "#+filetags: blog"
                "#+date: %(eval hp/ox-hugo-post--fdate)"
                "#+export_file_name: %(concat hp/ox-hugo-post--fname \".vi.md\")"
-               "#+hugo_paired_shortcodes: <notice notice"
-               "#+macro: sidenote {{< sidenote >}}$1{{< /sidenote >}}"
                "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
                "#+hugo_section: ./posts/"
                "#+hugo_tags: %?"
@@ -609,7 +606,6 @@ TODO abstract backend implementations."
                "#+options: toc:2 num:t"
                "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
                "#+hugo_section: ./notes"
-               "#+hugo_paired_shortcodes: <notice notice"
                "#+hugo_custom_front_matter: :exclude true :math true"
                "#+hugo_custom_front_matter: :bibinfo '((doi .\"${doi}\") (isbn . \"${isbn}\") (url . \"${url}\") (year . \"${year}\") (month . \"${month}\") (date . \"${date}\") (author . \"${author}\") (journal . \"${journal}\"))"
                "#+hugo_series: \"Reading notes\""
