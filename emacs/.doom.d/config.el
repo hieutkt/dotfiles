@@ -431,11 +431,6 @@ TODO abstract backend implementations."
 
 (use-package! org-agenda
   :config
-  ;; Agenda folder - .org files are found recursively
-  (setq org-agenda-files (list (concat org-directory "/Agenda")))
-  ;; Also to make refiling easier
-  (setq org-refile-targets '((nil :maxlevel . 9)
-                             (org-agenda-files :maxlevel . 9)))
   ;; Setting the TODO keywords
   (setq org-todo-keywords
         '((sequence
@@ -464,18 +459,7 @@ TODO abstract backend implementations."
           ("PROJ" . +org-todo-project)
           ("REVIEW" . font-lock-keyword-face)))
   ;; Appearance
-  (setq org-agenda-category-icon-alist
-        `(("work" ,(list (all-the-icons-material "short_text")) nil nil :ascent center)
-          ("personal" ,(list (all-the-icons-material "short_text")) nil nil :ascent center)
-          ("gcal" ,(list (all-the-icons-material "cloud")) nil nil :ascent center)
-          ("birthday" ,(list (all-the-icons-material "cake" :face 'all-the-icons-lpink)) nil nil :ascent center)
-          ("learn" ,(list (all-the-icons-material "library_books" :face 'all-the-icons-cyan)) nil nil :ascent center)
-          ("blog" ,(list (all-the-icons-material "short_text" :face 'all-the-icons-green)) nil nil :ascent center)
-          ("life" ,(list (all-the-icons-material "healing" :face 'all-the-icons-dred)) nil nil :ascent center)
-          ("code" ,(list (all-the-icons-material "code" :face 'all-the-icons-green)) nil nil :ascent center)
-          ("write" ,(list (all-the-icons-material "create" :face 'all-the-icons-yellow)) nil nil :ascent center)
-          )
-        org-agenda-prefix-format       " %i %?-2 t%s"
+  (setq org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
         org-agenda-current-time-string "ᐊ┈┈┈┈┈┈┈ Now"
         org-agenda-time-grid '((today require-timed remove-match)
@@ -485,15 +469,11 @@ TODO abstract backend implementations."
         org-agenda-scheduled-leaders '("" "")
         org-agenda-deadline-leaders '("Deadline: " "Deadline: ")
         )
-  ;; Tags triggers
-  ;; (setq org-todo-state-tags-triggers)
-  ;;
   ;; Clocking
   (setq org-clock-persist 'history
         org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA"
         org-agenda-start-with-log-mode t)
-  (org-clock-persistence-insinuate)
-  )
+  (org-clock-persistence-insinuate))
 
 (use-package! org-capture
   :config
@@ -574,18 +554,36 @@ TODO abstract backend implementations."
   :config
   ;; Enable org-super-agenda
   (org-super-agenda-mode)
-  (setq org-agenda-block-separator ?_)
+  (setq org-agenda-block-separator ?―)
   ;; Customise the agenda view
   (setq org-agenda-custom-commands
         '(("o" "Overview"
            ((agenda "")
-            (todo "NEXT" ((org-super-agenda-groups
-                           '((:auto-outline-path t)))))
-            (tags-todo "INBOX")
-            (tags-todo "@work" ((org-super-agenda-groups
-                                 '((:auto-outline-path t)))))
-            (tags-todo "@home" ((org-super-agenda-groups
-                                 '((:auto-outline-path t)))))))))
+            (todo "NEXT"
+                  ((org-super-agenda-groups
+                    '((:auto-outline-path t)))))
+            (tags-todo "journal"
+                       ((org-agenda-overriding-header "Tasks listed in journal:")
+                        (org-super-agenda-groups
+                         '((:auto-outline-path t)))))
+            (tags-todo "task"
+                       ((org-agenda-overriding-header "Tasks listed in other files:")
+                        (org-super-agenda-groups
+                         '((:discard (:tag "journal"))
+                           (:auto-map hp/agenda-auto-group-title-olp)))))))))
+
+  (defun hp/agenda-auto-group-title-olp (item)
+    (-when-let* ((marker (or (get-text-property 0 'org-marker item)
+                             (get-text-property 0 'org-hd-marker item)))
+                 (buffer (->> marker marker-buffer ))
+                 (title (cadar (org-collect-keywords '("title"))))
+                 (filledtitle (if (> (length title) 50)
+                                  (concat (substring title 0 50)  "...") title))
+                 (olp (org-super-agenda--when-with-marker-buffer
+                        (org-super-agenda--get-marker item)
+                        (s-join "/" (org-get-outline-path)))))
+      (concat filledtitle " / " olp )))
+
   ;; Make evil keymaps works on org-super-agenda headers
   (after! evil-org-agenda
     (setq org-super-agenda-header-map (copy-keymap evil-org-agenda-mode-map)))
@@ -596,7 +594,157 @@ TODO abstract backend implementations."
       :weight bold)
     `(org-agenda-structure
       :inherit 'variable-pitch
-      :weight bold :foreground ,(doom-color 'blue)))
+      :weight bold :foreground ,(doom-color 'blue))))
+
+(after! (org-agenda org-roam)
+  (defun vulpea-task-p ()
+    "Return non-nil if current buffer has any todo entry.
+
+TODO entries marked as done are ignored, meaning the this
+function returns nil if current buffer contains only completed
+tasks."
+    (seq-find                                 ; (3)
+     (lambda (type)
+       (eq type 'todo))
+     (org-element-map                         ; (2)
+         (org-element-parse-buffer 'headline) ; (1)
+         'headline
+       (lambda (h)
+         (org-element-property :todo-type h)))))
+
+  (defun vulpea-task-update-tag ()
+    "Update task tag in the current buffer."
+    (when (and (not (active-minibuffer-window))
+               (vulpea-buffer-p))
+      (save-excursion
+        (goto-char (point-min))
+        (let* ((tags (vulpea-buffer-tags-get))
+               (original-tags tags))
+          (if (vulpea-task-p)
+              (setq tags (cons "task" tags))
+            (setq tags (remove "task" tags)))
+
+          ;; cleanup duplicates
+          (setq tags (seq-uniq tags))
+
+          ;; update tags if changed
+          (when (or (seq-difference tags original-tags)
+                    (seq-difference original-tags tags))
+            (apply #'vulpea-buffer-tags-set tags))))))
+
+  (defun vulpea-buffer-p ()
+    "Return non-nil if the currently visited buffer is a note."
+    (and buffer-file-name
+         (string-prefix-p
+          (expand-file-name (file-name-as-directory org-roam-directory))
+          (file-name-directory buffer-file-name))))
+
+  (defun vulpea-task-files ()
+    "Return a list of note files containing 'task' tag." ;
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+        :from tags
+        :left-join nodes
+        :on (= tags:node-id nodes:id)
+        :where (like tag (quote "%\"task\"%"))]))))
+
+  (defun vulpea-agenda-files-update (&rest _)
+    "Update the value of `org-agenda-files'."
+    (setq org-agenda-files (vulpea-task-files)))
+
+  (add-hook 'find-file-hook #'vulpea-task-update-tag)
+  (add-hook 'before-save-hook #'vulpea-task-update-tag)
+
+  (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
+  (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
+
+  ;; functions borrowed from `vulpea' library
+  ;; https://github.com/d12frosted/vulpea/blob/6a735c34f1f64e1f70da77989e9ce8da7864e5ff/vulpea-buffer.el
+
+  (defun vulpea-buffer-tags-get ()
+    "Return filetags value in current buffer."
+    (vulpea-buffer-prop-get-list "filetags" "[ :]"))
+
+  (defun vulpea-buffer-tags-set (&rest tags)
+    "Set TAGS in current buffer.
+
+If filetags value is already set, replace it."
+    (if tags
+        (vulpea-buffer-prop-set
+         "filetags" (concat ":" (string-join tags ":") ":"))
+      (vulpea-buffer-prop-remove "filetags")))
+
+  (defun vulpea-buffer-tags-add (tag)
+    "Add a TAG to filetags in current buffer."
+    (let* ((tags (vulpea-buffer-tags-get))
+           (tags (append tags (list tag))))
+      (apply #'vulpea-buffer-tags-set tags)))
+
+  (defun vulpea-buffer-tags-remove (tag)
+    "Remove a TAG from filetags in current buffer."
+    (let* ((tags (vulpea-buffer-tags-get))
+           (tags (delete tag tags)))
+      (apply #'vulpea-buffer-tags-set tags)))
+
+  (defun vulpea-buffer-prop-set (name value)
+    "Set a file property called NAME to VALUE in buffer file.
+If the property is already set, replace its value."
+    (setq name (downcase name))
+    (org-with-point-at 1
+      (let ((case-fold-search t))
+        (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)")
+                               (point-max) t)
+            (replace-match (concat "#+" name ": " value) 'fixedcase)
+          (while (and (not (eobp))
+                      (looking-at "^[#:]"))
+            (if (save-excursion (end-of-line) (eobp))
+                (progn
+                  (end-of-line)
+                  (insert "\n"))
+              (forward-line)
+              (beginning-of-line)))
+          (insert "#+" name ": " value "\n")))))
+
+  (defun vulpea-buffer-prop-set-list (name values &optional separators)
+    "Set a file property called NAME to VALUES in current buffer.
+VALUES are quoted and combined into single string using
+`combine-and-quote-strings'.
+If SEPARATORS is non-nil, it should be a regular expression
+matching text that separates, but is not part of, the substrings.
+If nil it defaults to `split-string-default-separators', normally
+\"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t.
+If the property is already set, replace its value."
+    (vulpea-buffer-prop-set
+     name (combine-and-quote-strings values separators)))
+
+  (defun vulpea-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                               (point-max) t)
+        (buffer-substring-no-properties
+         (match-beginning 1)
+         (match-end 1)))))
+
+  (defun vulpea-buffer-prop-get-list (name &optional separators)
+    "Get a buffer property NAME as a list using SEPARATORS.
+If SEPARATORS is non-nil, it should be a regular expression
+matching text that separates, but is not part of, the substrings.
+If nil it defaults to `split-string-default-separators', normally
+\"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+    (let ((value (vulpea-buffer-prop-get name)))
+      (when (and value (not (string-empty-p value)))
+        (split-string-and-unquote value separators))))
+
+  (defun vulpea-buffer-prop-remove (name)
+    "Remove a buffer property called NAME."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "\\(^#\\+" name ":.*\n?\\)")
+                               (point-max) t)
+        (replace-match ""))))
   )
 
 (use-package! ob-julia
