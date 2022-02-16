@@ -200,8 +200,26 @@
   (custom-set-faces!
     '((org-block-begin-line org-block-end-line)
       :slant italic)
-    '((org-document-title)
-      :height 1.5))
+    `((org-document-title)
+      :foreground ,(face-attribute 'org-document-title :foreground)
+      :overline ,(doom-blend (face-attribute 'org-document-title :foreground)
+                             (doom-color 'bg) 0.5)
+      :background ,(doom-blend (face-attribute 'org-document-title :foreground)
+                               (doom-color 'bg) 0.1)
+      :height 1.3 :extend t)
+    `((org-level-1)
+      :foreground ,(face-attribute 'outline-1 :foreground)
+      :overline ,(doom-blend (face-attribute 'outline-1 :foreground)
+                             (doom-color 'bg) 0.5)
+      :background ,(doom-blend (face-attribute 'outline-1 :foreground)
+                               (doom-color 'bg) 0.05)
+      :height 1.1)
+    `((org-level-2)
+      :foreground ,(face-attribute 'outline-2 :foreground)
+      :overline ,(doom-blend (face-attribute 'outline-2 :foreground)
+                             (doom-color 'bg) 0.5)
+      :background ,(doom-blend (face-attribute 'outline-2 :foreground)
+                               (doom-color 'bg) 0.05)))
   ;; Custom keyword
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
@@ -212,7 +230,9 @@
     (interactive)
     (setq prettify-symbols-alist
           (mapcan (lambda (x) (list x (cons (upcase (car x)) (cdr x))))
-                  `(("#+title:" . ,(all-the-icons-material "insert_drive_file" :v-adjust -0.01))
+                  `(("#+title:" .
+                     ,(all-the-icons-material "insert_drive_file"
+                                              :face 'org-document-title))
                     ("#+begin_src" . "")
                     ("#+end_src" . "⎺")
                     ("#+begin_quote" . "")
