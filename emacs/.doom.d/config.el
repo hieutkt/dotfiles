@@ -457,7 +457,7 @@ TODO abstract backend implementations."
           ("WAIT" . +org-todo-active)
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)
-          ("REVIEW" . font-lock-keyword-face)))
+          ("REVIEW" . +org-todo-onhold)))
   ;; Appearance
   (setq org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
@@ -561,28 +561,26 @@ TODO abstract backend implementations."
            ((agenda "")
             (todo "NEXT"
                   ((org-super-agenda-groups
-                    '((:auto-outline-path t)))))
-            (tags-todo "journal"
-                       ((org-agenda-overriding-header "Tasks listed in journal:")
-                        (org-super-agenda-groups
-                         '((:auto-outline-path t)))))
+                    '((:auto-map hp/agenda-auto-group-title-olp)))))
             (tags-todo "task"
-                       ((org-agenda-overriding-header "Tasks listed in other files:")
-                        (org-super-agenda-groups
-                         '((:discard (:tag "journal"))
-                           (:auto-map hp/agenda-auto-group-title-olp)))))))))
+                  ((org-agenda-overriding-header
+                    "Every TASKS under the sun")
+                   (org-super-agenda-groups
+                    '((:auto-map hp/agenda-auto-group-title-olp)))))))))
 
   (defun hp/agenda-auto-group-title-olp (item)
     (-when-let* ((marker (or (get-text-property 0 'org-marker item)
                              (get-text-property 0 'org-hd-marker item)))
                  (buffer (->> marker marker-buffer ))
                  (title (cadar (org-collect-keywords '("title"))))
-                 (filledtitle (if (> (length title) 50)
-                                  (concat (substring title 0 50)  "...") title))
+                 (filledtitle (if (> (length title) 70)
+                                  (concat (substring title 0 70)  "...") title))
+                 (tags (org-get-tags))
                  (olp (org-super-agenda--when-with-marker-buffer
                         (org-super-agenda--get-marker item)
-                        (s-join "/" (org-get-outline-path)))))
-      (concat filledtitle " / " olp )))
+                        (s-join " → " (org-get-outline-path)))))
+      (concat (if (not (member "journal" tags))
+                 (concat "「" filledtitle "」" ) "    ") olp)))
 
   ;; Make evil keymaps works on org-super-agenda headers
   (after! evil-org-agenda
