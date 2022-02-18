@@ -200,6 +200,8 @@
   (custom-set-faces!
     '((org-block-begin-line org-block-end-line)
       :slant italic)
+    '((org-quote)
+      :extend t)
     `((org-document-title)
       :foreground ,(face-attribute 'org-document-title :foreground)
       :overline ,(doom-blend (face-attribute 'org-document-title :foreground)
