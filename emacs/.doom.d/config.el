@@ -800,6 +800,16 @@ If nil it defaults to `split-string-default-separators', normally
     ;; with this, you can exploit embark's multitarget actions, so that you can run `embark-act-all`
     (add-to-list 'embark-multitarget-actions #'citar/search-pdf-contents)))
 
+(use-package! oc-csl-activate
+  :config
+  (setq org-cite-activate-processor 'csl-activate)
+  (setq org-cite-csl-activate-use-document-style t)
+  (setq org-cite-csl-activate-use-document-locale t)
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (cursor-sensor-mode 1)
+              (org-cite-csl-activate-render-all))))
+
 (use-package! org-roam
   :after org
   :init

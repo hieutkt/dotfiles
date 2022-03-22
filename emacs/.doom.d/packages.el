@@ -26,6 +26,8 @@
   :recipe (:host github :repo "andras-simonyi/citeproc-org"))
 (package! org-transclusion
   :recipe (:host github :repo "nobiot/org-transclusion"))
+(package! org-csl-activate
+  :recipe (:host github :repo "andras-simonyi/org-cite-csl-activate"))
 
 (package! ess-stata-mode
   :recipe (:host github :repo "emacs-ess/ess-stata-mode"))
