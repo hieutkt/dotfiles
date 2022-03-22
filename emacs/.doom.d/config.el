@@ -198,8 +198,6 @@
   (+org-init-custom-links-h)
   ;; Custom some face
   (custom-set-faces!
-    '((org-block-begin-line org-block-end-line)
-      :slant italic)
     '((org-quote)
       :extend t)
     `((org-document-title)
@@ -208,20 +206,21 @@
                              (doom-color 'bg) 0.5)
       :background ,(doom-blend (face-attribute 'org-document-title :foreground)
                                (doom-color 'bg) 0.1)
-      :height 1.3 :extend t)
+      :height 1.3 :extend t :weight bold)
     `((org-level-1)
       :foreground ,(face-attribute 'outline-1 :foreground)
       :overline ,(doom-blend (face-attribute 'outline-1 :foreground)
                              (doom-color 'bg) 0.5)
       :background ,(doom-blend (face-attribute 'outline-1 :foreground)
                                (doom-color 'bg) 0.05)
-      :height 1.1)
+      :height 1.1 :weight bold)
     `((org-level-2)
       :foreground ,(face-attribute 'outline-2 :foreground)
       :overline ,(doom-blend (face-attribute 'outline-2 :foreground)
                              (doom-color 'bg) 0.5)
       :background ,(doom-blend (face-attribute 'outline-2 :foreground)
-                               (doom-color 'bg) 0.05)))
+                               (doom-color 'bg) 0.05)
+      :weight bold))
   ;; Custom keyword
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
@@ -449,17 +448,20 @@ TODO abstract backend implementations."
            "PROJ(p)"                    ;Contains sub-tasks
            "WAIT(w)"                    ;Tasks delegated to others
            "REVIEW(r)"                  ;Daily notes that need reviews
+           "IDEA(i)"                    ;Daily notes that need reviews
            "|"
            "STOP(c)"                    ;Stopped/cancelled
-           "MEETING(m)"                 ;Meetings
+           "EVENT(m)"                   ;Meetings
            ))
         org-todo-keyword-faces
         '(("REPEAT" . +org-todo-project)
+          ("EVENT" . +org-todo-project)
           ("NEXT" . +org-todo-active)
           ("WAIT" . +org-todo-active)
           ("HOLD" . +org-todo-onhold)
           ("PROJ" . +org-todo-project)
-          ("REVIEW" . +org-todo-onhold)))
+          ("REVIEW" . +org-todo-onhold)
+          ("IDEA" . +org-todo-project)))
   ;; Appearance
   (setq org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
@@ -565,10 +567,27 @@ TODO abstract backend implementations."
                   ((org-super-agenda-groups
                     '((:auto-map hp/agenda-auto-group-title-olp)))))
             (tags-todo "task"
-                  ((org-agenda-overriding-header
-                    "Every TASKS under the sun")
+                       ((org-agenda-overriding-header
+                         "Every TASKS under the sun")
+                        (org-super-agenda-groups
+                         '((:discard (:todo "IDEA"))
+                           (:discard (:todo "REVIEW"))
+                           (:discard (:tag "writings"))
+                           (:discard (:tag "blog"))
+                           (:auto-map hp/agenda-auto-group-title-olp)))))
+            (todo "REVIEW"
+                  ((org-agenda-overriding-header "Study")
                    (org-super-agenda-groups
-                    '((:auto-map hp/agenda-auto-group-title-olp)))))))))
+                    '((:auto-map hp/agenda-auto-group-title-olp)))))
+            (tags-todo "writings|blog"
+                  ((org-agenda-overriding-header "Writings")
+                   (org-super-agenda-groups
+                    '((:auto-map hp/agenda-auto-group-title-olp)))))
+            (todo "IDEA"
+                  ((org-agenda-overriding-header "Ideas")
+                   (org-super-agenda-groups
+                    '((:auto-map hp/agenda-auto-group-title-olp)))))
+            ))))
 
   (defun hp/agenda-auto-group-title-olp (item)
     (-when-let* ((marker (or (get-text-property 0 'org-marker item)
