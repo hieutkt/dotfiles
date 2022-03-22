@@ -25,7 +25,7 @@ function subtypetree(roottype, prefix = "")
     end
     for i in 1:length(stype)
         print("\n")
-        print(prefix, i == length(stype) ? "└── " : "├── ")
+        printstyled(prefix, i == length(stype) ? "└── " : "├── "; color=:light_black)
         s = stype[i]
         show(s)
         subtypetree(s, "│   " * prefix)
