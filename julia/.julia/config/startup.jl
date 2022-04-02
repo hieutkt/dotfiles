@@ -1,8 +1,16 @@
+# Import
 using Revise
 using OhMyREPL; colorscheme!("GruvboxDark")
 
+# Eviroment
 push!(LOAD_PATH, homedir()*"/Dropbox/Codes/Julia")
 
+# To make @edit macro works within emacs `julia-repl-mode`
+if haskey(ENV, "INSIDE_EMACS")
+    ENV["JULIA_EDITOR"] = "emacsclient"
+end
+
+# Functions
 function Base.show(s::Type)
     col = isconcretetype(s) ? :yellow : :blue
     col = isprimitivetype(s) ? :red : col
