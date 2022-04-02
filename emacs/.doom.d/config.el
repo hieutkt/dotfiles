@@ -1280,3 +1280,20 @@ If nil it defaults to `split-string-default-separators', normally
   (map! :map elfeed-search-mode-map
         :n "=" elfeed-score-map)
   (elfeed-score-enable))
+
+(use-package! anki-editor
+  :hook (org-mode . anki-editor-mode)
+  :init
+  (setq anki-editor-use-math-jax t
+        anki-editor-org-tags-as-anki-tags nil)
+  :config
+  (map! :localleader
+        :map org-mode-map
+        (:prefix ("A" . "Anki")
+         :desc "Push notes at point" "p" 'anki-editor-push-notes
+         :desc "Retry failure notes" "r" 'anki-editor-retry-failure-notes
+         :desc "Insert note" "n" 'anki-editor-insert-note
+         (:prefix ("c" . "Cloze")
+          :desc "Cloze DWIM" "d" 'anki-editor-cloze-dwim
+          :desc "Cloze region" "r" 'anki-editor-cloze-region
+          ))))

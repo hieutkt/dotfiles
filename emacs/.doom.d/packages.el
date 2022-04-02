@@ -54,3 +54,7 @@
 
 (package! ob-julia
   :recipe (:host github :repo "nico202/ob-julia" :files ("*.el" "julia")))
+
+;; Anki
+(package! anki-editor
+  :recipe (:host github :repo "louietan/anki-editor"))
