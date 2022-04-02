@@ -172,9 +172,6 @@
                           (face-attribute 'default :foreground)))))
   :hook (post-command . hp/change-cursor-color-if-yasnippet-can-fire))
 
-(map! :map (term-mode vterm-mode)
-      "C-c C-z" 'other-window)
-
 (use-package! pdf-occur)
 
 (use-package! epa
@@ -1080,7 +1077,7 @@ If nil it defaults to `split-string-default-separators', normally
 (use-package! julia-repl
   :config
   ;; Use vterm instead of the defautl term
-  (when (featurep 'vterm)
+  (when (featurep! :term vterm)
     (julia-repl-set-terminal-backend 'vterm))
   ;; Make popup position similar to `ess'
   (set-popup-rules!
