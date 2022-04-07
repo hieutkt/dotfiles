@@ -781,7 +781,7 @@ If nil it defaults to `split-string-default-separators', normally
      (preview . "${author editor} (${year issued date}) ${title}, ${journal publisher container-title collection-title}.\n")
      (note .
            ,(string-join
-             '("#+title: ${author editor} (${year issued date}) ${title}"
+             '("${author editor} (${year issued date}) ${title}"
                "#+filetags: literature"
                "#+startup: overview"
                "#+startup: hideblocks"
