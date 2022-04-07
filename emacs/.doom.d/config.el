@@ -31,8 +31,6 @@
     (setq doom-font                (font-spec :name "Sarasa Mono CL" :size 18)))
 (when (doom-font-exists-p "Alegreya")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya"       :size 20)))
-(when (doom-font-exists-p "JuliaMono")
-    (setq doom-unicode-font        (font-spec :name "JuliaMono"      :size 18)))
 
 
 (use-package! unicode-fonts
