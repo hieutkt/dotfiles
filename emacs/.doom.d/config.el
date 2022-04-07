@@ -1076,7 +1076,9 @@ If nil it defaults to `split-string-default-separators', normally
   :config
   ;; Use vterm instead of the defautl term
   (when (featurep! :term vterm)
-    (julia-repl-set-terminal-backend 'vterm))
+    (julia-repl-set-terminal-backend 'vterm)
+    (map! :map vterm-mode-map :i "C-c C-z" nil))
+  (setq lsp-julia-package-dir nil)
   ;; Make popup position similar to `ess'
   (set-popup-rules!
     '(("^\\*julia.*\\*$" :side right :size 0.5 :ttl nil))))
