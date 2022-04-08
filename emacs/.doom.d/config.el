@@ -1157,21 +1157,6 @@ If nil it defaults to `split-string-default-separators', normally
 
 (use-package! company-graphviz-dot)
 
-(use-package! blamer
-  :defer 20
-  :config
-  ;; Formatter
-  (setq blamer-prettify-time-p t
-        blamer-min-offset 0
-        blamer-author-formatter "······%s"
-        blamer-datetime-formatter "[%s]")
-  ;; Custom face
-  (custom-set-faces!
-    `(blamer-face
-      :foreground ,(doom-color 'base4) :background nil :italic t))
-  ;; Enable
-  (add-hook 'prog-mode-hook 'blamer-mode))
-
 (use-package! elfeed
   :commands (elfeed)
   :hook (elfeed-search-mode . elfeed-update)
