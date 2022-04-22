@@ -1,7 +1,7 @@
-#+TITLE: Readme
+#+TITLE: Personal dotfiles
 
-This is my dotfiles, managed with [[https://www.gnu.org/software/stow/][GNU =stow=]].
-Basic prerequisite in an Ubuntu-based distro are as follow:
+This is my dotfiles, managed using [[https://www.gnu.org/software/stow/][GNU stow]].
+Basic prerequisites in an Ubuntu-based distro are as follow:
 
 #+begin_src bash
 sudo apt install fd-find ripgrep git stow
@@ -19,5 +19,5 @@ stow --target=$HOME --restow */
 Or set up individual modules only. For example:
 
 #+begin_src bash
-stow --target=$HOME -restow shell # For zsh or bash setup
+stow --target=$HOME --restow shell # For zsh or bash setup
 #+end_src
