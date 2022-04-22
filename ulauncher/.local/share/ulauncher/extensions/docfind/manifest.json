@@ -1,0 +1,30 @@
+{
+  "required_api_version": "^2.0.0",
+  "name": "Document Find",
+  "description": "Quick Search Search in stored Zotero Documents",
+  "developer_name": "Nguyễn Đức Hiếu (Hiếu Phẩy)",
+  "icon": "images/icon.png",
+  "options": {
+    "query_debounce": 0.3
+  },
+  "preferences": [
+    {
+      "id": "kw_df",
+      "type": "keyword",
+      "name": "df - Search in stored Zotero Documents",
+      "default_value": "df"
+    },{
+      "id": "kw_docfind",
+      "type": "keyword",
+      "name": "docfind - Search in stored Zotero Documents",
+      "default_value": "docfind"
+    },
+    {
+      "id": "base_dir",
+      "type": "input",
+      "name": "Base dir",
+      "description": "The base directory to start your searches. Ex: /",
+      "default_value": "/home/hieuphay/Dropbox/Documents/ZotFile"
+    }
+  ]
+}
