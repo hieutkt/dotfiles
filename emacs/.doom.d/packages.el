@@ -55,3 +55,8 @@
 ;; Anki
 (package! anki-editor
   :recipe (:host github :repo "louietan/anki-editor"))
+
+(package! org-modern
+  :recipe (:host github :repo "minad/org-modern"))
+(package! svg-tag-mode
+  :recipe (:host github :repo "rougier/svg-tag-mode"))

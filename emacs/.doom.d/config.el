@@ -56,7 +56,7 @@
 ;; Start Doom fullscreen
 (add-to-list 'default-frame-alist '(width . 92))
 (add-to-list 'default-frame-alist '(height . 35))
-(add-to-list 'default-frame-alist '(alpha 97 100))
+;; (add-to-list 'default-frame-alist '(alpha 97 100))
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -197,25 +197,14 @@
       :extend t)
     `((org-document-title)
       :foreground ,(face-attribute 'org-document-title :foreground)
-      :overline ,(doom-blend (face-attribute 'org-document-title :foreground)
-                             (doom-color 'bg) 0.5)
-      :background ,(doom-blend (face-attribute 'org-document-title :foreground)
-                               (doom-color 'bg) 0.1)
       :height 1.3 :extend t :weight bold)
     `((org-level-1)
       :foreground ,(face-attribute 'outline-1 :foreground)
-      :overline ,(doom-blend (face-attribute 'outline-1 :foreground)
-                             (doom-color 'bg) 0.5)
-      :background ,(doom-blend (face-attribute 'outline-1 :foreground)
-                               (doom-color 'bg) 0.05)
       :height 1.1 :weight bold)
     `((org-level-2)
       :foreground ,(face-attribute 'outline-2 :foreground)
-      :overline ,(doom-blend (face-attribute 'outline-2 :foreground)
-                             (doom-color 'bg) 0.5)
-      :background ,(doom-blend (face-attribute 'outline-2 :foreground)
-                               (doom-color 'bg) 0.05)
-      :weight bold))
+      :weight bold)
+    )
   ;; Custom keyword
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
@@ -248,17 +237,98 @@
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols))
   )
 
-(use-package! org-superstar
+(use-package! org-modern
+  :hook (org-mode . org-modern-mode)
   :config
-  (setq org-superstar-headline-bullets-list '("⁖")
-        org-superstar-item-bullet-alist '((?+ . ?•)
-                                          (?* . ?∘)
-                                          (?- . ?–))
-        org-superstar-cycle-headline-bullets nil))
+  (setq
+   ;; Edit settings
+   org-auto-align-tags nil
+   org-tags-column 0
+   org-catch-invisible-edits 'show-and-error
+   org-special-ctrl-a/e t
+   org-insert-heading-respect-content t
+   ;; Appearance
+   org-modern-todo nil
+   org-modern-tag nil
+   org-modern-timestamp t
+   org-modern-statistics nil
+   org-modern-progress nil
+   org-modern-priority nil
+   org-modern-star ["⁖"]
+   org-modern-list '((43 . "•")
+                     (45 . "–")
+                     (42 . "∘")))
+  (set-face-attribute 'org-modern-label nil :family "Alegreya Sans")
+  (set-face-attribute 'org-modern-tag nil
+                      :background (doom-blend (doom-color 'blue) (doom-color 'bg) 0.1)
+                      :foreground (doom-color 'grey))
+  )
 
-(use-package! org-fancy-priorities
+(use-package! svg-tag-mode
   :config
-  (setq org-fancy-priorities-list '("[!!]" "[-!]" "[--]")))
+  (defconst date-re "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}")
+  (defconst time-re "[0-9]\\{2\\}:[0-9]\\{2\\}")
+  (defconst day-re "[A-Za-z]\\{3\\}")
+  (defconst day-time-re (format "\\(%s\\)? ?\\(%s\\)?" day-re time-re))
+
+  (defun svg-progress-percent (value)
+    (svg-image (svg-lib-concat
+                (svg-lib-progress-bar (/ (string-to-number value) 100.0)
+                                      nil :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+                (svg-lib-tag (concat value "%")
+                             nil :stroke 0 :margin 0)) :ascent 'center))
+
+  (defun svg-progress-count (value)
+    (let* ((seq (mapcar #'string-to-number (split-string value "/")))
+           (count (float (car seq)))
+           (total (float (cadr seq))))
+      (svg-image (svg-lib-concat
+                  (svg-lib-progress-bar (/ count total) nil
+                                        :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+                  (svg-lib-tag value nil
+                               :stroke 0 :margin 0)) :ascent 'center)))
+
+  (setq svg-tag-tags
+        `(
+          ;; Org tags
+          (":\\([A-Za-z0-9_]+\\):" . ((lambda (tag) (svg-tag-make tag :face 'org-tag))))
+          (":\\([A-Za-z0-9_]+[ \-]\\):" . ((lambda (tag) tag)))
+
+          ;; Progress
+          ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
+                                              (svg-progress-percent (substring tag 1 -2)))))
+          ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
+                                            (svg-progress-count (substring tag 1 -1)))))
+          ;; Task priority
+          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error
+                                             :height 0.8 :inverse t
+                                             :beg 2 :end -1 :margin 0 :radius 10))))
+          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning
+                                             :height 0.8 :inverse t
+                                             :beg 2 :end -1 :margin 0 :radius 10))))
+          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo
+                                             :height 0.8 :inverse t
+                                             :beg 2 :end -1 :margin 0 :radius 10))))
+          ;; Keywords
+          ("TODO" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
+                                            :face 'org-todo :margin 0 :radius 5))))
+          ("HOLD" . ((lambda (tag) (svg-tag-make tag :height 0.8
+                                            :face 'org-todo :margin 0 :radius 5))))
+          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
+                                              :face 'org-done :margin 0 :radius 5))))
+          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
+                                              :face '+org-todo-active :margin 0 :radius 5))))
+          ("REPEAT\\|EVENT\\|PROJ\\|IDEA" .
+           ((lambda (tag) (svg-tag-make tag
+                                   :height 0.8 :inverse t
+                                   :face '+org-todo-project :margin 0 :radius 5))))
+          ("REVIEW" . ((lambda (tag) (svg-tag-make tag
+                                   :height 0.8 :inverse t
+                                   :face '+org-todo-onhold :margin 0 :radius 5))))
+          ))
+
+  :hook (org-mode . svg-tag-mode)
+  )
 
 (use-package! org-tempo
   :config
@@ -449,16 +519,7 @@ TODO abstract backend implementations."
            "|"
            "STOP(c)"                    ;Stopped/cancelled
            "EVENT(m)"                   ;Meetings
-           ))
-        org-todo-keyword-faces
-        '(("REPEAT" . +org-todo-project)
-          ("EVENT" . +org-todo-project)
-          ("NEXT" . +org-todo-active)
-          ("WAIT" . +org-todo-active)
-          ("HOLD" . +org-todo-onhold)
-          ("PROJ" . +org-todo-project)
-          ("REVIEW" . +org-todo-onhold)
-          ("IDEA" . +org-todo-project)))
+           )))
   ;; Appearance
   (setq org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
@@ -605,9 +666,9 @@ TODO abstract backend implementations."
     (setq org-super-agenda-header-map (copy-keymap evil-org-agenda-mode-map)))
   ;; Change header face to make it standout more
   (custom-set-faces!
-    '(org-super-agenda-header
+    `(org-super-agenda-header
       :inherit 'variable-pitch
-      :weight bold)
+      :weight bold :foreground ,(doom-color 'cyan))
     `(org-agenda-structure
       :inherit 'variable-pitch
       :weight bold :foreground ,(doom-color 'blue))))

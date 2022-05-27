@@ -36,7 +36,7 @@
        doom                            ; what makes DOOM look the way it does
        doom-dashboard                  ; a nifty splash screen for Emacs
        doom-quit                       ; DOOM quit-message prompts when you quit Emacs
-       hl-todo                         ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       ;; hl-todo                         ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
        indent-guides                   ; highlighted indent columns
        ;;minimap                       ; show a map of the code on the side
@@ -148,7 +148,9 @@
        ;;nix                           ; I hereby declare "nix geht mehr!"
        ;;ocaml                         ; an objective camel
        (org +roam2 +jupyter +hugo +noter
-            +beamer +pretty +dragndrop)   ; organize your plain life in plain text
+            +beamer
+            ;; +pretty
+            +dragndrop)   ; organize your plain life in plain text
        ;;php                           ; perl's insecure younger brother
        ;;plantuml                      ; diagrams for confusing people more
        ;;purescript                    ; javascript, but functional
