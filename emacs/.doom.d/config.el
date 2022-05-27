@@ -423,7 +423,9 @@ TODO abstract backend implementations."
   :config
   (setq org-hugo-use-code-for-kbd t
         org-hugo-paired-shortcodes "sidenote marginnote notice"
-        org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt")))
+        org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt"))
+  ;; No reference heading in ox-hugo export
+  (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
 
 (use-package! org-agenda
   :config
