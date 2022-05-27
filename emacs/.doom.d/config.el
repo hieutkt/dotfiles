@@ -1159,7 +1159,6 @@ If nil it defaults to `split-string-default-separators', normally
 
 (use-package! elfeed
   :commands (elfeed)
-  :hook (elfeed-search-mode . elfeed-update)
   :custom
   (rmh-elfeed-org-files (list (concat org-directory "/Feeds/elfeed.org")))
   (elfeed-db-directory (concat org-directory "/Feeds/elfeed.db/"))
