@@ -4,7 +4,6 @@
 (package! visual-fill-column)
 (package! lsp-treemacs)
 (package! org-super-agenda)
-(package! keycast)
 (package! benchmark-init)
 
 (package! tree-sitter)
