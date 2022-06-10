@@ -1,3 +1,10 @@
+#+title: Doom Emacs configurations
+#+startup: hideblocks content
+
+* General editing functionality
+** Some good defaults
+
+#+begin_src emacs-lisp
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Hieu Phay"
@@ -39,26 +46,43 @@
          (let ((project-name (projectile-project-name)))
            (unless (string= "-" project-name)
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
 
+** Theme
+
+#+begin_src emacs-lisp
 (setq doom-theme 'doom-gruvbox
       doom-themes-treemacs-enable-variable-pitch nil)
 
 (use-package! doom-modeline
   :config
   (setq doom-modeline-persp-name t))
+#+end_src
 
+** Visual lines for prose writings
+
+#+begin_src emacs-lisp
 (use-package! visual-fill-column
   :hook (visual-line-mode . visual-fill-column-mode)
   :init
   (setq visual-fill-column-width 92
         visual-fill-column-center-text t
         visual-fill-column-fringes-outside-margins nil))
+#+end_src
 
+** Font configs
+Favorite fonts:
+
+#+begin_src emacs-lisp
 (when (doom-font-exists-p "Sarasa Mono CL")
     (setq doom-font                (font-spec :name "Sarasa Mono CL" :size 18)))
 (when (doom-font-exists-p "Alegreya")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya"       :size 20)))
+#+end_src
 
+Fallback font for non-ascii glyphs:
+
+#+begin_src emacs-lisp
 (use-package! unicode-fonts
   :config
   ;; CJK characters
@@ -66,13 +90,21 @@
     (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
   (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
     (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping)))))
+#+end_src
 
+We should take care of =mixed-pitch-mode= here, too:
+
+#+begin_src emacs-lisp
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
   (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt)
   (setq mixed-pitch-set-height t))
+#+end_src
 
+* Editing configurations
+** Evil
+#+begin_src emacs-lisp
 (use-package! evil-escape
   :config
   (setq evil-esc-delay 0.25))
@@ -108,7 +140,11 @@
       :background ,(doom-blend (doom-color 'yellow) (doom-color 'bg-alt) 0.25)
       :extend t)
     ))
+#+end_src
 
+** Completions
+
+#+begin_src emacs-lisp
 (use-package! orderless
   :config
   (add-to-list 'orderless-matching-styles 'char-fold-to-regexp))
@@ -118,20 +154,30 @@
   (setq graphviz-dot-indent-width 4))
 
 (use-package! company-graphviz-dot)
+#+end_src
 
+** Language server protocol (LSP)
+#+begin_src emacs-lisp
 (use-package! lsp-ui
   :config
   (setq lsp-ui-doc-delay 2
         lsp-ui-doc-max-width 80)
   (setq lsp-signature-function 'lsp-signature-posframe))
+#+end_src
 
+** Tree-sitter
+#+begin_src emacs-lisp
 (use-package! tree-sitter
   :config
   (use-package! tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
   :hook (tree-sitter-hl-mode . rainbow-delimiters-mode))
+#+end_src
 
+** Yasnippet
+
+#+begin_src emacs-lisp
 (use-package! yasnippet
   :config
   ;; It will test whether it can expand, if yes, change cursor color
@@ -152,7 +198,11 @@
                             (doom-color 'red)
                           (face-attribute 'default :foreground)))))
   :hook (post-command . hp/change-cursor-color-if-yasnippet-can-fire))
+#+end_src
 
+** Citations
+
+#+begin_src emacs-lisp
 (use-package! citar
   :custom
   (citar-bibliography (list (concat org-directory "/References/zotero.bib")))
@@ -202,7 +252,12 @@
         (pdf-occur-search files search-str t)))
     ;; with this, you can exploit embark's multitarget actions, so that you can run `embark-act-all`
     (add-to-list 'embark-multitarget-actions #'citar/search-pdf-contents)))
+#+end_src
 
+** Miscellaneous
+Gonna clean this up later:
+
+#+begin_src emacs-lisp
 (use-package! ansi-color
   :config
   (defun hp/display-ansi-colors ()
@@ -218,7 +273,12 @@
 (use-package! epa
   :config
   (epa-file-enable))
+#+end_src
 
+* Major modes and language-specific configs
+** Org-mode
+*** Basics
+#+begin_src emacs-lisp
 (use-package! org
   :config
   (define-key! 'org-mode-map "C-c [" nil) ;org-agenda-file-to-front
@@ -263,7 +323,14 @@
     (prettify-symbols-mode 1))
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
+#+end_src
 
+*** Visual-related configs
+
+=org-modern= is really cool -- especially when combined with =svg-tag-mode=.
+The only downside is it doesn't play well with =org-indent-mode= (for now).
+
+#+begin_src emacs-lisp
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :config
@@ -363,7 +430,11 @@
 
   :hook (org-mode . svg-tag-mode)
   )
+#+end_src
 
+=org-appear= and =org-fragtog= for seemless look:
+
+#+begin_src emacs-lisp
 (use-package! org-appear
   :hook
   (org-mode . org-appear-mode)
@@ -373,7 +444,11 @@
 (use-package! org-fragtog
   :hook
   (org-mode . org-fragtog-mode))
+#+end_src
 
+Similarly, for CSL citations formatting in an Org buffer:
+
+#+begin_src emacs-lisp
 (use-package! oc-csl-activate
   :config
   (setq org-cite-activate-processor 'csl-activate)
@@ -383,7 +458,12 @@
             (lambda ()
               (cursor-sensor-mode 1)
               (org-cite-csl-activate-render-all))))
+#+end_src
 
+*** Org-contribs
+**** Org-tempo
+
+#+begin_src emacs-lisp
 (use-package! org-tempo
   :after org
   :config
@@ -406,7 +486,10 @@
    "Hugo question" '("#+attr_shortcode: question\n#+begin_notice\n" p "\n#+end_notice">)
    "<question")
   )
+#+end_src
 
+**** Export functionalities
+#+begin_src emacs-lisp
 (use-package! ox
   :config
   ;; Auto export acronyms as small caps
@@ -469,7 +552,11 @@ TODO abstract backend implementations."
   ;;                             (org-export-filter-text-acronym text 'latex info)) tags info))
   ;; (setq org-latex-format-headline-function #'org-latex-format-headline-acronymised)
   )
+#+end_src
 
+Export to LaTeX:
+
+#+begin_src emacs-lisp
 (use-package! ox-latex
   :config
   (setq org-latex-pdf-process
@@ -543,7 +630,11 @@ TODO abstract backend implementations."
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+end_src
 
+Export to website
+
+#+begin_src emacs-lisp
 (use-package! ox-hugo
   :config
   (setq org-hugo-use-code-for-kbd t
@@ -551,7 +642,10 @@ TODO abstract backend implementations."
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt"))
   ;; No reference heading in ox-hugo export
   (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
+#+end_src
 
+**** Agenda
+#+begin_src emacs-lisp
 (use-package! org-agenda
   :config
   ;; Setting the TODO keywords
@@ -661,7 +755,10 @@ TODO abstract backend implementations."
     `(org-agenda-structure
       :inherit 'variable-pitch
       :weight bold :foreground ,(doom-color 'blue))))
+#+end_src
 
+**** Capture templates
+#+begin_src emacs-lisp
 (use-package! org-capture
   :config
   ;;CAPTURE TEMPLATES
@@ -727,10 +824,18 @@ TODO abstract backend implementations."
            :create-id t
            :immediate-finish t
            :jump-to-captured t))))
+#+end_src
 
+**** Babel
+#+begin_src emacs-lisp
 (use-package! ob-julia
   :commands org-babel-execute:julia)
+#+end_src
 
+**** Miscellaneous
+Gonna clean this up later
+
+#+begin_src emacs-lisp
 (use-package! org-gcal
   :commands org-gcal-fetch
   :config
@@ -767,7 +872,11 @@ TODO abstract backend implementations."
           :desc "Cloze DWIM" "d" 'anki-editor-cloze-dwim
           :desc "Cloze region" "r" 'anki-editor-cloze-region
           ))))
+#+end_src
 
+*** Org-roam
+
+#+begin_src emacs-lisp
 (use-package! org-roam
   :after org
   :init
@@ -969,7 +1078,11 @@ TODO abstract backend implementations."
 (use-package! org-roam-ui
   :after org-roam
   :commands (org-roam-ui-mode))
+#+end_src
 
+This is to automate creating a workspace for Org-roam
+
+#+begin_src emacs-lisp
 (after! (org-roam)
   (defadvice! yeet/org-roam-in-own-workspace-a (&rest _)
   "Open all roam buffers in there own workspace."
@@ -980,7 +1093,10 @@ TODO abstract backend implementations."
   :before #'org-roam-dailies-goto-today
   (when (featurep! :ui workspaces)
     (+workspace-switch "Org-roam" t))))
-
+#+end_src
+*** Org-roam and Org-agenda itegration
+These are blindly copied elsewhere:
+#+begin_src emacs-lisp
 (after! (org-agenda org-roam)
   (defun vulpea-task-p ()
     "Return non-nil if current buffer has any todo entry.
@@ -1131,7 +1247,10 @@ If nil it defaults to `split-string-default-separators', normally
                                (point-max) t)
         (replace-match ""))))
   )
+#+end_src
 
+** R
+#+begin_src emacs-lisp
 (use-package! ess
   :config
   (set-popup-rules!
@@ -1144,12 +1263,19 @@ If nil it defaults to `split-string-default-separators', normally
         inferior-STA-program (executable-find "stata")
         inferior-STA-program-name (executable-find "stata"))
   (add-to-list 'org-src-lang-modes '("jupyter-stata" . stata)))
+#+end_src
 
+** Python
+
+#+begin_src emacs-lisp
 (use-package! python
   :config
   (set-popup-rules!
     '(("^\\*Python:*\\*$" :side right :size 0.5 :ttl nil))))
+#+end_src
 
+** Julia
+#+begin_src emacs-lisp
 (use-package! julia-repl
   :config
   ;; Use vterm instead of the defautl term
@@ -1167,7 +1293,10 @@ If nil it defaults to `split-string-default-separators', normally
   (add-hook! 'julia-mode-hook
     (setq-local lsp-enable-folding t
                 lsp-folding-range-limit 100)))
+#+end_src
 
+** Elfeeds
+#+begin_src emacs-lisp
 (use-package! elfeed
   :commands (elfeed)
   :custom
@@ -1275,3 +1404,4 @@ If nil it defaults to `split-string-default-separators', normally
   (map! :map elfeed-search-mode-map
         :n "=" elfeed-score-map)
   (elfeed-score-enable))
+#+end_src
