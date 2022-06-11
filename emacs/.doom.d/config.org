@@ -1,7 +1,20 @@
+:PROPERTIES:
+:ID:       21f80d7d-00f7-4959-9ea2-d7e4b680b272
+:END:
 #+title: Doom Emacs configurations
 #+startup: hideblocks content
+#+date: 2022-06-11
+#+export_file_name: Doom-Emacs-config.md
+#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/
+#+hugo_section: ./posts/
+#+hugo_tags: Emacs
+#+hugo_url: /Doom-Emacs-config
+#+hugo_slug: Doom-Emacs-config
+#+hugo_custom_front_matter:
+#+hugo_draft: false
+#+options: toc:2 num:t
 
-* General editing functionality
+* Fundamental setups
 ** Some good defaults
 
 #+begin_src emacs-lisp
@@ -59,7 +72,7 @@
   (setq doom-modeline-persp-name t))
 #+end_src
 
-** Visual lines for prose writings
+** Visual lines for writing prose
 
 #+begin_src emacs-lisp
 (use-package! visual-fill-column
