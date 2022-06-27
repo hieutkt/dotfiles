@@ -6,9 +6,6 @@
 (package! org-super-agenda)
 (package! benchmark-init)
 
-(package! tree-sitter)
-(package! tree-sitter-langs)
-
 (package! ox-pandoc)
 (package! org-pandoc-import
   :recipe (:host github

@@ -125,13 +125,6 @@
         lsp-ui-doc-max-width 80)
   (setq lsp-signature-function 'lsp-signature-posframe))
 
-(use-package! tree-sitter
-  :config
-  (use-package! tree-sitter-langs)
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-  :hook (tree-sitter-hl-mode . rainbow-delimiters-mode))
-
 (use-package! yasnippet
   :config
   ;; It will test whether it can expand, if yes, change cursor color
