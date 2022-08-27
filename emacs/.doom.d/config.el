@@ -59,6 +59,9 @@
 (when (doom-font-exists-p "Alegreya")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya"       :size 20)))
 
+(set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
+(set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
+
 (use-package! unicode-fonts
   :config
   ;; CJK characters
@@ -70,7 +73,7 @@
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
-  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt)
+  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt 'corfu-default)
   (setq mixed-pitch-set-height t))
 
 (use-package! evil-escape
@@ -113,11 +116,8 @@
   :config
   (add-to-list 'orderless-matching-styles 'char-fold-to-regexp))
 
-(use-package! graphviz-dot-mode
-  :config
-  (setq graphviz-dot-indent-width 4))
-
-(use-package! company-graphviz-dot)
+(after! mixed-pitch
+  (pushnew! mixed-pitch-fixed-pitch-faces 'corfu-default))
 
 (use-package! lsp-ui
   :config
@@ -196,6 +196,12 @@
     ;; with this, you can exploit embark's multitarget actions, so that you can run `embark-act-all`
     (add-to-list 'embark-multitarget-actions #'citar/search-pdf-contents)))
 
+(defadvice! hp/config-in-its-own-workspace (&rest _)
+  "Open Elfeeds in its own workspace."
+  :before #'doom/find-file-in-private-config
+  (when (modulep! :ui workspaces)
+    (+workspace-switch "Configs" t)))
+
 (use-package! ansi-color
   :config
   (defun hp/display-ansi-colors ()
@@ -203,8 +209,11 @@
     (ansi-color-apply-on-region (point-min) (point-max))))
 
 (use-package! page-break-lines
+  :hook (prog-mode . page-break-lines-mode)
+  :init
+  (autoload 'turn-on-page-break-lines-mode "page-break-lines")
   :config
-  (add-hook 'prog-mode-hook (lambda () (page-break-lines-mode 1))))
+  (setq page-break-lines-max-width fill-column))
 
 (use-package! pdf-occur)
 
@@ -219,8 +228,7 @@
   (setq org-startup-with-latex-preview t
         ;; Make latex preview with "C-c C-x C-l" slightly bigger
         org-format-latex-options
-        (plist-put org-format-latex-options
-                   :scale 1.1)
+        (plist-put org-format-latex-options :scale 2)
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
         org-highlight-latex-and-related nil
@@ -261,6 +269,8 @@
   :hook (org-mode . org-modern-mode)
   :config
   (setq
+   ;; org-indent-mode -- Yay or nay??
+   org-indent-mode t
    ;; Edit settings
    org-auto-align-tags nil
    org-tags-column 0
@@ -317,10 +327,6 @@
 
   (setq svg-tag-tags
         `(
-          ;; Org tags
-          (":\\([A-Za-z0-9_]+\\):" . ((lambda (tag) (svg-tag-make tag :face 'org-tag :height 0.8))))
-          (":\\([A-Za-z0-9_]+[ \-]\\):" . ((lambda (tag) tag)))
-
           ;; Progress
           ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
                                               (svg-progress-percent (substring tag 1 -2)))))
@@ -328,30 +334,30 @@
                                             (svg-progress-count (substring tag 1 -1)))))
           ;; Task priority
           ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error
-                                             :height 0.8 :inverse t
-                                             :beg 2 :end -1 :margin 0 :radius 10))))
+                                                     :height 0.8 :inverse t
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
           ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning
-                                             :height 0.8 :inverse t
-                                             :beg 2 :end -1 :margin 0 :radius 10))))
+                                                     :height 0.8 :inverse t
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
           ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo
-                                             :height 0.8 :inverse t
-                                             :beg 2 :end -1 :margin 0 :radius 10))))
+                                                     :height 0.8 :inverse t
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
           ;; Keywords
           ("TODO" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
-                                            :face 'org-todo :margin 0 :radius 5))))
+                                                 :face 'org-todo :margin 0 :radius 5))))
           ("HOLD" . ((lambda (tag) (svg-tag-make tag :height 0.8
-                                            :face 'org-todo :margin 0 :radius 5))))
+                                                 :face 'org-todo :margin 0 :radius 5))))
           ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
-                                              :face 'org-done :margin 0 :radius 5))))
+                                                        :face 'org-done :margin 0 :radius 5))))
           ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :height 0.8 :inverse t
-                                              :face '+org-todo-active :margin 0 :radius 5))))
+                                                        :face '+org-todo-active :margin 0 :radius 5))))
           ("REPEAT\\|EVENT\\|PROJ\\|IDEA" .
            ((lambda (tag) (svg-tag-make tag
-                                   :height 0.8 :inverse t
-                                   :face '+org-todo-project :margin 0 :radius 5))))
+                                        :height 0.8 :inverse t
+                                        :face '+org-todo-project :margin 0 :radius 5))))
           ("REVIEW" . ((lambda (tag) (svg-tag-make tag
-                                   :height 0.8 :inverse t
-                                   :face '+org-todo-onhold :margin 0 :radius 5))))
+                                                   :height 0.8 :inverse t
+                                                   :face '+org-todo-onhold :margin 0 :radius 5))))
           ))
 
   :hook (org-mode . svg-tag-mode)
@@ -496,6 +502,7 @@ TODO abstract backend implementations."
           ("" "rotating" nil)
           ("normalem" "ulem" t)
           ("" "amsmath" t)
+          ("" "bbm" t)
           ("" "mathrsfs" t)
           ("" "textcomp" t)
           ("" "amssymb" t)
@@ -911,33 +918,6 @@ TODO abstract backend implementations."
                           "") "\n"))
            :unnarrowed t))))
 
-(use-package! org-roam-protocol
-  :after (org-roam org-roam-dailies)
-  :config
-  (add-to-list
-   'org-roam-capture-ref-templates
-   `(;; Browser bookletmark template:
-     ;; javascript:location.href =
-     ;; 'org-protocol://roam-ref?template=w&ref='
-     ;; + encodeURIComponent(location.href)
-     ;; + '&title='
-     ;; + encodeURIComponent(document.getElementsByTagName("h1")[0].innerText)
-     ;; + '&hostname='
-     ;; + encodeURIComponent(location.hostname)
-     ("w" "webref" entry "* ${title} ([[${ref}][${hostname}]])\n%?"
-      :target
-      (file+head
-       ,(concat org-roam-dailies-directory "%<%Y-%m>.org")
-       ,(string-join
-         '(":properties:"
-           ":roam_refs: %^{Key}"
-           ":end:"
-           "#+title: %<%Y-%m>"
-           "#+filetags: journal"
-           "#+startup: overview"
-           "#+created: %U"
-           "") "\n"))
-      :unnarrowed t))))
 
 (use-package! org-roam-dailies
   :config
@@ -971,8 +951,36 @@ TODO abstract backend implementations."
   :before #'org-roam-buffer-display-dedicated
   :before #'org-roam-buffer-toggle
   :before #'org-roam-dailies-goto-today
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (+workspace-switch "Org-roam" t))))
+
+(use-package! org-roam-protocol
+  :after (org-roam org-roam-dailies org-protocol)
+  :config
+  (add-to-list
+   'org-roam-capture-ref-templates
+   `(;; Browser bookletmark template:
+     ;; javascript:location.href =
+     ;; 'org-protocol://roam-ref?template=w&ref='
+     ;; + encodeURIComponent(location.href)
+     ;; + '&title='
+     ;; + encodeURIComponent(document.getElementsByTagName("h1")[0].innerText)
+     ;; + '&hostname='
+     ;; + encodeURIComponent(location.hostname)
+     ("w" "webref" entry "* ${title} ([[${ref}][${hostname}]])\n%?"
+      :target
+      (file+head
+       ,(concat org-roam-dailies-directory "%<%Y-%m>.org")
+       ,(string-join
+         '(":properties:"
+           ":roam_refs: %^{Key}"
+           ":end:"
+           "#+title: %<%Y-%m>"
+           "#+filetags: journal"
+           "#+startup: overview"
+           "#+created: %U"
+           "") "\n"))
+      :unnarrowed t))))
 
 (after! (org-agenda org-roam)
   (defun vulpea-task-p ()
@@ -1146,7 +1154,7 @@ If nil it defaults to `split-string-default-separators', normally
 (use-package! julia-repl
   :config
   ;; Use vterm instead of the defautl term
-  (when (featurep! :term vterm)
+  (when (modulep! :term vterm)
     (julia-repl-set-terminal-backend 'vterm)
     (map! :map vterm-mode-map :i "C-c C-z" nil))
   (setq lsp-julia-package-dir nil)
@@ -1160,6 +1168,12 @@ If nil it defaults to `split-string-default-separators', normally
   (add-hook! 'julia-mode-hook
     (setq-local lsp-enable-folding t
                 lsp-folding-range-limit 100)))
+
+(use-package! cdlatex
+  :config
+  (setq cdlatex-math-modify-alist
+        '((?d "\\mathbb" nil t nil nil)
+          (?D "\\mathbbm" nil t nil nil))))
 
 (use-package! elfeed
   :commands (elfeed)
@@ -1268,3 +1282,10 @@ If nil it defaults to `split-string-default-separators', normally
   (map! :map elfeed-search-mode-map
         :n "=" elfeed-score-map)
   (elfeed-score-enable))
+
+(after! (elfeed)
+  (defadvice! hp/elfeed-in-own-workspace (&rest _)
+  "Open Elfeeds in its own workspace."
+  :before #'elfeed
+  (when (modulep! :ui workspaces)
+    (+workspace-switch "Elfeeds" t))))

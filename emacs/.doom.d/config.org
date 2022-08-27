@@ -93,6 +93,13 @@ Favorite fonts:
     (setq doom-variable-pitch-font (font-spec :name "Alegreya"       :size 20)))
 #+end_src
 
+Ligature composition fix for Alegreya:
+
+#+begin_src emacs-lisp
+(set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
+(set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
+#+end_src
+
 Fallback font for non-ascii glyphs:
 
 #+begin_src emacs-lisp
