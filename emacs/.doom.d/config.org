@@ -1,9 +1,10 @@
 :PROPERTIES:
 :ID:       21f80d7d-00f7-4959-9ea2-d7e4b680b272
 :END:
-#+title: Doom Emacs configurations
+#+title: My Doom Emacs configurations
 #+startup: hideblocks content
-#+date: 2022-06-11
+#+filetags: :compilation:tools:blogs:
+#+date: {{{modification-time(%Y-%m-%d)}}}
 #+export_file_name: Doom-Emacs-config.md
 #+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/
 #+hugo_section: ./posts/
@@ -14,6 +15,27 @@
 #+hugo_draft: false
 #+options: toc:2 num:t
 
+* Prerequisites
+** Reproducible information
+I build my own Emacs from source in order to take advantage of some experimental features, so there might be incompability if one blindly copy codes from this configurations (as with any Emacs configurations on the Internet).
+Nevertheless, I reiterate the relevant info about the version of the software I'm using here, in case someone finds this infomation useful.
+
+#+begin_src emacs-lisp :exports output :tangle no :eval t
+(emacs-version)
+#+end_src
+
+#+RESULTS:
+: GNU Emacs 29.0.50 (build 1, x86_64-pc-linux-gnu, GTK+ Version 3.24.33, cairo version 1.16.0)
+:  of 2022-08-20
+
+This Emacs is built with the following configuration options:
+
+#+begin_src emacs-lisp :exports output :tangle no :eval t
+system-configuration-options
+#+end_src
+
+#+RESULTS:
+: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-pgtk --with-xinput2 --with-xwidgets --with-gif
 * Fundamental setups
 ** Some good defaults
 
@@ -61,7 +83,12 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 #+end_src
 
-** Theme
+** Theme :ATTACH:
+#+caption: Colors declarations in the dark variant of the Gruvbox color schemes.
+[[attachment:_20220611_145719screenshot.png]]
+
+I have done a fair share of theme-hopping. In the end, I always come back the the dark variant of the [[https://github.com/morhetz/gruvbox][Gruvbox color scheme]].
+If you are viewing this on my website, you may find that this color scheme is ubiquitous here.
 
 #+begin_src emacs-lisp
 (setq doom-theme 'doom-gruvbox
@@ -480,8 +507,7 @@ Similarly, for CSL citations formatting in an Org buffer:
               (org-cite-csl-activate-render-all))))
 #+end_src
 
-*** Org-contribs
-**** Org-tempo
+*** Org-tempo
 
 #+begin_src emacs-lisp
 (use-package! org-tempo
@@ -508,7 +534,7 @@ Similarly, for CSL citations formatting in an Org buffer:
   )
 #+end_src
 
-**** Export functionalities
+*** Export functionalities
 #+begin_src emacs-lisp
 (use-package! ox
   :config
@@ -664,7 +690,7 @@ Export to website
   (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
 #+end_src
 
-**** Agenda
+*** Agenda
 #+begin_src emacs-lisp
 (use-package! org-agenda
   :config
@@ -777,7 +803,7 @@ Export to website
       :weight bold :foreground ,(doom-color 'blue))))
 #+end_src
 
-**** Capture templates
+*** Capture templates
 #+begin_src emacs-lisp
 (use-package! org-capture
   :config
@@ -846,13 +872,13 @@ Export to website
            :jump-to-captured t))))
 #+end_src
 
-**** Babel
+*** Babel
 #+begin_src emacs-lisp
 (use-package! ob-julia
   :commands org-babel-execute:julia)
 #+end_src
 
-**** Miscellaneous
+*** Miscellaneous
 Gonna clean this up later
 
 #+begin_src emacs-lisp
@@ -1114,7 +1140,6 @@ This is to automate creating a workspace for Org-roam
   (when (modulep! :ui workspaces)
     (+workspace-switch "Org-roam" t))))
 #+end_src
-*** Org-roam and Org-agenda itegration
 These are blindly copied elsewhere:
 #+begin_src emacs-lisp
 (after! (org-agenda org-roam)
@@ -1269,6 +1294,7 @@ If nil it defaults to `split-string-default-separators', normally
   )
 #+end_src
 
+- TODO Fix export behavior of Org-roam links
 ** R
 #+begin_src emacs-lisp
 (use-package! ess
@@ -1416,6 +1442,11 @@ If nil it defaults to `split-string-default-separators', normally
   (setq elfeed-search-print-entry-function 'hp/elfeed-entry-line-draw
         elfeed-search-filter "@8-weeks-ago -bury "))
 
+#+end_src
+
+Elfeed-score helps with keeping track of the more important entries.
+
+#+begin_src emacs-lisp
 (use-package! elfeed-score
   :after elfeed
   :custom
