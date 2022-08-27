@@ -1111,7 +1111,7 @@ This is to automate creating a workspace for Org-roam
   :before #'org-roam-buffer-display-dedicated
   :before #'org-roam-buffer-toggle
   :before #'org-roam-dailies-goto-today
-  (when (featurep! :ui workspaces)
+  (when (modulep! :ui workspaces)
     (+workspace-switch "Org-roam" t))))
 #+end_src
 *** Org-roam and Org-agenda itegration
@@ -1299,7 +1299,7 @@ If nil it defaults to `split-string-default-separators', normally
 (use-package! julia-repl
   :config
   ;; Use vterm instead of the defautl term
-  (when (featurep! :term vterm)
+  (when (modulep! :term vterm)
     (julia-repl-set-terminal-backend 'vterm)
     (map! :map vterm-mode-map :i "C-c C-z" nil))
   (setq lsp-julia-package-dir nil)
