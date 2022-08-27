@@ -93,7 +93,7 @@ class FileSearchExtension(Extension):
                 icon = "images/icon.png"
 
             result.append({'path': filepath,
-                           'name': textwrap.fill(title.decode('utf-8'), 55),
+                           'name': title.decode('utf-8'),
                            'description': authoryear,
                            'icon': icon})
         return result
