@@ -636,6 +636,7 @@ Export to LaTeX:
           ("" "rotating" nil)
           ("normalem" "ulem" t)
           ("" "amsmath" t)
+          ("" "bbm" t)
           ("" "mathrsfs" t)
           ("" "textcomp" t)
           ("" "amssymb" t)
@@ -1340,8 +1341,18 @@ If nil it defaults to `split-string-default-separators', normally
     (setq-local lsp-enable-folding t
                 lsp-folding-range-limit 100)))
 #+end_src
+** $\LaTeX$
+=cdlatex-mode= is useful when writing math equations
 
+#+begin_src emacs-lisp
+(use-package! cdlatex
+  :config
+  (setq cdlatex-math-modify-alist
+        '((?d "\\mathbb" nil t nil nil)
+          (?D "\\mathbbm" nil t nil nil))))
+#+end_src
 ** Elfeeds
+
 #+begin_src emacs-lisp
 (use-package! elfeed
   :commands (elfeed)
