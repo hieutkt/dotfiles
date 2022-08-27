@@ -300,7 +300,14 @@ We should take care of =mixed-pitch-mode= here, too:
     ;; with this, you can exploit embark's multitarget actions, so that you can run `embark-act-all`
     (add-to-list 'embark-multitarget-actions #'citar/search-pdf-contents)))
 #+end_src
-
+** Workspaces
+#+begin_src emacs-lisp
+(defadvice! hp/config-in-its-own-workspace (&rest _)
+  "Open Elfeeds in its own workspace."
+  :before #'doom/find-file-in-private-config
+  (when (modulep! :ui workspaces)
+    (+workspace-switch "Configs" t)))
+    #+end_src
 ** Miscellaneous
 Gonna clean this up later:
 
@@ -333,8 +340,7 @@ Gonna clean this up later:
   (setq org-startup-with-latex-preview t
         ;; Make latex preview with "C-c C-x C-l" slightly bigger
         org-format-latex-options
-        (plist-put org-format-latex-options
-                   :scale 1.1)
+        (plist-put org-format-latex-options :scale 2)
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
         org-highlight-latex-and-related nil
@@ -1466,4 +1472,15 @@ Elfeed-score helps with keeping track of the more important entries.
   (map! :map elfeed-search-mode-map
         :n "=" elfeed-score-map)
   (elfeed-score-enable))
+#+end_src
+
+Like Org-roam, Elfeed should be opened in it's own workspace:
+
+#+begin_src emacs-lisp
+(after! (elfeed)
+  (defadvice! hp/elfeed-in-own-workspace (&rest _)
+  "Open Elfeeds in its own workspace."
+  :before #'elfeed
+  (when (modulep! :ui workspaces)
+    (+workspace-switch "Elfeeds" t))))
 #+end_src
