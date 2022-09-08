@@ -228,7 +228,8 @@
   (setq org-startup-with-latex-preview t
         ;; Make latex preview with "C-c C-x C-l" slightly bigger
         org-format-latex-options
-        (plist-put org-format-latex-options :scale 2)
+        (plist-put org-format-latex-options
+                   :scale (if (> (display-pixel-width) 2240) 2 1.1))
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
         org-highlight-latex-and-related '(native entities script)
@@ -1176,7 +1177,7 @@ If nil it defaults to `split-string-default-separators', normally
         '((?d "\\mathbb" nil t nil nil)
           (?D "\\mathbbm" nil t nil nil))
         cdlatex-math-symbol-alist
-        '((?* ("^{\\ast}" "\\times"))))
+        '((?* ("^{\\ast}" "\\times")))))
 
 (use-package! elfeed
   :commands (elfeed)
