@@ -73,7 +73,7 @@
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
-  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt 'corfu-default)
+  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt 'corfu-default 'font-latex-math-face)
   (setq mixed-pitch-set-height t))
 
 (use-package! evil-escape
@@ -231,7 +231,7 @@
         (plist-put org-format-latex-options :scale 2)
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
-        org-highlight-latex-and-related nil
+        org-highlight-latex-and-related '(native entities script)
         org-image-actual-width (/ (display-pixel-width) 3))
   ;; Setup custom links
   (+org-init-custom-links-h)
@@ -1169,11 +1169,14 @@ If nil it defaults to `split-string-default-separators', normally
     (setq-local lsp-enable-folding t
                 lsp-folding-range-limit 100)))
 
-(use-package! cdlatex
-  :config
+(setq font-latex-fontify-script nil)
+
+(after! cdlatex
   (setq cdlatex-math-modify-alist
         '((?d "\\mathbb" nil t nil nil)
-          (?D "\\mathbbm" nil t nil nil))))
+          (?D "\\mathbbm" nil t nil nil))
+        cdlatex-math-symbol-alist
+        '((?* ("^{\\ast}" "\\times"))))
 
 (use-package! elfeed
   :commands (elfeed)

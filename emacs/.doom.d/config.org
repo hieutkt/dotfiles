@@ -145,7 +145,7 @@ We should take care of =mixed-pitch-mode= here, too:
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config
-  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt)
+  (pushnew! mixed-pitch-fixed-pitch-faces 'warning 'org-cite-key 'org-list-dt 'corfu-default 'font-latex-math-face)
   (setq mixed-pitch-set-height t))
 #+end_src
 
@@ -343,7 +343,7 @@ Gonna clean this up later:
         (plist-put org-format-latex-options :scale 2)
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
-        org-highlight-latex-and-related nil
+        org-highlight-latex-and-related '(native entities script)
         org-image-actual-width (/ (display-pixel-width) 3))
   ;; Setup custom links
   (+org-init-custom-links-h)
@@ -1348,15 +1348,23 @@ If nil it defaults to `split-string-default-separators', normally
                 lsp-folding-range-limit 100)))
 #+end_src
 ** $\LaTeX$
+Subscript and superscript highlighting is a bit annoying, so let's turn them offering
+
+#+begin_src emacs-lisp
+(setq font-latex-fontify-script nil)
+#+end_src
+
 =cdlatex-mode= is useful when writing math equations
 
 #+begin_src emacs-lisp
-(use-package! cdlatex
-  :config
+(after! cdlatex
   (setq cdlatex-math-modify-alist
         '((?d "\\mathbb" nil t nil nil)
-          (?D "\\mathbbm" nil t nil nil))))
+          (?D "\\mathbbm" nil t nil nil))
+        cdlatex-math-symbol-alist
+        '((?* ("^{\\ast}" "\\times"))))
 #+end_src
+
 ** Elfeeds
 
 #+begin_src emacs-lisp
