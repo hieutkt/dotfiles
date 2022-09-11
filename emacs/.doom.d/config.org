@@ -728,7 +728,16 @@ Export to website
            "|"
            "STOP(c)"                    ;Stopped/cancelled
            "EVENT(m)"                   ;Meetings
-           )))
+           ))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("NEXT" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("REVIEW" . +org-todo-onhold)
+          ("HOLD" . +org-todo-cancel)
+          ("PROJ" . +org-todo-project)
+          ("DONE"   . +org-todo-cancel)
+          ("STOP" . +org-todo-cancel)))
   ;; Appearance
   (setq org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
