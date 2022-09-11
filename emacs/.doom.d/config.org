@@ -1348,22 +1348,42 @@ If nil it defaults to `split-string-default-separators', normally
     (setq-local lsp-enable-folding t
                 lsp-folding-range-limit 100)))
 #+end_src
-** $\LaTeX$
+
+** LaTeX
+*** Built-in packages
 Subscript and superscript highlighting is a bit annoying, so let's turn them offering
 
 #+begin_src emacs-lisp
 (setq font-latex-fontify-script nil)
 #+end_src
 
-=cdlatex-mode= is useful when writing math equations
+*** CDLatex-mode and LaTeX-auto-activating-snippets
+=cdlatex-mode= is useful when writing math equations:
 
 #+begin_src emacs-lisp
 (after! cdlatex
   (setq cdlatex-math-modify-alist
         '((?d "\\mathbb" nil t nil nil)
-          (?D "\\mathbbm" nil t nil nil))
-        cdlatex-math-symbol-alist
-        '((?* ("^{\\ast}" "\\times")))))
+          (?D "\\mathbbm" nil t nil nil))))
+#+end_src
+
+=laas-mode= automate /even more/.
+The list of snippets enabled by this package is enormous, best to check their README if you have any doubt.
+
+#+begin_src emacs-lisp
+(use-package! laas
+  :hook (org-mode . laas-mode)
+  :config
+  (setq laas-enable-auto-space nil)
+  (aas-set-snippets 'laas-mode
+    :cond #'texmathp
+    "st" "\\text{s.t.}"
+    "; " "\\quad"
+    :cond #'laas-object-on-left-condition
+    "tt"  "_{t}"
+    "tp1" "_{t+1}"
+    "tm1" "_{t-1}"
+    "**"  "^{\\ast}"))
 #+end_src
 
 ** Elfeeds
