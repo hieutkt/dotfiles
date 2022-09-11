@@ -56,3 +56,6 @@
   :recipe (:host github :repo "minad/org-modern"))
 (package! svg-tag-mode
   :recipe (:host github :repo "rougier/svg-tag-mode"))
+
+(package! laas
+  :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
