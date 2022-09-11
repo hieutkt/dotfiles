@@ -322,8 +322,11 @@ Gonna clean this up later:
     (ansi-color-apply-on-region (point-min) (point-max))))
 
 (use-package! page-break-lines
+  :hook (prog-mode . page-break-lines-mode)
+  :init
+  (autoload 'turn-on-page-break-lines-mode "page-break-lines")
   :config
-  (add-hook 'prog-mode-hook (lambda () (page-break-lines-mode 1))))
+  (setq page-break-lines-max-width fill-column))
 
 (use-package! pdf-occur)
 
