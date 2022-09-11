@@ -1,3 +1,3 @@
 config/.config/*
 pop-os/.local/share/pop-launcher/plugins/bangs/db.json
-/emacs/.doom.d/*.el
+/emacs/.doom.d/config.el
