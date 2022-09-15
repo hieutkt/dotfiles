@@ -1227,7 +1227,8 @@ tasks."
         :from tags
         :left-join nodes
         :on (= tags:node-id nodes:id)
-        :where (like tag (quote "%\"task\"%"))]))))
+        :where (or (like tag (quote "%\"task\"%"))
+                   (like tag (quote "%\"schedule\"%")))]))))
 
   (defun vulpea-agenda-files-update (&rest _)
     "Update the value of `org-agenda-files'."
