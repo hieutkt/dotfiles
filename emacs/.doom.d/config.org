@@ -683,7 +683,7 @@ Export to LaTeX:
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
-Export to website
+**** Export to website with =ox-hugo=
 
 #+begin_src emacs-lisp
 (use-package! ox-hugo
@@ -693,6 +693,18 @@ Export to website
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt"))
   ;; No reference heading in ox-hugo export
   (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
+#+end_src
+
+**** Prevent the =ATTACH=  tag from showing in exports :testing:
+
+#+begin_src emacs-lisp
+(defun +org-export-remove-attach-tag-from-headings (text _backend _info)
+  "Remove ATTACH tags from TEXT."
+  (unless (org-export-derived-backend-p 'org)
+    (replace-regexp-in-string "\\(<span class=\"section-num\">.+\\)\\(:ATTACH:\\)" "\\1" text)))
+
+(after! ox
+  (add-to-list 'org-export-filter-final-output-functions #'+org-export-remove-attach-tag-from-headings t))
 #+end_src
 
 *** Agenda
