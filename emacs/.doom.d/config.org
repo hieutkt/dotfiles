@@ -1161,7 +1161,13 @@ Org-roam-protocol:
       :unnarrowed t))))
 #+end_src
 **** Org-roam and Org-agenda itegration
-These are blindly copied elsewhere:
+Integrating Org-roam and Org-agenda might be complicated, since Org-roam pushes us towards making many =.org= files, and Org-agenda works best with a few, big =.org= files.
+
+The solution proposed in [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][this blog post]] is to dynamically update the variable =org-agenda-files=, so that Org-agenda only check for Org-roam files that contains certain tags.
+In my case, the tags that are marked for inspection are =tasked= and =schedule=.
+Org-roam files are automatically marked with =tasked= as long as it has any =TODO= heading.
+Files with =schedule= tags are designated manually.
+
 #+begin_src emacs-lisp
 (after! (org-agenda org-roam)
   (defun vulpea-task-p ()
@@ -1316,7 +1322,6 @@ If nil it defaults to `split-string-default-separators', normally
   )
 #+end_src
 
-- TODO Fix export behavior of Org-roam links
 ** R
 First programming language that I learnt.
 
