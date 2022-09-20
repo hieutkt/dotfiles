@@ -486,6 +486,16 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
   (org-mode . org-fragtog-mode))
 #+end_src
 
+However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
+Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with :inherit default which will override the background colour.
+
+Inspecting =org-do-latex-and-related= shows that "latex" is the language argument passed, and so we can override the background as discussed above.
+
+#+begin_src emacs-lisp
+(after! org-src
+  (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
+#+end_src
+
 Similarly, for CSL citations formatting in an Org buffer:
 
 #+begin_src emacs-lisp
