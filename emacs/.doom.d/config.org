@@ -208,17 +208,6 @@ We should take care of =mixed-pitch-mode= here, too:
         lsp-ui-doc-max-width 80)
   (setq lsp-signature-function 'lsp-signature-posframe))
 #+end_src
-
-** Tree-sitter
-#+begin_src emacs-lisp
-(use-package! tree-sitter
-  :config
-  (use-package! tree-sitter-langs)
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-  :hook (tree-sitter-hl-mode . rainbow-delimiters-mode))
-#+end_src
-
 ** Yasnippet
 
 #+begin_src emacs-lisp
