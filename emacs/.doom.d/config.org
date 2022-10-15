@@ -105,7 +105,7 @@ If you are viewing this on my website, you may find that this color scheme is ub
 (use-package! visual-fill-column
   :hook (visual-line-mode . visual-fill-column-mode)
   :init
-  (setq visual-fill-column-width 92
+  (setq visual-fill-column-width 120
         visual-fill-column-center-text t
         visual-fill-column-fringes-outside-margins nil))
 #+end_src
@@ -330,8 +330,7 @@ Gonna clean this up later:
   (setq org-startup-with-latex-preview t
         ;; Make latex preview with "C-c C-x C-l" slightly bigger
         org-format-latex-options
-        (plist-put org-format-latex-options
-                   :scale (if (> (display-pixel-width) 2240) 2 1.1))
+        (plist-put org-format-latex-options :scale 1.8)
         ;; Cache the preview images elsewhere
         org-preview-latex-image-directory "~/.cache/ltximg/"
         org-highlight-latex-and-related '(native entities script)
@@ -560,6 +559,44 @@ The code is from [[https://kitchingroup.cheme.cmu.edu/blog/2016/11/07/Better-equ
 (put 'scimax-org-renumber-environment 'enabled t)
 #+end_src
 
+**** Setting up previews using =imagemagick=
+For this to show properly:
+
+#+begin_src emacs-lisp
+(setq org-latex-create-formula-image-program 'imagemagick)
+#+end_src
+
+Remember that you have to comment out this line in =/etc/ImageMagick-6/policy.xml=:
+
+#+begin_example xml
+<policy domain="coder" rights="none" pattern="PDF" />
+#+end_example
+
+Or run this command:
+
+#+begin_src bash :tangle no
+sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+#+end_src
+
+While we're at it, let's try to wrap equations in a =tcolorbox=, so that equations are centered.
+Their numbering will also align properly in previews.
+
+#+begin_src emacs-lisp
+(defun hp/wrap-latex-equation-preview-in-tcolorbox (orig-func &rest args)
+  (setf (car args)
+        (if (or (string-match "\\\\begin{equation" (car args))
+                       (string-match "\\\\begin{align" (car args)))
+                   (format "\\begin{tcolorbox}[size=small,colback=bg,coltext=fg]\n%s\n\\end{tcolorbox}\n"
+                           (car args))
+                 (car args)))
+    (apply orig-func args))
+
+(setq org-latex-packages-alist
+      (add-to-list 'org-latex-packages-alist '("" "tcolorbox" t)))
+(advice-add 'org-create-formula-image :around #'hp/wrap-latex-equation-preview-in-tcolorbox)
+
+#+end_src
+
 **** Org-CSL-activate
 Similarly, for CSL citations formatting in an Org buffer:
 
@@ -603,6 +640,7 @@ Similarly, for CSL citations formatting in an Org buffer:
 #+end_src
 
 *** Export functionalities
+**** General
 #+begin_src emacs-lisp
 (use-package! ox
   :config
@@ -668,7 +706,7 @@ TODO abstract backend implementations."
   )
 #+end_src
 
-Export to LaTeX:
+**** Export to LaTeX
 
 #+begin_src emacs-lisp
 (use-package! ox-latex
@@ -676,22 +714,49 @@ Export to LaTeX:
   (setq org-latex-pdf-process
         '("latexmk -pdflatex='%latex -shell-escape -bibtex -interaction=nonstopmode' -pdf -output-directory=%o -f %f"))
 
-  (add-to-list
-   'org-preview-latex-process-alist
-   '(dvipng :programs
-            ("latex" "dvipng")
-            :description "dvi > png" :message "you need to install the programs: latex and dvipng." :image-input-type "dvi" :image-output-type "png" :image-size-adjust
-            (1.0 . 1.0)
-            :latex-compiler
-            ("latex -shell-escape -interaction nonstopmode -output-directory %o %f")
-            :image-converter
-            ("dvipng -D %D -T tight -bg Transparent -o %O %f")))
+  (setq org-format-latex-header "\\documentclass[a4]{article}
+\\usepackage[usenames]{xcolor}
+
+\\usepackage[T1]{fontenc}
+
+\\usepackage{booktabs}
+
+\\pagestyle{empty}             % do not remove
+% The settings below are copied from fullpage.sty
+\\setlength{\\textwidth}{\\paperwidth}
+\\addtolength{\\textwidth}{-10cm}
+\\setlength{\\oddsidemargin}{1.5cm}
+\\addtolength{\\oddsidemargin}{-2.54cm}
+\\setlength{\\evensidemargin}{\\oddsidemargin}
+\\setlength{\\textheight}{\\paperheight}
+\\addtolength{\\textheight}{-\\headheight}
+\\addtolength{\\textheight}{-\\headsep}
+\\addtolength{\\textheight}{-\\footskip}
+\\addtolength{\\textheight}{-3cm}
+\\setlength{\\topmargin}{1.5cm}
+\\addtolength{\\topmargin}{-2.54cm}
+")
+
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist
+        (add-to-list 'org-latex-packages-alist '("" "minted"))
+        org-latex-minted-options '(
+                                   ("breaklines" "true")
+                                   ;; ("breakanywhere" "true")
+                                   ;; ("mathescape")
+                                   ;; ("linenos" "true")
+                                   ;; ("firstnumber" "last")
+                                   ("frame" "lines")
+                                   ("fontsize" "\\footnotesize")
+                                   ("bgcolor" "gray!5")
+                                   ("framesep" "2mm")
+                                   ))
 
   ;; Default packages
   (setq org-latex-default-packages-alist
         '(("AUTO" "inputenc" t ("pdflatex"))
           ("T1" "fontenc" t ("pdflatex"))
-          ("" "fontspec" t ("xelatex"))
+          ;; ("" "fontspec" t ("xelatex"))
           ("" "graphicx" t)
           ("" "grffile" t)
           ;; Array, tabularx, booktabs are for tables
