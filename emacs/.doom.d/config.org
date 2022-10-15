@@ -1457,6 +1457,7 @@ The list of snippets enabled by this package is enormous, best to check their RE
   (setq laas-enable-auto-space nil)
   (aas-set-snippets 'laas-mode
     :cond #'texmathp
+    "qed" "\\blacksquare"
     "st"  "\\text{ s.t. }"
     "; "  "\\quad"
     ";; " "\\qquad"
