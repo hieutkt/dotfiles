@@ -806,15 +806,14 @@ Export to LaTeX:
           ("DONE"   . +org-todo-cancel)
           ("STOP" . +org-todo-cancel)))
   ;; Appearance
-  (setq org-agenda-prefix-format       " %i %?-2 t%s"
+  (setq org-agenda-span 20
+        org-agenda-prefix-format       " %i %?-2 t%s"
         org-agenda-todo-keyword-format "%-6s"
         org-agenda-current-time-string "ᐊ┈┈┈┈┈┈┈ Now"
         org-agenda-time-grid '((today require-timed remove-match)
                                (0900 1200 1400 1700 2100)
                                "      "
                                "┈┈┈┈┈┈┈┈┈┈┈┈┈")
-        org-agenda-scheduled-leaders '("" "")
-        org-agenda-deadline-leaders '("Deadline: " "Deadline: ")
         )
   ;; Clocking
   (setq org-clock-persist 'history
@@ -885,6 +884,10 @@ Export to LaTeX:
     (setq org-super-agenda-header-map (copy-keymap evil-org-agenda-mode-map)))
   ;; Change header face to make it standout more
   (custom-set-faces!
+    `(org-todo
+      :weight bold :foreground ,(doom-color 'blue))
+    `(+org-todo-active
+      :weight bold :foreground ,(doom-color 'green))
     `(org-super-agenda-header
       :inherit 'variable-pitch
       :weight bold :foreground ,(doom-color 'cyan))
