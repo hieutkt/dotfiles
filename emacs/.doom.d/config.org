@@ -1169,11 +1169,11 @@ Gonna clean this up later
   (defun +marginalia--time-colorful (time)
     (let* ((seconds (float-time (time-subtract (current-time) time)))
            (color (doom-blend
-                   (face-attribute 'marginalia-date :foreground nil t)
-                   (face-attribute 'marginalia-documentation :foreground nil t)
+                   (face-attribute 'marginalia-on :foreground nil t)
+                   (face-attribute 'marginalia-off :foreground nil t)
                    (/ 1.0 (log (+ 3 (/ (+ 1 seconds) 345600.0)))))))
       ;; 1 - log(3 + 1/(days + 1)) % grey
-      (propertize (marginalia--time time) 'face (list :foreground color))))
+      (propertize (marginalia--time time) 'face (list :foreground color :slant 'italic))))
 
   (setq org-roam-node-display-template
         (concat  "${backlinkscount:16} ${functiontag} ${directories}${hierarchy} ${othertags} ")
