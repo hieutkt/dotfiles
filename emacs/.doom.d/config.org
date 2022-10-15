@@ -1065,23 +1065,6 @@ Gonna clean this up later
   (map! :map global-map "<f9>" #'org-transclusion-mode))
 
 (use-package! clip2org)
-
-(use-package! anki-editor
-  :hook (org-mode . anki-editor-mode)
-  :init
-  (setq anki-editor-use-math-jax t
-        anki-editor-org-tags-as-anki-tags nil)
-  :config
-  (map! :localleader
-        :map org-mode-map
-        (:prefix ("A" . "Anki")
-         :desc "Push notes at point" "p" 'anki-editor-push-notes
-         :desc "Retry failure notes" "r" 'anki-editor-retry-failure-notes
-         :desc "Insert note" "n" 'anki-editor-insert-note
-         (:prefix ("c" . "Cloze")
-          :desc "Cloze DWIM" "d" 'anki-editor-cloze-dwim
-          :desc "Cloze region" "r" 'anki-editor-cloze-region
-          ))))
 #+end_src
 *** Org-roam
 
