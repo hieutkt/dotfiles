@@ -5,6 +5,12 @@
 #+startup: hideblocks content
 #+filetags: :compilation:tools:blogs:
 #+date: {{{modification-time(%Y-%m-%d)}}}
+#+latex_class: koma-article
+#+latex_compiler: xelatex
+#+latex_header_extra: \usepackage{mathpazo}
+#+latex_header_extra: \setromanfont{Alegreya}
+#+latex_header_extra: \setsansfont{Alegreya Sans}
+#+latex_header_extra: \setmonofont{JuliaMono}
 #+export_file_name: Doom-Emacs-config.md
 #+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/
 #+hugo_section: ./posts/
@@ -13,7 +19,7 @@
 #+hugo_slug: Doom-Emacs-config
 #+hugo_custom_front_matter:
 #+hugo_draft: false
-#+options: toc:2 num:t
+#+options: toc:3 num:t
 
 * Prerequisites
 ** Reproducible information
