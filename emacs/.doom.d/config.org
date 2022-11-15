@@ -153,7 +153,7 @@ We should take care of =mixed-pitch-mode= here, too:
   :config
   (pushnew! mixed-pitch-fixed-pitch-faces
             'warning
-            'org-drawer 'org-cite-key 'org-list-dt
+            'org-drawer 'org-cite-key 'org-list-dt 'org-hide
             'corfu-default 'font-latex-math-face)
   (setq mixed-pitch-set-height t))
 #+end_src
@@ -398,6 +398,7 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-modern-progress nil
    org-modern-priority nil
    org-modern-horizontal-rule "──────────"
+   org-modern-hide-stars "·"
    org-modern-star ["⁖"]
    org-modern-keyword "‣"
    org-modern-list '((43 . "•")
