@@ -1077,7 +1077,7 @@ Gonna clean this up later
 (use-package! clip2org)
 #+end_src
 *** Org-roam
-
+**** Fundemental settings
 #+begin_src emacs-lisp
 (use-package! org-roam
   :after org
@@ -1151,10 +1151,11 @@ Gonna clean this up later
     (let* ((tags (seq-filter (lambda (tag) (not (string= tag "ATTACH"))) (org-roam-node-tags node)))
            (specialtags hp/org-roam-function-tags)
            (othertags (seq-difference tags specialtags 'string=)))
-      (concat
-       (if othertags
-           (propertize "=has:tags=" 'display (all-the-icons-faicon "tags" :face 'all-the-icons-dgreen :v-adjust 0.02))) " "
-       (propertize (string-join othertags ", ") 'face 'all-the-icons-dgreen))))
+       (propertize
+        (string-join
+         (append '(" ") othertags)
+         (propertize "#" 'display (all-the-icons-material "label" :face 'all-the-icons-dgreen)))
+        'face 'all-the-icons-dgreen)))
 
   (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
     (let* ((count (caar (org-roam-db-query
@@ -1186,7 +1187,7 @@ Gonna clean this up later
       (propertize (marginalia--time time) 'face (list :foreground color :slant 'italic))))
 
   (setq org-roam-node-display-template
-        (concat  "${backlinkscount:16} ${functiontag} ${directories}${hierarchy} ${othertags} ")
+        (concat  "${backlinkscount:16} ${functiontag} ${directories}${hierarchy}${othertags} ")
         org-roam-node-annotation-function
         (lambda (node) (+marginalia--time-colorful (org-roam-node-file-mtime node))))
   )
