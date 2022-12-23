@@ -31,6 +31,8 @@
 (package! clip2org
   :recipe (:host github :repo "thamer/clip2org"))
 
+(package! engrave-faces
+  :recipe (:host github :repo "tecosaur/engrave-faces"))
 
 ;;Org-roam
 (package! org-roam-ui
