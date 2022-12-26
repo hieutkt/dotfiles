@@ -1239,12 +1239,7 @@ Gonna clean this up later
         `(("d" "default" plain "%?"
            :target
            (file+head "${slug}_%<%Y-%m-%d--%H-%M-%S>.org"
-                      ,(string-join
-                        '("#+title: ${title}"
-                          "#+created: %U"
-                          "#+filetags: %(completing-read \"Function tags: \" hp/org-roam-function-tags)"
-                          "#+startup: overview hideblocks"
-                          "") "\n"))
+                      "#+title: ${title}\n#+created: %U\n#+filetags: %(completing-read \"Function tags: \" hp/org-roam-function-tags)\n#+startup: overview hideblocks")
            :unnarrowed t))))
 
 
