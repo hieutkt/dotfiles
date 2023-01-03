@@ -744,44 +744,6 @@ TODO abstract backend implementations."
   (setq org-latex-pdf-process
         '("latexmk -pdflatex='%latex -shell-escape -bibtex -interaction=nonstopmode' -pdf -output-directory=%o -f %f"))
 
-  (setq org-format-latex-header "\\documentclass[a4]{article}
-\\usepackage[usenames]{xcolor}
-
-\\usepackage[T1]{fontenc}
-
-\\usepackage{booktabs}
-
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-10cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-")
-
-  (setq org-latex-listings 'minted
-        org-latex-packages-alist
-        (add-to-list 'org-latex-packages-alist '("" "minted"))
-        org-latex-minted-options '(
-                                   ("breaklines" "true")
-                                   ;; ("breakanywhere" "true")
-                                   ;; ("mathescape")
-                                   ;; ("linenos" "true")
-                                   ;; ("firstnumber" "last")
-                                   ("frame" "lines")
-                                   ("fontsize" "\\footnotesize")
-                                   ("bgcolor" "gray!5")
-                                   ("framesep" "2mm")
-                                   ))
-
   ;; Default packages
   (setq org-latex-default-packages-alist
         '(("AUTO" "inputenc" t ("pdflatex"))
