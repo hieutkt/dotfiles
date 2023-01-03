@@ -1522,18 +1522,23 @@ The list of snippets enabled by this package is enormous, best to check their RE
   :config
   (setq laas-enable-auto-space nil)
   (aas-set-snippets 'laas-mode
+    ;; Condition: Not in math environment and not in a middle of a word
+    :cond (lambda nil (and (not (texmathp)) (memq (char-before) '(?\n ? ))))
+    "mk"  (lambda () (interactive) (yas-expand-snippet "\\\\($0"))
+    ;; Condition: Math environment
     :cond #'texmathp
     "qed" "\\blacksquare"
-    "st"  "\\text{ s.t. }"
     "; "  "\\quad"
     ";; " "\\qquad"
+    ;; Condition: Math environment, modify last object on the left
     :cond #'laas-object-on-left-condition
+    "hat" (lambda () (interactive) (laas-wrap-previous-object "hat"))
+    "dot" (lambda () (interactive) (laas-wrap-previous-object "dot"))
     "tt"  "_{t}"
     "tp1" "_{t+1}"
     "tm1" "_{t-1}"
     "**"  "^{\\ast}"))
 #+end_src
-
 ** Elfeeds
 
 #+begin_src emacs-lisp
