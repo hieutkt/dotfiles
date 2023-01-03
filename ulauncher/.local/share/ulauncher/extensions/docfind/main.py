@@ -2,7 +2,6 @@
 
 import logging
 import os
-import textwrap
 import subprocess
 import mimetypes
 import gi
