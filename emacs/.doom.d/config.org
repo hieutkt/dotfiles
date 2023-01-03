@@ -335,27 +335,55 @@ Gonna clean this up later:
 
 * Major modes and language-specific configs
 ** Org-mode
+I came to Emacs for coding, but eventually what kept me using it is Org-mode.
+In fact, I spend most of my time in an Org-mode buffer.
+It's just that good.
 *** Basics
 
 #+begin_src emacs-lisp
 (use-package! org
   :config
-  (define-key! 'org-mode-map "C-c [" nil) ;org-agenda-file-to-front
-  ;; ORG LATEX PREVIEW
-  (setq org-startup-with-latex-preview t
-        ;; Make latex preview with "C-c C-x C-l" slightly bigger
-        org-format-latex-options
-        (plist-put org-format-latex-options :scale 1.5)
-        ;; Cache the preview images elsewhere
-        org-preview-latex-image-directory "~/.cache/ltximg/"
-        org-highlight-latex-and-related '(native entities script)
-        org-image-actual-width (min (/ (display-pixel-width) 3) 800))
   ;; Setup custom links
-  (+org-init-custom-links-h)
+  (+org-init-custom-links-h))
+#+end_src
+
+*** Org-tempo
+
+#+begin_src emacs-lisp
+(use-package! org-tempo
+  :after org
+  :config
+  (tempo-define-template
+   "Hugo info" '("#+attr_shortcode: info\n#+begin_notice\n" p "\n#+end_notice">)
+   "<info")
+  (tempo-define-template
+   "Hugo tip" '("#+attr_shortcode:tip\n#+begin_notice\n" p "\n#+end_notice">)
+   "<tip")
+  (tempo-define-template
+   "Hugo warning" '("#+attr_shortcode: warning\n#+begin_notice\n" p "\n#+end_notice">)
+   "<warning")
+  (tempo-define-template
+   "Hugo error" '("#+attr_shortcode: error\n#+begin_notice\n" p "\n#+end_notice">)
+   "<error")
+  (tempo-define-template
+   "Hugo example" '("#+attr_shortcode: example\n#+begin_notice\n" p "\n#+end_notice">)
+   "<example")
+  (tempo-define-template
+   "Hugo question" '("#+attr_shortcode: question\n#+begin_notice\n" p "\n#+end_notice">)
+   "<question")
+  )
+#+end_src
+
+*** Visual-related configs
+Since I spend most of my time writing in Org-mode, might as well make it looks nice.
+**** Some custom faces
+
+#+begin_src emacs-lisp
+(after! org
   ;; Set some faces
   (custom-set-faces!
-    '((org-quote)
-      :extend t)
+    `((org-quote)
+      :foreground ,(doom-color 'blue) :extend t)
     `((org-document-title)
       :foreground ,(face-attribute 'org-document-title :foreground)
       :height 1.3 :extend t :weight bold)
@@ -366,7 +394,10 @@ Gonna clean this up later:
       :foreground ,(face-attribute 'outline-2 :foreground)
       :weight bold)
     )
-  ;; Custom keyword
+  ;; Change how LaTeX and image previews are shown
+  (setq org-highlight-latex-and-related '(native entities script)
+        org-image-actual-width (min (/ (display-pixel-width) 3) 800))
+  ;; Custom regex fontifications
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
                              . 'fixed-pitch)))
@@ -382,9 +413,7 @@ Gonna clean this up later:
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
 #+end_src
-
-*** Visual-related configs
-**** Org-modern, Org-appear, Org-fragtog, Org-CSL-activate
+**** Org-modern
 =org-modern= is really cool -- especially when combined with =svg-tag-mode=.
 The only downside is it doesn't play well with =org-indent-mode= (for now).
 
@@ -477,7 +506,7 @@ It also goes well with =svg-tag-mode=:
   :hook (org-mode . svg-tag-mode)
   )
 #+end_src
-
+**** Org-appear, Org-fragtog
 =org-appear= and =org-fragtog= for seemless look:
 
 #+begin_src emacs-lisp
@@ -500,6 +529,61 @@ Inspecting =org-do-latex-and-related= shows that "latex" is the language argumen
 #+begin_src emacs-lisp
 (after! org-src
   (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
+#+end_src
+**** Org-CSL-activate
+Similarly, for CSL citations formatting in an Org buffer:
+
+#+begin_src emacs-lisp
+(use-package! oc-csl-activate
+  :config
+  (setq org-cite-activate-processor 'csl-activate)
+  (setq org-cite-csl-activate-use-document-style t)
+  (setq org-cite-csl-activate-use-document-locale t)
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (cursor-sensor-mode 1)
+              (org-cite-csl-activate-render-all))))
+#+end_src
+*** Previewing LaTeX fragments in Org-mode
+This part is about visuals, but it also relates to how Org-export  works(in particular, to LaTeX), so I split this into a separate section.
+In the future, when this previewing functionalities is reworked in Org version 9.7, this section will also be modified.
+**** Setting up backends
+Here's some miscellaneous settings:
+
+#+begin_src emacs-lisp
+(after! org
+  ;; ORG LATEX PREVIEW
+  (setq org-startup-with-latex-preview t
+        ;; Make latex preview with "C-c C-x C-l" slightly bigger
+        org-format-latex-options
+        (plist-put org-format-latex-options :scale 1.5)
+        ;; Cache the preview images elsewhere
+        org-preview-latex-image-directory "~/.cache/ltximg/"))
+#+end_src
+
+There are three supported backends for creating these previews: =dvipng=, =dvisvgm=, and =imagemagick=.
+=dvipng= is the fastest, however, it has trouble with rendering Tikz figures.
+So, =dvisvgm= is my choice.
+The rendered SVGs also looks extra cripsy, which I like.
+One small caveat is that Emacs has to be build with support for SVG, with the =--with-rsvg= flag.
+If not then =imagemagick= is fine, although it's very slow.
+
+#+begin_src emacs-lisp
+(if (string-match-p "RSVG" system-configuration-features)
+    (setq org-preview-latex-default-process 'dvisvgm)
+    (setq org-preview-latex-default-process 'imagemagick))
+#+end_src
+
+If we use =imagemagick=, remember that you have to comment out this line in =/etc/ImageMagick-6/policy.xml=:
+
+#+begin_example xml
+<policy domain="coder" rights="none" pattern="PDF" />
+#+end_example
+
+Or run this command:
+
+#+begin_src bash :tangle no
+sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 #+end_src
 
 **** Automatic number equations in LaTeX previews.
@@ -566,25 +650,6 @@ The code is from [[https://kitchingroup.cheme.cmu.edu/blog/2016/11/07/Better-equ
 (put 'scimax-org-renumber-environment 'enabled t)
 #+end_src
 
-**** Setting up previews using =imagemagick=
-For this to show properly:
-
-#+begin_src emacs-lisp
-(setq org-latex-create-formula-image-program 'imagemagick)
-#+end_src
-
-Remember that you have to comment out this line in =/etc/ImageMagick-6/policy.xml=:
-
-#+begin_example xml
-<policy domain="coder" rights="none" pattern="PDF" />
-#+end_example
-
-Or run this command:
-
-#+begin_src bash :tangle no
-sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
-#+end_src
-
 While we're at it, let's try to wrap equations in a =tcolorbox=, so that equations are centered.
 Their numbering will also align properly in previews.
 
@@ -626,50 +691,7 @@ Their numbering will also align properly in previews.
   (advice-add 'org-create-formula-image :around #'hp/wrap-latex-equation-preview-in-tcolorbox)
   )
 #+end_src
-
-**** Org-CSL-activate
-Similarly, for CSL citations formatting in an Org buffer:
-
-#+begin_src emacs-lisp
-(use-package! oc-csl-activate
-  :config
-  (setq org-cite-activate-processor 'csl-activate)
-  (setq org-cite-csl-activate-use-document-style t)
-  (setq org-cite-csl-activate-use-document-locale t)
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (cursor-sensor-mode 1)
-              (org-cite-csl-activate-render-all))))
-#+end_src
-
-*** Org-tempo
-
-#+begin_src emacs-lisp
-(use-package! org-tempo
-  :after org
-  :config
-  (tempo-define-template
-   "Hugo info" '("#+attr_shortcode: info\n#+begin_notice\n" p "\n#+end_notice">)
-   "<info")
-  (tempo-define-template
-   "Hugo tip" '("#+attr_shortcode:tip\n#+begin_notice\n" p "\n#+end_notice">)
-   "<tip")
-  (tempo-define-template
-   "Hugo warning" '("#+attr_shortcode: warning\n#+begin_notice\n" p "\n#+end_notice">)
-   "<warning")
-  (tempo-define-template
-   "Hugo error" '("#+attr_shortcode: error\n#+begin_notice\n" p "\n#+end_notice">)
-   "<error")
-  (tempo-define-template
-   "Hugo example" '("#+attr_shortcode: example\n#+begin_notice\n" p "\n#+end_notice">)
-   "<example")
-  (tempo-define-template
-   "Hugo question" '("#+attr_shortcode: question\n#+begin_notice\n" p "\n#+end_notice">)
-   "<question")
-  )
-#+end_src
-
-*** Export functionalities
+*** Org-export
 **** General
 #+begin_src emacs-lisp
 (use-package! ox
@@ -842,7 +864,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
   (add-to-list 'org-export-filter-final-output-functions #'+org-export-remove-attach-tag-from-headings t))
 #+end_src
 
-*** Agenda
+*** Org-agenda
 #+begin_src emacs-lisp
 (use-package! org-agenda
   :config
@@ -966,8 +988,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
       :inherit 'variable-pitch
       :weight bold :foreground ,(doom-color 'blue))))
 #+end_src
-
-*** Capture templates
+*** Org-capture
 #+begin_src emacs-lisp
 (use-package! org-capture
   :config
@@ -1035,36 +1056,10 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
            :immediate-finish t
            :jump-to-captured t))))
 #+end_src
-
-*** Babel
+*** Org-babel
 #+begin_src emacs-lisp
 (use-package! ob-julia
   :commands org-babel-execute:julia)
-#+end_src
-
-*** Miscellaneous
-Gonna clean this up later
-
-#+begin_src emacs-lisp
-(use-package! org-gcal
-  :commands org-gcal-fetch
-  :config
-  (load-file (concat dropbox-directory "/Auths/org-gcal-settings.el.gpg")))
-
-(use-package! org-download
-  :config
-  (add-hook 'dired-mode-hook 'org-download-enable)
-  ;; Change how inline images are displayed
-  (setq org-download-display-inline-images nil))
-
-(use-package! org-transclusion
-  :after org
-  :config
-  (setq org-transclusion-include-first-section t)
-  (add-to-list 'org-transclusion-exclude-elements 'keyword)
-  (map! :map global-map "<f9>" #'org-transclusion-mode))
-
-(use-package! clip2org)
 #+end_src
 *** Org-roam
 **** Fundemental settings
@@ -1077,6 +1072,8 @@ Gonna clean this up later
         (list #'org-roam-backlinks-section
               #'org-roam-reflinks-section
               #'org-roam-unlinked-references-section)
+        ;;Functions tags are special types of tags which tells what the node are for
+        ;;In the future, this should probably be replaced by categories
         hp/org-roam-function-tags '("compilation" "argument" "journal" "concept" "tool" "data" "bio" "literature" "event" "website"))
   (add-to-list 'magit-section-initial-visibility-alist
                '(org-roam-unlinked-references-section . hide))
@@ -1431,8 +1428,35 @@ If nil it defaults to `split-string-default-separators', normally
   )
 #+end_src
 
+*** Miscellaneous
+Gonna clean this up later
+
+#+begin_src emacs-lisp
+(use-package! org-gcal
+  :commands org-gcal-fetch
+  :config
+  (load-file (concat dropbox-directory "/Auths/org-gcal-settings.el.gpg")))
+
+(use-package! org-download
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable)
+  ;; Change how inline images are displayed
+  (setq org-download-display-inline-images nil))
+
+(use-package! org-transclusion
+  :after org
+  :config
+  (setq org-transclusion-include-first-section t)
+  (add-to-list 'org-transclusion-exclude-elements 'keyword)
+  (map! :map global-map "<f9>" #'org-transclusion-mode))
+
+(use-package! clip2org)
+#+end_src
 ** R
 First programming language that I learnt.
+Most of the time, the interation provided by ESS-mode is excellent and I can be productive with it.
+Syntax-highlighting in =ess-r-mode= is not so spectacular, however.
+Hopefully this will get better once =tree-sitter= is better integrated into Emacs.
 
 #+begin_src emacs-lisp
 (use-package! ess
@@ -1452,7 +1476,13 @@ First programming language that I learnt.
           (ess-fl-keyword:delimiters . t)
           (ess-fl-keyword:= . t)
           (ess-R-fl-keyword:F&T . t))))
+#+end_src
+** Stata
+Even though I try to use Stata as little as I can, sometimes it's unavoidable, especially in collaboration with applied economists.
+I usually use the [[https://github.com/kylebarron/stata_kernel][Jupyter Stata kernel]] in these situations and it's decent, but sometimes I really miss the excellent editing environment that I have in Emacs.
+In preparation, here's the little configurations if I ever decide to use Stata in Emacs:
 
+#+begin_src emacs-lisp
 (use-package! ess-stata-mode
   :after ess
   :config
@@ -1461,9 +1491,10 @@ First programming language that I learnt.
         inferior-STA-program-name (executable-find "stata"))
   (add-to-list 'org-src-lang-modes '("jupyter-stata" . stata)))
 #+end_src
-
 ** Python
-Probably the most useful thing to learn nowadays.
+Python is widely used and thus is extensively supported everywhere.
+While I prefer Julia for numerical computing and R for econometrics and data visualization, Python is good in pretty much everything else.
+I am happy with most the defaults given in Doom Emacs, so my custom configuration in this section is only minimal.
 
 #+begin_src emacs-lisp
 (use-package! python
@@ -1471,7 +1502,6 @@ Probably the most useful thing to learn nowadays.
   (set-popup-rules!
     '(("^\\*Python:*\\*$" :side right :size 0.5 :ttl nil))))
 #+end_src
-
 ** Julia
 Economists are picking up on this language.
 
@@ -1496,15 +1526,20 @@ Economists are picking up on this language.
 #+end_src
 
 ** LaTeX
-*** Built-in packages
-Subscript and superscript highlighting is a bit annoying, so let's turn them offering
+A good bulk of any good research should go into writing, and once your writing topic gets slightly technical, you need the goodness of LaTeX.
+These days I don't really write =.tex= files directly in Emacs and from what I hear, the built-in [[https://www.gnu.org/software/auctex/][AUCTeX]] is awesome for that.
+Most of my writings in Emacs is done in Org-mode.
+However, Org-mode inherits quite a few things from LaTeX-mode, so some configuration is needed here, most of which relates to syntax-highlighting of LaTeX fragments and snippets for fast insertion of math equations.
+*** Better looks
+Subscript and superscript fontification looks janky to me, so let's turn them off.
 
 #+begin_src emacs-lisp
 (setq font-latex-fontify-script nil)
 #+end_src
 
 *** CDLatex-mode and LaTeX-auto-activating-snippets
-=cdlatex-mode= is useful when writing math equations:
+=cdlatex-mode= is useful when writing math equations.
+It support Org-mode out of the box.
 
 #+begin_src emacs-lisp
 (after! cdlatex
@@ -1513,7 +1548,7 @@ Subscript and superscript highlighting is a bit annoying, so let's turn them off
           (?D "\\mathbbm" nil t nil nil))))
 #+end_src
 
-=laas-mode= automate /even more/.
+=laas-mode= automates /even more/.
 The list of snippets enabled by this package is enormous, best to check their README if you have any doubt.
 
 #+begin_src emacs-lisp
