@@ -429,6 +429,8 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
    ;; Appearance
+   org-modern-radio-target    '("⁜ " t "")
+   org-modern-internal-target '("↪ " t "")
    org-modern-todo nil
    org-modern-tag nil
    org-modern-timestamp t
@@ -442,9 +444,12 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-modern-list '((43 . "•")
                      (45 . "–")
                      (42 . "∘")))
-  (set-face-attribute 'org-modern-tag nil
-                      :background (doom-blend (doom-color 'blue) (doom-color 'bg) 0.1)
-                      :foreground (doom-color 'grey))
+  (custom-set-faces!
+    `((org-modern-tag)
+      :background ,(doom-blend (doom-color 'blue) (doom-color 'bg) 0.1)
+      :foreground ,(doom-color 'grey))
+    `((org-modern-radio-target org-modern-internal-target)
+      :inherit 'default :foreground ,(doom-color 'blue)))
   )
 #+end_src
 
