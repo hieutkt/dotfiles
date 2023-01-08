@@ -714,6 +714,7 @@ Their numbering will also align properly in previews.
 #+begin_src emacs-lisp
 (use-package! ox
   :config
+  (setq org-export-with-tags nil)
   ;; Auto export acronyms as small caps
   ;; Copied from tecosaur
   (defun org-latex-substitute-verb-with-texttt (content)
@@ -868,18 +869,6 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt"))
   ;; No reference heading in ox-hugo export
   (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
-#+end_src
-
-**** Prevent the =ATTACH=  tag from showing in exports :testing:
-
-#+begin_src emacs-lisp
-(defun +org-export-remove-attach-tag-from-headings (text _backend _info)
-  "Remove ATTACH tags from TEXT."
-  (unless (org-export-derived-backend-p 'org)
-    (replace-regexp-in-string "\\(<span class=\"section-num\">.+\\)\\(:ATTACH:\\)" "\\1" text)))
-
-(after! ox
-  (add-to-list 'org-export-filter-final-output-functions #'+org-export-remove-attach-tag-from-headings t))
 #+end_src
 
 *** Org-agenda
