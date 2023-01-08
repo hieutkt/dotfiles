@@ -1561,12 +1561,17 @@ The list of snippets enabled by this package is enormous, best to check their RE
   :hook (org-mode . laas-mode)
   :config
   (setq laas-enable-auto-space nil)
+  ;; ;; For some reason (texmathp) returns t everywhere in org buffer
+  ;; ;; which is not every useful, so here's a fix
+  ;; (add-hook 'org-cdlatex-mode-hook
+  ;;           (lambda () (advice-remove 'texmathp 'org--math-always-on)))
+  ;;More snippets
   (aas-set-snippets 'laas-mode
     ;; Condition: Not in math environment and not in a middle of a word
-    :cond (lambda nil (and (not (texmathp)) (memq (char-before) '(?\n ? ))))
+    :cond (lambda nil (and (not (laas-org-mathp)) (memq (char-before) '(10 40 32))))
     "mk"  (lambda () (interactive) (yas-expand-snippet "\\\\($0"))
     ;; Condition: Math environment
-    :cond #'texmathp
+    :cond #'laas-org-mathp
     "qed" "\\blacksquare"
     "; "  "\\quad"
     ";; " "\\qquad"
