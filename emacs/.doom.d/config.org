@@ -414,7 +414,6 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   ;; Replace two consecutive hyphens with the em-dash
   (defun hp/org-mode-load-prettify-symbols ()
     (interactive)
-    ;; (setq org-ellipsis "")
     (pushnew! prettify-symbols-alist
               '("--" . "—")
               '("(?)" . "") '("(?)." . "") '("(?)," . ""))
