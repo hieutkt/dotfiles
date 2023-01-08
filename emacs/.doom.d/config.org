@@ -23,8 +23,14 @@
 
 * Prerequisites
 ** Reproducible information
-I build my own Emacs from source in order to take advantage of some experimental features, so there might be incompability if one blindly copy codes from this configurations (as with any Emacs configurations on the Internet).
-Nevertheless, I reiterate the relevant info about the version of the software I'm using here, in case someone finds this infomation useful.
+This configuration is continuingly being improved.
+I build my own Emacs from source in order to take advantage of some experimental features.
+There are also =(packages! ...)=  calls to external Emacs packages that are unpinned to any specific version.
+As such, there might be incompabilities if one blindly copies codes from this configurations.
+Although I'll try to document which features are based on developing softwares and are likely to be changed in the future, it is inevitable that some bits of information are going to fall through the cracks.
+
+In this section, I reiterate the relevant info about the version of the software I'm using here, in case someone finds this infomation useful.
+Here's my current build of Emacs:
 
 #+begin_src emacs-lisp :exports output :tangle no :eval t
 (emacs-version)
@@ -223,6 +229,7 @@ We should take care of =mixed-pitch-mode= here, too:
         lsp-ui-doc-max-width 80)
   (setq lsp-signature-function 'lsp-signature-posframe))
 #+end_src
+
 ** Yasnippet
 
 #+begin_src emacs-lisp
@@ -301,6 +308,7 @@ We should take care of =mixed-pitch-mode= here, too:
     ;; with this, you can exploit embark's multitarget actions, so that you can run `embark-act-all`
     (add-to-list 'embark-multitarget-actions #'citar/search-pdf-contents)))
 #+end_src
+
 ** Workspaces
 #+begin_src emacs-lisp
 (defadvice! hp/config-in-its-own-workspace (&rest _)
@@ -309,6 +317,7 @@ We should take care of =mixed-pitch-mode= here, too:
   (when (modulep! :ui workspaces)
     (+workspace-switch "Configs" t)))
 #+end_src
+
 ** Miscellaneous
 Gonna clean this up later:
 
@@ -405,7 +414,7 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   ;; Replace two consecutive hyphens with the em-dash
   (defun hp/org-mode-load-prettify-symbols ()
     (interactive)
-    (setq org-ellipsis "")
+    ;; (setq org-ellipsis "")
     (pushnew! prettify-symbols-alist
               '("--" . "—")
               '("(?)" . "") '("(?)." . "") '("(?)," . ""))
@@ -413,6 +422,7 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
 #+end_src
+
 **** Org-modern and svg-tag-mode
 =org-modern= is really cool -- especially when combined with =svg-tag-mode=.
 The only downside is it doesn't play well with =org-indent-mode= (for now).
@@ -511,6 +521,7 @@ The configurations for =svg-tag-mode= go here, too:
   :hook (org-mode . svg-tag-mode)
   )
 #+end_src
+
 **** Org-appear, Org-fragtog
 =org-appear= and =org-fragtog= for seemless look:
 
@@ -535,6 +546,7 @@ Inspecting =org-do-latex-and-related= shows that "latex" is the language argumen
 (after! org-src
   (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
 #+end_src
+
 **** Org-CSL-activate
 Similarly, for CSL citations formatting in an Org buffer:
 
@@ -549,13 +561,14 @@ Similarly, for CSL citations formatting in an Org buffer:
               (cursor-sensor-mode 1)
               (org-cite-csl-activate-render-all))))
 #+end_src
+
 *** Previewing LaTeX fragments in Org-mode
 This part is about visuals, but it also relates to how Org-export  works(in particular, to LaTeX), so I split this into a separate section.
 In the future, when this previewing functionalities is reworked in Org version 9.7, this section will also be modified.
 **** Setting up backends
 Here's some miscellaneous settings:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org
   ;; ORG LATEX PREVIEW
   (setq org-startup-with-latex-preview t
@@ -993,6 +1006,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
       :inherit 'variable-pitch
       :weight bold :foreground ,(doom-color 'blue))))
 #+end_src
+
 *** Org-capture
 #+begin_src emacs-lisp
 (use-package! org-capture
@@ -1061,11 +1075,13 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
            :immediate-finish t
            :jump-to-captured t))))
 #+end_src
+
 *** Org-babel
 #+begin_src emacs-lisp
 (use-package! ob-julia
   :commands org-babel-execute:julia)
 #+end_src
+
 *** Org-roam
 **** Fundemental settings
 #+begin_src emacs-lisp
@@ -1457,6 +1473,7 @@ Gonna clean this up later
 
 (use-package! clip2org)
 #+end_src
+
 ** R
 First programming language that I learnt.
 Most of the time, the interation provided by ESS-mode is excellent and I can be productive with it.
@@ -1482,6 +1499,7 @@ Hopefully this will get better once =tree-sitter= is better integrated into Emac
           (ess-fl-keyword:= . t)
           (ess-R-fl-keyword:F&T . t))))
 #+end_src
+
 ** Stata
 Even though I try to use Stata as little as I can, sometimes it's unavoidable, especially in collaboration with applied economists.
 I usually use the [[https://github.com/kylebarron/stata_kernel][Jupyter Stata kernel]] in these situations and it's decent, but sometimes I really miss the excellent editing environment that I have in Emacs.
@@ -1496,6 +1514,7 @@ In preparation, here's the little configurations if I ever decide to use Stata i
         inferior-STA-program-name (executable-find "stata"))
   (add-to-list 'org-src-lang-modes '("jupyter-stata" . stata)))
 #+end_src
+
 ** Python
 Python is widely used and thus is extensively supported everywhere.
 While I prefer Julia for numerical computing and R for econometrics and data visualization, Python is good in pretty much everything else.
@@ -1507,6 +1526,7 @@ I am happy with most the defaults given in Doom Emacs, so my custom configuratio
   (set-popup-rules!
     '(("^\\*Python:*\\*$" :side right :size 0.5 :ttl nil))))
 #+end_src
+
 ** Julia
 Economists are picking up on this language.
 
@@ -1584,6 +1604,7 @@ The list of snippets enabled by this package is enormous, best to check their RE
     "tm1" "_{t-1}"
     "**"  "^{\\ast}"))
 #+end_src
+
 ** Elfeeds
 
 #+begin_src emacs-lisp
