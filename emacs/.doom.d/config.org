@@ -413,7 +413,7 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
 #+end_src
-**** Org-modern
+**** Org-modern and svg-tag-mode
 =org-modern= is really cool -- especially when combined with =svg-tag-mode=.
 The only downside is it doesn't play well with =org-indent-mode= (for now).
 
@@ -453,7 +453,7 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
   )
 #+end_src
 
-It also goes well with =svg-tag-mode=:
+The configurations for =svg-tag-mode= go here, too:
 
 #+begin_src emacs-lisp
 (use-package! svg-tag-mode
@@ -467,7 +467,7 @@ It also goes well with =svg-tag-mode=:
     (svg-image (svg-lib-concat
                 (svg-lib-progress-bar
                  (/ (string-to-number value) 100.0) nil
-                 :height 0.8 :background (doom-color 'fg)
+                 :height 0.8 :background (doom-color 'bg)
                  :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
                 (svg-lib-tag (concat value "%") nil
                              :height 0.8 :background (doom-color 'bg)
@@ -493,20 +493,20 @@ It also goes well with =svg-tag-mode=:
           ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
                                             (svg-progress-count (substring tag 1 -1)))))
           ;; Task priority e.g. [#A], [#B], or [#C]
-          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error :inverse t
+          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error :inverse t :height 1.05
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
-          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning :inverse t
+          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning :inverse t :height 1.05
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
-          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t
+          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t :height 1.05
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
           ;; Keywords
-          ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :face 'org-todo))))
-          ("HOLD" . ((lambda (tag) (svg-tag-make tag :face 'org-todo))))
-          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :inverse t :face 'org-done))))
-          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :inverse t :face '+org-todo-active))))
+          ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face 'org-todo))))
+          ("HOLD" . ((lambda (tag) (svg-tag-make tag :height 1.05 :face 'org-todo))))
+          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face 'org-done))))
+          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-active))))
           ("REPEAT\\|EVENT\\|PROJ\\|IDEA" .
-           ((lambda (tag) (svg-tag-make tag :inverse t :face '+org-todo-project))))
-          ("REVIEW" . ((lambda (tag) (svg-tag-make tag :inverse t :face '+org-todo-onhold))))))
+           ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-project))))
+          ("REVIEW" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-onhold))))))
 
   :hook (org-mode . svg-tag-mode)
   )
