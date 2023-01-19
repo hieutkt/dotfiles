@@ -3,7 +3,7 @@
 :END:
 #+title: My Doom Emacs configurations
 #+startup: hideblocks content
-#+filetags: :compilation:tools:blogs:
+#+filetags: :compilation:tool:blogs:
 #+date: {{{modification-time(%Y-%m-%d)}}}
 #+latex_class: koma-article
 #+latex_compiler: xelatex
@@ -37,8 +37,8 @@ Here's my current build of Emacs:
 #+end_src
 
 #+RESULTS:
-: GNU Emacs 28.1 (build 2, x86_64-pc-linux-gnu, GTK+ Version 3.24.33, cairo version 1.16.0)
-:  of 2022-09-08
+: GNU Emacs 28.2 (build 2, x86_64-pc-linux-gnu, GTK+ Version 3.24.33, cairo version 1.16.0)
+:  of 2022-12-03
 
 This Emacs is built with the following configuration options:
 
@@ -47,7 +47,8 @@ system-configuration-options
 #+end_src
 
 #+RESULTS:
-: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-xwidgets --with-gif
+: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-xwidgets --with-gif --with-x-toolkit=gtk3 --with-tree-sitter=ifavailable
+
 * Fundamental setups
 ** Some good defaults
 
@@ -156,7 +157,7 @@ However, sometimes we still need to manually fix some ligature composition:
 ;; For Sarasa Mono
 (set-char-table-range composition-function-table ?+ '(["\\(?:++++\\)" 0 font-shape-gstring]))
 ;; For Alegreya
-(set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
+(set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijltkbh]\\)" 0 font-shape-gstring]))
 ;; (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 #+end_src
 
@@ -164,7 +165,8 @@ We should take care of =mixed-pitch-mode= here, too:
 
 #+begin_src emacs-lisp
 (use-package! mixed-pitch
-  :hook (org-mode . mixed-pitch-mode)
+  :hook ((org-mode      . mixed-pitch-mode)
+         (org-roam-mode . mixed-pitch-mode))
   :config
   (pushnew! mixed-pitch-fixed-pitch-faces
             'warning
@@ -173,6 +175,16 @@ We should take care of =mixed-pitch-mode= here, too:
   (setq mixed-pitch-set-height t))
 #+end_src
 
+** Slightly transparent Emacs
+Emacs version 29 added a new frame parameter for "true" transparency, which means that only the blackground is transparent while the text is not.
+
+#+begin_src emacs-lisp
+(add-to-list 'default-frame-alist '(alpha-background . 96))
+#+end_src
+
+I set Emacs to be slightly transparent.
+With this setting, I can put Emacs at full screen while still being able to read from the windows behind it.
+This is very useful when screen real-estate is scarce (Which is always the case!)
 * Editing configurations
 ** Evil
 #+begin_src emacs-lisp
@@ -214,6 +226,22 @@ We should take care of =mixed-pitch-mode= here, too:
 #+end_src
 
 ** Completions
+Enable corfu in the minibuffer:
+
+#+begin_src emacs-lisp
+(use-package! corfu
+  :config
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer if `completion-at-point' is bound."
+    (when (where-is-internal #'completion-at-point (list (current-local-map)))
+      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+                  corfu-popupinfo-delay nil)
+      (corfu-mode 1)))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
+#+end_src
+
+Set orderless matching styles:
 
 #+begin_src emacs-lisp
 (use-package! orderless
@@ -357,11 +385,11 @@ It's just that good.
 #+end_src
 
 *** Org-tempo
-
 #+begin_src emacs-lisp
 (use-package! org-tempo
   :after org
   :config
+  ;;Hugo shortcodes
   (tempo-define-template
    "Hugo info" '("#+attr_shortcode: info\n#+begin_notice\n" p "\n#+end_notice">)
    "<info")
@@ -438,7 +466,7 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
    ;; Appearance
-   org-modern-radio-target    '("⁜ " t "")
+   org-modern-radio-target    '("" t "")
    org-modern-internal-target '("↪ " t "")
    org-modern-todo nil
    org-modern-tag nil
@@ -529,7 +557,8 @@ The configurations for =svg-tag-mode= go here, too:
   :hook
   (org-mode . org-appear-mode)
   :config
-  (setq org-hide-emphasis-markers t))
+  (setq org-hide-emphasis-markers t
+        org-appear-autolinks      t))
 
 (use-package! org-fragtog
   :hook
@@ -585,10 +614,10 @@ The rendered SVGs also looks extra cripsy, which I like.
 One small caveat is that Emacs has to be build with support for SVG, with the =--with-rsvg= flag.
 If not then =imagemagick= is fine, although it's very slow.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (if (string-match-p "RSVG" system-configuration-features)
-    (setq org-preview-latex-default-process 'dvisvgm)
-    (setq org-preview-latex-default-process 'imagemagick))
+    (setq org-latex-preview-default-process 'dvisvgm)
+    (setq org-latex-preview-default-process 'dvipng))
 #+end_src
 
 If we use =imagemagick=, remember that you have to comment out this line in =/etc/ImageMagick-6/policy.xml=:
@@ -606,7 +635,7 @@ sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 **** Automatic number equations in LaTeX previews.
 The code is from [[https://kitchingroup.cheme.cmu.edu/blog/2016/11/07/Better-equation-numbering-in-LaTeX-fragments-in-org-mode/][John Kitchin's blogpost]] and his Scimax config.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; Numbered equations all have (1) as the number for fragments with vanilla
 ;; org-mode. This code injects the correct numbers into the previews so they
 ;; look good.
@@ -670,7 +699,7 @@ The code is from [[https://kitchingroup.cheme.cmu.edu/blog/2016/11/07/Better-equ
 While we're at it, let's try to wrap equations in a =tcolorbox=, so that equations are centered.
 Their numbering will also align properly in previews.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org
   (setq org-format-latex-header "\\documentclass[a4]{article}
 \\usepackage[usenames]{xcolor}
@@ -708,6 +737,42 @@ Their numbering will also align properly in previews.
   (advice-add 'org-create-formula-image :around #'hp/wrap-latex-equation-preview-in-tcolorbox)
   )
 #+end_src
+**** Org-preview-latex
+#+begin_src emacs-lisp
+(use-package! org
+  :config
+  (pushnew! org-latex-preview--ignored-faces 'org-list-dt 'fixed-pitch)
+  (setq org-latex-preview-numbered     t
+        org-startup-with-latex-preview t
+        org-latex-preview-processing-indicator 'face
+        org-persist--inhibit-write nil
+        org-latex-preview-auto--from-overlay nil
+        org-latex-preview-auto--marker (make-marker)
+        org-latex-preview-header "\\documentclass[a4]{article}
+\\usepackage[dvisvgm, dvipsnames, usenames, HTML]{xcolor}
+\\usepackage{tcolorbox}
+\\usepackage[T1]{fontenc}
+\\usepackage{booktabs}
+\\usepackage[sfdefault]{AlegreyaSans}
+\\usepackage{newtxsf}
+\\pagestyle{empty}             % do not remove
+% The settings below are copied from fullpage.sty
+\\setlength{\\textwidth}{\\paperwidth}
+\\addtolength{\\textwidth}{-10cm}
+\\setlength{\\oddsidemargin}{1.5cm}
+\\addtolength{\\oddsidemargin}{-2.54cm}
+\\setlength{\\evensidemargin}{\\oddsidemargin}
+\\setlength{\\textheight}{\\paperheight}
+\\addtolength{\\textheight}{-\\headheight}
+\\addtolength{\\textheight}{-\\headsep}
+\\addtolength{\\textheight}{-\\footskip}
+\\addtolength{\\textheight}{-3cm}
+\\setlength{\\topmargin}{1.5cm}
+\\addtolength{\\topmargin}{-2.54cm}
+")
+  :hook (((org-mode org-roam-mode) . org-latex-preview-auto-mode)))
+#+end_src
+
 *** Org-export
 **** General
 #+begin_src emacs-lisp
@@ -1077,10 +1142,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
   :after org
   :init
   (setq org-roam-directory (concat org-directory "/Org-roam/")
-        org-roam-mode-section-functions
-        (list #'org-roam-backlinks-section
-              #'org-roam-reflinks-section
-              #'org-roam-unlinked-references-section)
+        org-roam-completion-everywhere nil
         ;;Functions tags are special types of tags which tells what the node are for
         ;;In the future, this should probably be replaced by categories
         hp/org-roam-function-tags '("compilation" "argument" "journal" "concept" "tool" "data" "bio" "literature" "event" "website"))
@@ -1485,7 +1547,9 @@ Hopefully this will get better once =tree-sitter= is better integrated into Emac
           (ess-fl-keyword:operators . t)
           (ess-fl-keyword:delimiters . t)
           (ess-fl-keyword:= . t)
-          (ess-R-fl-keyword:F&T . t))))
+          (ess-R-fl-keyword:F&T . t)))
+  (map! (:map (ess-mode-map inferior-ess-mode-map)
+         :g ";" #'ess-insert-assign)))
 #+end_src
 
 ** Stata
@@ -1577,16 +1641,24 @@ The list of snippets enabled by this package is enormous, best to check their RE
   (aas-set-snippets 'laas-mode
     ;; Condition: Not in math environment and not in a middle of a word
     :cond (lambda nil (and (not (laas-org-mathp)) (memq (char-before) '(10 40 32))))
-    "mk"  (lambda () (interactive) (yas-expand-snippet "\\\\($0"))
+    "mk"  (lambda () (interactive) (yas-expand-snippet "\\\\( $0 \\\\)"))
+    "mmk" (lambda () (interactive) (yas-expand-snippet "\\[ $0 \\]"))
     ;; Condition: Math environment
     :cond #'laas-org-mathp
     "qed" "\\blacksquare"
     "; "  "\\quad"
     ";; " "\\qquad"
+    ",,"  "\\,,"
+    ".,"  "\\,."
+    ";;p" "\\psi"
+    ";;P" "\\Psi"
+    ";0" "\\emptyset"
+    ",." nil
     ;; Condition: Math environment, modify last object on the left
     :cond #'laas-object-on-left-condition
     "hat" (lambda () (interactive) (laas-wrap-previous-object "hat"))
     "dot" (lambda () (interactive) (laas-wrap-previous-object "dot"))
+    "ON"  (lambda () (interactive) (laas-wrap-previous-object "operatorname"))
     "tt"  "_{t}"
     "tp1" "_{t+1}"
     "tm1" "_{t-1}"
