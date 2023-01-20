@@ -6,11 +6,11 @@
 #+filetags: :compilation:tool:blogs:
 #+date: {{{modification-time(%Y-%m-%d)}}}
 #+latex_class: koma-article
-#+latex_compiler: xelatex
-#+latex_header_extra: \usepackage{fontspec}
-#+latex_header_extra: \setromanfont{Linux Libertine O}
-#+latex_header_extra: \setmonofont{Sarasa Mono CL}
-#+latex_engraved_theme: doom-one-light
+#+latex_compiler: lualatex
+#+latex_header_extra: \usepackage{libertinus}
+#+latex_header_extra: \setmonofont[Scale=0.9]{Sarasa Mono CL}
+#+latex_header_extra: \setsansfont{TeX Gyre Heros}
+#+latex_engraved_theme: doom-gruvbox-light
 #+export_file_name: Doom-Emacs-config.md
 #+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/
 #+hugo_section: ./posts/
@@ -865,19 +865,35 @@ TODO abstract backend implementations."
           ("" "wrapfig" nil)
           ("" "rotating" nil)
           ("normalem" "ulem" t)
+          ;; Math
           ("" "amsmath" t)
+          ("" "mathtools" t)
           ("" "bbm" t)
           ("" "mathrsfs" t)
           ("" "textcomp" t)
           ("" "amssymb" t)
           ("" "capt-of" nil)
-          ("dvipsnames" "xcolor" nil)
-          ("colorlinks=true, linkcolor=Blue, citecolor=BrickRed, urlcolor=PineGreen" "hyperref" nil)
-          ("" "indentfirst" nil)))
+          ;;Microtype
+          ;;- pdflatex: full microtype features, fast, however no fontspec
+          ;;- lualatex: good microtype feature support, however slow to compile
+          ;;- xelatex: only protrusion support, fast compilation
+          ("activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10"
+           "microtype" t ("pdflatex"))
+          ("activate={true,nocompatibility},final,tracking=true,factor=1100,stretch=10,shrink=10"
+           "microtype" t ("lualatex"))
+          ("protrusion={true,nocompatibility},final,factor=1100,stretch=10,shrink=10"
+           "microtype" t ("xelatex"))
+          ("dvipsnames,svgnames" "xcolor" nil)
+          ("colorlinks=true, linkcolor=DarkBlue, citecolor=BrickRed, urlcolor=DarkGreen" "hyperref" nil))))
+#+end_src
 
+Add KOMA-scripts classes to org export:
+
+#+begin_src emacs-lisp
+(after! ox
   ;; Add KOMA-scripts classes to org export
   (add-to-list 'org-latex-classes
-               '("koma-letter" "\\documentclass{scrletter}"
+               '("koma-letter" "\\documentclass[11pt]{scrletter}"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -885,7 +901,7 @@ TODO abstract backend implementations."
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
   (add-to-list 'org-latex-classes
-               '("koma-article" "\\documentclass{scrartcl}"
+               '("koma-article" "\\documentclass[11pt]{scrartcl}"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -893,7 +909,7 @@ TODO abstract backend implementations."
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
   (add-to-list 'org-latex-classes
-               '("koma-report" "\\documentclass{scrreprt}"
+               '("koma-report" "\\documentclass[11pt]{scrreprt}"
                  ("\\part{%s}" . "\\part*{%s}")
                  ("\\chapter{%s}" . "\\chapter*{%s}")
                  ("\\section{%s}" . "\\section*{%s}")
@@ -907,8 +923,8 @@ TODO abstract backend implementations."
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
-
 #+end_src
+
 
 This part controls how code blocks (verbatims) are handled.
 In the past, this is done via a LaTeX package called =minted=, which gives =pygments=-style syntax highlighting to codes.
