@@ -124,11 +124,49 @@ If you are viewing this on my website, you may find that this color scheme is ub
 #+end_src
 
 ** Font configs
-Here are my favorite fonts:
+Iosevka is a great font with good coverage (excellent if you count its extension Sarasa Gothic).
+The narrow glyphs allow us to save some precious screen real estate.
+This is particularly super useful for multitasking with multiple windows open.
+For example, my notetaking workflows typically involved having a small (and possible transparent) Emacs window, along with one or several windows pdf viewer, sometimes on a 13-inch laptop screen.
+You can see the benefit here.
+I cannot go back to non-narrow fonts anymore.
+
+It's even better that it allows us to cherry-pick glyphs to build the perfect style variant to use.
+I build my own version of Iosevka, based on the Ubuntu Mono style variant (SS12).
+This style brings me that nostagic feel of my first linux distribution.
+The rounded letters (e.g. =l=, =m=, =n=, =i=, =j=,...) bring a stylish yet comfy looks.
+The underscore =_= is more pronounced, which I like.
+
+Below is my =private-build-plans.toml=, made with this [[https://typeof.net/Iosevka/customizer][lovely customizer]].
+The compilation takes quite a while, though.
+Make sure to consult with the [[https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md][instructions]].
+
+#+begin_src toml :tangle no
+[buildPlans.iosevka-custom]
+family = "Iosevka Custom"
+spacing = "normal"
+serifs = "sans"
+no-cv-ss = true
+export-glyph-names = false
+
+  [buildPlans.iosevka-custom.variants]
+  inherits = "ss12"
+
+    [buildPlans.iosevka-custom.variants.design]
+    lower-alpha = "crossing"
+    capital-gamma = "top-right-serifed"
+    zero = "dotted"
+    ampersand = "et-toothed"
+
+  [buildPlans.iosevka-custom.ligations]
+  inherits = "julia"
+#+end_src
+
+Now to set all this up:
 
 #+begin_src emacs-lisp
-(when (doom-font-exists-p "Sarasa Mono CL")
-    (setq doom-font                (font-spec :name "Sarasa Mono CL" :size 18)))
+(when (doom-font-exists-p "Iosevka Custom")
+    (setq doom-font                (font-spec :name "Iosevka Custom" :size 18)))
 (when (doom-font-exists-p "Alegreya Sans")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya Sans"  :size 20)))
 (when (doom-font-exists-p "JuliaMono")
