@@ -325,41 +325,18 @@ Set orderless matching styles:
 
 #+begin_src emacs-lisp
 (use-package! citar
-  :custom
-  (citar-bibliography (list (concat org-directory "/References/zotero.bib")))
-  (citar-notes-paths (list (concat org-directory "/Org-roam/literature")))
-  (citar-library-paths (list (concat org-directory "/Org-roam/")))
-  (citar-file-variable "file")
-  (citar-symbols
+  :config
+  (setq
+   citar-bibliography (list (concat org-directory "/References/zotero.bib"))
+   citar-notes-paths (list(concat org-directory "/Org-roam/literature/"))
+   citar-library-paths (list (concat org-directory "/Org-roam/"))
+   citar-file-variable "file"
+   citar-symbols
    `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-red :v-adjust -0.1) . " ")
      (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
-     (link ,(all-the-icons-material "link" :face 'all-the-icons-blue) . " ")))
-  (citar-symbol-separator "  ")
-  (citar-templates
-   `((main . "${author editor:30}     ${date year issued:4}     ${title:48}")
-     (suffix . "          ${=key= id:15}    ${=type=:12}    ${tags keywords:*}")
-     (preview . "${author editor} (${year issued date}) ${title}, ${journal publisher container-title collection-title}.\n")
-     (note .
-           ,(string-join
-             '("${author editor} (${year issued date}) ${title}"
-               "#+filetags: literature"
-               "#+startup: overview"
-               "#+startup: hideblocks"
-               "#+options: toc:2 num:t"
-               "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
-               "#+hugo_section: ./notes"
-               "#+hugo_custom_front_matter: :exclude true :math true"
-               "#+hugo_custom_front_matter: :bibinfo '((doi .\"${doi}\") (isbn . \"${isbn}\") (url . \"${url}\") (year . \"${year}\") (month . \"${month}\") (date . \"${date}\") (author . \"${author}\") (journal . \"${journal}\"))"
-               "#+hugo_series: \"Reading notes\""
-               "#+hugo_tags:"
-               ""
-               "* What?"
-               "* Why?"
-               "* How?"
-               "* And?"
-               ) "\n"))))
-  :config
-  (setq org-cite-global-bibliography citar-bibliography)
+     (link ,(all-the-icons-material "link" :face 'all-the-icons-blue) . " "))
+   citar-symbol-separator "  "
+   org-cite-global-bibliography citar-bibliography)
   ;; Search contents of PDFs
   (after! (embark pdf-occur)
     (defun citar/search-pdf-contents (keys-entries &optional str)
@@ -1551,6 +1528,45 @@ If nil it defaults to `split-string-default-separators', normally
                                (point-max) t)
         (replace-match ""))))
   )
+#+end_src
+
+**** Org-roam and citar integration
+Citar integrates with Org-roam via =citar-org-roam.el=.
+This makes the comand =citar-open-notes=  (bind to ~SPC n b~) use Org-roam's template system.
+The bibliography notes created this way will be set up with proper =ID= and =ROAM_REFS= properties.
+The integration also comes with a nice inteface when following an org citation
+
+#+caption: Following a citation in Org-mode, with Citar and Org-roam integraion
+[[file:pics/citar-org-roam-follow.png]]
+
+Here's the relevent part:
+
+#+begin_src emacs-lisp
+(use-package citar-org-roam
+  :after citar org-roam
+  :no-require
+  :config
+  (setq citar-org-roam-subdir "literature"
+        citar-org-roam-note-title-template
+        (string-join
+         '("${author editor} (${year issued date}) ${title}"
+           "#+filetags: literature"
+           "#+startup: overview"
+           "#+startup: hideblocks"
+           "#+options: toc:2 num:t"
+           "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
+           "#+hugo_section: ./notes"
+           "#+hugo_custom_front_matter: :exclude true :math true"
+           "#+hugo_custom_front_matter: :bibinfo '((doi .\"${doi}\") (isbn . \"${isbn}\") (url . \"${url}\") (year . \"${year}\") (month . \"${month}\") (date . \"${date}\") (author . \"${author}\") (journal . \"${journal}\"))"
+           "#+hugo_series: \"Reading notes\""
+           "#+hugo_tags:"
+           ""
+           "* What?"
+           "* Why?"
+           "* How?"
+           "* And?"
+           ) "\n"))
+  (citar-org-roam-mode))
 #+end_src
 
 *** Miscellaneous
