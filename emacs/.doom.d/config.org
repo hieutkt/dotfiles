@@ -8,7 +8,7 @@
 #+latex_class: koma-article
 #+latex_compiler: lualatex
 #+latex_header_extra: \usepackage{libertinus}
-#+latex_header_extra: \setmonofont[Scale=0.9]{Sarasa Mono CL}
+#+latex_header_extra: \setmonofont[Scale=0.9]{Iosevka Custom}
 #+latex_header_extra: \setsansfont{TeX Gyre Heros}
 #+latex_engraved_theme: doom-gruvbox-light
 #+export_file_name: Doom-Emacs-config.md
@@ -19,7 +19,23 @@
 #+hugo_slug: Doom-Emacs-config
 #+hugo_custom_front_matter:
 #+hugo_draft: false
-#+options: toc:3 num:t
+#+options: toc:5 num:t H:5
+
+Emacs is certainly a strange piece of software.
+It wad created in the 1970s and is still in active development until this day, preserving weird concepts like "buffers" and "frame" and "fontification" in its documentation.
+It calls the button ~Ctrl~ on modern keyboards as ~C~ and the ~Alt~ button as ~M~.
+By default emacs, you copy text by pressing ~M-w~ (read: ~Alt + w~ on a modern keyboard ), kill (cut) by ~C-w~ (~Ctrl + w~), and paste by ~C-y~ (~Ctrl + y~).
+In order to customize Emacs, you need to use a dedicated programming language called Emacs Lisp.
+
+But despite all that, Emacs has become the central piece of software that I use to interact with my computer.
+It's still just an text editor, but the one that you can spend hours to fine-tune it just the way you want it to be.
+In my journey to study Emacs, I also learnt a lot about how my computer works.
+With it, I learnt to code and I learnt to write.
+These days, I learn about stuffs beyond the computer, yet Emacs is still my friend.
+
+This document describes how I set up my Emacs, in [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] style, from a text format closely related to Emacs called [[https://orgmode.org/][Org-mode]].
+The whole thing is contained in a [[https://raw.githubusercontent.com/hieutkt/dotfiles/main/emacs/.doom.d/config.org][single file]], which generates both the Elisp code and a HTML document.
+This Emacs configuration is built based on a configuration framework called [[https://github.com/doomemacs/][Doom Emacs]], hence the name of this document.
 
 * Prerequisites
 ** Reproducible information
@@ -126,20 +142,20 @@ If you are viewing this on my website, you may find that this color scheme is ub
 ** Font configs
 Iosevka is a great font with good coverage (excellent if you count its extension Sarasa Gothic).
 The narrow glyphs allow us to save some precious screen real estate.
-This is particularly super useful for multitasking with multiple windows open.
+This is particularly useful for multitasking with multiple windows open.
 For example, my notetaking workflows typically involved having a small (and possible transparent) Emacs window, along with one or several windows pdf viewer, sometimes on a 13-inch laptop screen.
 You can see the benefit here.
 I cannot go back to non-narrow fonts anymore.
 
-It's even better that it allows us to cherry-pick glyphs to build the perfect style variant to use.
-I build my own version of Iosevka, based on the Ubuntu Mono style variant (SS12).
-This style brings me that nostagic feel of my first linux distribution.
-The rounded letters (e.g. =l=, =m=, =n=, =i=, =j=,...) bring a stylish yet comfy looks.
+It's even better that it allows me to cherry-pick glyphs that I like (or don't like).
+My customized Iosevka is based on the Ubuntu Mono style variant (SS12).
+This style brings me that nostalgic feel of my first linux distribution.
 The underscore =_= is more pronounced, which I like.
+The stylized letters (e.g. see =l=, =m=, =n=, =i=, =j=,...) bring forth a humanized, comfy yet quirky aesthetic.
 
 Below is my =private-build-plans.toml=, made with this [[https://typeof.net/Iosevka/customizer][lovely customizer]].
 The compilation takes quite a while, though.
-Make sure to consult with the [[https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md][instructions]].
+Make sure to consult with the [[https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md][instructions]]:
 
 #+begin_src toml :tangle no
 [buildPlans.iosevka-custom]
