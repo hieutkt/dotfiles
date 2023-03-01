@@ -114,9 +114,9 @@ system-configuration-options
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 #+end_src
 
-** Theme :ATTACH:
+** Theme
 #+caption: Colors declarations in the dark variant of the Gruvbox color schemes.
-[[attachment:_20220611_145719screenshot.png]]
+[[file:pics/gruvbox-colorscheme.png]]
 
 I have done a fair share of theme-hopping. In the end, I always come back the the dark variant of the [[https://github.com/morhetz/gruvbox][Gruvbox color scheme]].
 If you are viewing this on my website, you may find that this color scheme is ubiquitous here.
@@ -622,10 +622,13 @@ Similarly, for CSL citations formatting in an Org buffer:
               (cursor-sensor-mode 1)
               (org-cite-csl-activate-render-all))))
 #+end_src
-
 *** Previewing LaTeX fragments in Org-mode
 This part is about visuals, but it also relates to how Org-export  works(in particular, to LaTeX), so I split this into a separate section.
 In the future, when this previewing functionalities is reworked in Org version 9.7, this section will also be modified.
+
+#+caption: An example of how LaTex equations are rendered in an Org-mode buffer
+[[file:pics/org-latex-preview.png]]
+
 **** Setting up backends
 Here's some miscellaneous settings:
 
@@ -958,10 +961,10 @@ Add KOMA-scripts classes to org export:
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
 #+end_src
 
-
 This part controls how code blocks (verbatims) are handled.
 In the past, this is done via a LaTeX package called =minted=, which gives =pygments=-style syntax highlighting to codes.
 However, in recent changes, Org-mode provide its own highlighting backend -- =engraved= -- which translates Emacs' font-lock overlays to LaTeX, results in much better color schemes and "smarter" syntax highlighting, as this potentially works with the Language Server Protocol and =tree-sitter=.
+
 
 #+begin_src emacs-lisp
 (after! ox-latex
