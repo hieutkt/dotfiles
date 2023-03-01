@@ -2,7 +2,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="robbyrussell"
 export PATH="/usr/local/stata15:$PATH"
-export PATH="$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.config/emacs/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export POP_PLUGINS_PATH="$HOME/.local/share/pop-launcher/plugins"
 export FZF_DEFAULT_COMMAND="fdfind --type file --follow --hidden --exclude .git --color=always"
