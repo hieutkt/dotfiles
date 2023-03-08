@@ -1167,10 +1167,6 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package! org-roam-db
-  :config
-  (setq org-roam-db-location "~/.emacs.d/org-roam.db"))
-
 (use-package! org-roam-capture
   :config
   (setq org-roam-capture-templates
