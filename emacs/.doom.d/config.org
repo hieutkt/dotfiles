@@ -622,26 +622,11 @@ Similarly, for CSL citations formatting in an Org buffer:
               (cursor-sensor-mode 1)
               (org-cite-csl-activate-render-all))))
 #+end_src
-*** Previewing LaTeX fragments in Org-mode
+*** Previewing LaTeX fragments
 This part is about visuals, but it also relates to how Org-export  works(in particular, to LaTeX), so I split this into a separate section.
-In the future, when this previewing functionalities is reworked in Org version 9.7, this section will also be modified.
 
 #+caption: An example of how LaTex equations are rendered in an Org-mode buffer
 [[file:pics/org-latex-preview.png]]
-
-**** Setting up backends
-Here's some miscellaneous settings:
-
-#+begin_src emacs-lisp :tangle no
-(after! org
-  ;; ORG LATEX PREVIEW
-  (setq org-startup-with-latex-preview t
-        ;; Make latex preview with "C-c C-x C-l" slightly bigger
-        org-format-latex-options
-        (plist-put org-format-latex-options :scale 1.5)
-        ;; Cache the preview images elsewhere
-        org-preview-latex-image-directory "~/.cache/ltximg/"))
-#+end_src
 
 There are three supported backends for creating these previews: =dvipng=, =dvisvgm=, and =imagemagick=.
 =dvipng= is the fastest, however, it has trouble with rendering Tikz figures.
@@ -650,7 +635,7 @@ The rendered SVGs also looks extra cripsy, which I like.
 One small caveat is that Emacs has to be build with support for SVG, with the =--with-rsvg= flag.
 If not then =imagemagick= is fine, although it's very slow.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (if (string-match-p "RSVG" system-configuration-features)
     (setq org-latex-preview-default-process 'dvisvgm)
     (setq org-latex-preview-default-process 'dvipng))
@@ -664,149 +649,27 @@ If we use =imagemagick=, remember that you have to comment out this line in =/et
 
 Or run this command:
 
-#+begin_src bash :tangle no
+#+begin_example bash
 sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
-#+end_src
+#+end_example
 
-**** Automatic number equations in LaTeX previews.
-The code is from [[https://kitchingroup.cheme.cmu.edu/blog/2016/11/07/Better-equation-numbering-in-LaTeX-fragments-in-org-mode/][John Kitchin's blogpost]] and his Scimax config.
+With all that set up, let's configure =org-latex-preview=:
 
-#+begin_src emacs-lisp :tangle no
-;; Numbered equations all have (1) as the number for fragments with vanilla
-;; org-mode. This code injects the correct numbers into the previews so they
-;; look good.
-(defun scimax-org-renumber-environment (orig-func &rest args)
-  "A function to inject numbers in LaTeX fragment previews."
-  (let ((results '())
-        (counter -1)
-        (numberp))
-    (setq results (cl-loop for (begin . env) in
-                           (org-element-map (org-element-parse-buffer) 'latex-environment
-                             (lambda (env)
-                               (cons
-                                (org-element-property :begin env)
-                                (org-element-property :value env))))
-                           collect
-                           (cond
-                            ((and (string-match "\\\\begin{equation}" env)
-                                  (not (string-match "\\\\tag{" env)))
-                             (cl-incf counter)
-                             (cons begin counter))
-                            ((string-match "\\\\begin{align}" env)
-                             (prog2
-                                 (cl-incf counter)
-                                 (cons begin counter)
-                               (with-temp-buffer
-                                 (insert env)
-                                 (goto-char (point-min))
-                                 ;; \\ is used for a new line. Each one leads to a number
-                                 (cl-incf counter (count-matches "\\\\$"))
-                                 ;; unless there are nonumbers.
-                                 (goto-char (point-min))
-                                 (cl-decf counter (count-matches "\\nonumber")))))
-                            (t
-                             (cons begin nil)))))
-
-    (when (setq numberp (cdr (assoc (point) results)))
-      (setf (car args)
-            (concat
-             (format "\\setcounter{equation}{%s}\n" numberp)
-             (car args)))))
-
-  (apply orig-func args))
-
-
-(defun scimax-toggle-latex-equation-numbering ()
-  "Toggle whether LaTeX fragments are numbered."
-  (interactive)
-  (if (not (get 'scimax-org-renumber-environment 'enabled))
-      (progn
-        (advice-add 'org-create-formula-image :around #'scimax-org-renumber-environment)
-        (put 'scimax-org-renumber-environment 'enabled t)
-        (message "Latex numbering enabled"))
-    (advice-remove 'org-create-formula-image #'scimax-org-renumber-environment)
-    (put 'scimax-org-renumber-environment 'enabled nil)
-    (message "Latex numbering disabled.")))
-
-(advice-add 'org-create-formula-image :around #'scimax-org-renumber-environment)
-(put 'scimax-org-renumber-environment 'enabled t)
-#+end_src
-
-While we're at it, let's try to wrap equations in a =tcolorbox=, so that equations are centered.
-Their numbering will also align properly in previews.
-
-#+begin_src emacs-lisp :tangle no
-(after! org
-  (setq org-format-latex-header "\\documentclass[a4]{article}
-\\usepackage[usenames]{xcolor}
-\\usepackage{tcolorbox}
-\\usepackage[T1]{fontenc}
-\\usepackage{booktabs}
-\\usepackage[sfdefault]{AlegreyaSans}
-\\usepackage{newtxsf}
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-10cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-")
-
-  (defun hp/wrap-latex-equation-preview-in-tcolorbox (orig-func &rest args)
-    (setf (car args)
-          (if (or (string-match "\\\\begin{equation" (car args))
-                  (string-match "\\\\begin{align" (car args))
-                  (string-match "\\\\begin{gather" (car args))
-                  )
-              (format "\\begin{tcolorbox}[size=small,colback=bg,coltext=fg]\n%s\n\\end{tcolorbox}\n"
-                      (car args))
-            (car args)))
-    (apply orig-func args))
-  (advice-add 'org-create-formula-image :around #'hp/wrap-latex-equation-preview-in-tcolorbox)
-  )
-#+end_src
-**** Org-preview-latex
 #+begin_src emacs-lisp
-(use-package! org
+(use-package! org-latex-preview
+  :after org
+  :hook ((org-mode . org-latex-preview-auto-mode))
   :config
   (pushnew! org-latex-preview--ignored-faces 'org-list-dt 'fixed-pitch)
   (setq org-latex-preview-numbered     t
         org-startup-with-latex-preview t
+        org-latex-preview-width 0.6
         org-latex-preview-processing-indicator 'face
-        org-persist--inhibit-write nil
-        org-latex-preview-auto--from-overlay nil
-        org-latex-preview-auto--marker (make-marker)
-        org-latex-preview-header "\\documentclass[a4]{article}
-\\usepackage[dvisvgm, dvipsnames, usenames, HTML]{xcolor}
-\\usepackage{tcolorbox}
-\\usepackage[T1]{fontenc}
-\\usepackage{booktabs}
+        org-latex-preview-header
+        "\\documentclass{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]
+\\usepackage[dvipsnames,svgnames]{xcolor}
 \\usepackage[sfdefault]{AlegreyaSans}
-\\usepackage{newtxsf}
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-10cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-")
-  :hook (((org-mode org-roam-mode) . org-latex-preview-auto-mode)))
+\\usepackage{newtxsf}"))
 #+end_src
 
 *** Org-export
