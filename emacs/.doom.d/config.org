@@ -446,7 +446,7 @@ It's just that good.
 
 *** Visual-related configs
 Since I spend most of my time writing in Org-mode, might as well make it looks nice.
-**** Some custom faces
+**** Custom faces
 
 #+begin_src emacs-lisp
 (after! org
@@ -463,24 +463,74 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
     `((org-level-2)
       :foreground ,(face-attribute 'outline-2 :foreground)
       :weight bold)
+    `((org-block-begin-line org-block-end-line)
+      :background ,(doom-color 'bg))
     )
   ;; Change how LaTeX and image previews are shown
   (setq org-highlight-latex-and-related '(native entities script)
-        org-image-actual-width (min (/ (display-pixel-width) 3) 800))
+        org-image-actual-width (min (/ (display-pixel-width) 3) 800)))
+#+end_src
+
+****  Font-lock settings
+
+#+begin_src emacs-lisp
+(after! org
   ;; Custom regex fontifications
   (font-lock-add-keywords 'org-mode
                           '(("^\\(?:[  ]*\\)\\(?:[-+]\\|[ ]+\\*\\|\\(?:[0-9]+\\|[A-Za-z]\\)[.)]\\)?[ ]+"
                              . 'fixed-pitch)))
   (font-lock-add-keywords 'org-mode '(("(\\?)" . 'error)))
+
+  ;; Highlight first letter of a paragraph
+  (font-lock-add-keywords 'org-mode '(("^\\(?:\n\\)\\([[:digit:][:upper:][:lower:]]\\)" . 'org-warning))))
+
+#+end_src
+
+**** Prettify symbols
+Org-mode syntax supports having two consecutive dashes =--= as to be exported as the en-dash (=–=) and three consecutive dashes =---= to be exported as the em-dash (=—=).
+It's good to have these symbols automatically prettified in an Org-buffer too.
+
+[[file:pics/org-em-dash.png]]
+
+However, the problem is that =prettify-symbol-mode= doesn't replace the symbols right after a word or inside quotes, which are the two major use-case for the em-dash (=—=).
+To remedy this problem, we need to write a custom function and set it to =prettify-symbols-compose-predicate=.
+
+#+begin_src emacs-lisp
+(after! org
+  ;; Prettification should ignore preceding letters
+  (defun prettify-symbols-compose-in-text-mode-p (start end _match)
+    "Similar to `prettify-symbols-default-compose-p' but ignore letters or words."
+    ;; Check that the chars should really be composed into a symbol.
+    (let* ((syntaxes-beg (if (memq (char-syntax (char-after start)) '(?_))
+                             '(?_) '(?. ?\\)))
+           (syntaxes-end (if (memq (char-syntax (char-before end)) '(?_))
+                             '(?_) '(?. ?\\))))
+      (not (or (memq (char-syntax (or (char-before start) ?\s)) syntaxes-beg)
+               (memq (char-syntax (or (char-after end) ?\s)) syntaxes-end)
+               ;; (nth 8 (syntax-ppss))
+               (org-in-src-block-p)
+               ))))
   ;; Replace two consecutive hyphens with the em-dash
   (defun hp/org-mode-load-prettify-symbols ()
     (interactive)
     (pushnew! prettify-symbols-alist
-              '("--" . "—")
+              '("--"  . "–") '("---" . "—")
               '("(?)" . "") '("(?)." . "") '("(?)," . ""))
-    (prettify-symbols-mode 1))
+    (modify-syntax-entry ? " ")
+    (prettify-symbols-mode 1)
+    ;; Now, set the value of this
+    (setq prettify-symbols-compose-predicate 'prettify-symbols-compose-in-text-mode-p)
+    )
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
+#+end_src
+**** Turn off highlighting current line
+Highlight mode is nice.
+However, in an Org-mode buffer, I feel like it might be too much.
+Let's turn off =hl-line-mode= in Org-mode buffers for now.
+
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook (lambda () (hl-line-mode -1)))
 #+end_src
 
 **** Org-modern and svg-tag-mode
