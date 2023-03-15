@@ -632,30 +632,15 @@ The configurations for =svg-tag-mode= go here, too:
   )
 #+end_src
 
-**** Org-appear, Org-fragtog
-=org-appear= and =org-fragtog= for seemless look:
+**** Org-appear
+=org-appear= for seemless look:
 
 #+begin_src emacs-lisp
 (use-package! org-appear
   :hook
   (org-mode . org-appear-mode)
   :config
-  (setq org-hide-emphasis-markers t
-        org-appear-autolinks      t))
-
-(use-package! org-fragtog
-  :hook
-  (org-mode . org-fragtog-mode))
-#+end_src
-
-However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
-Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with :inherit default which will override the background colour.
-
-Inspecting =org-do-latex-and-related= shows that "latex" is the language argument passed, and so we can override the background as discussed above.
-
-#+begin_src emacs-lisp
-(after! org-src
-  (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
+  (setq org-hide-emphasis-markers t))
 #+end_src
 
 **** Org-CSL-activate
@@ -715,13 +700,20 @@ With all that set up, let's configure =org-latex-preview=:
         org-startup-with-latex-preview t
         org-latex-preview-width 0.6
         org-latex-preview-processing-indicator 'face
-        org-latex-preview-header
+        org-latex-preview-preamble
         "\\documentclass{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]
 \\usepackage[dvipsnames,svgnames]{xcolor}
 \\usepackage[sfdefault]{AlegreyaSans}
 \\usepackage{newtxsf}"))
 #+end_src
 
+However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
+Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with =:inherit default= which will override the background colour.
+
+#+begin_src emacs-lisp
+(after! org-src
+  (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
+#+end_src
 *** Org-export
 **** General
 #+begin_src emacs-lisp
