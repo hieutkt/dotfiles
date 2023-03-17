@@ -241,6 +241,51 @@ Emacs version 29 added a new frame parameter for "true" transparency, which mean
 I set Emacs to be slightly transparent.
 With this setting, I can put Emacs at full screen while still being able to read from the windows behind it.
 This is very useful when screen real-estate is scarce (Which is always the case!)
+** Modeline
+Some tweaks to =doom-modeline=:
+#+begin_src emacs-lisp
+(setq doom-modeline-height 35)
+#+end_src
+
+Show page number when viewing PDFs:
+
+#+begin_src emacs-lisp
+(doom-modeline-def-segment buffer-name
+  "Display the current buffer's name, without any other information."
+  (concat
+   doom-modeline-spc
+   (doom-modeline--buffer-name)))
+
+(doom-modeline-def-segment pdf-icon
+  "PDF icon from all-the-icons."
+  (concat
+   doom-modeline-spc
+   (doom-modeline-icon 'material "picture_as_pdf" nil nil
+                       :face (if (doom-modeline--active)
+                                 'all-the-icons-red
+                               'mode-line-inactive))))
+
+(defun doom-modeline-update-pdf-pages ()
+  "Update PDF pages."
+  (setq doom-modeline--pdf-pages
+        (let ((current-page-str (number-to-string (eval `(pdf-view-current-page))))
+              (total-page-str (number-to-string (pdf-cache-number-of-pages))))
+          (concat
+           (propertize
+            (concat (make-string (- (length total-page-str) (length current-page-str)) ? )
+                    " P" current-page-str)
+            'face 'mode-line)
+           (propertize (concat "/" total-page-str) 'face 'doom-modeline-buffer-minor-mode)))))
+
+(doom-modeline-def-segment pdf-pages
+  "Display PDF pages."
+  (if (doom-modeline--active) doom-modeline--pdf-pages
+    (propertize doom-modeline--pdf-pages 'face 'mode-line-inactive)))
+
+(doom-modeline-def-modeline 'pdf
+  '(bar window-number pdf-pages pdf-icon buffer-name)
+  '(misc-info matches major-mode process vcs))
+#+end_src
 * Editing configurations
 ** Evil
 #+begin_src emacs-lisp
