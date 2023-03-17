@@ -286,6 +286,21 @@ Show page number when viewing PDFs:
   '(bar window-number pdf-pages pdf-icon buffer-name)
   '(misc-info matches major-mode process vcs))
 #+end_src
+** Git gutter
+The =diff= changes are reflected in the left fringe.
+However, I find them to be a little bit too intrusive, so let's change how they looks by blending the colors into the background a little bit
+
+#+begin_src emacs-lisp
+(use-package! diff-hl
+  :config
+  (custom-set-faces!
+    `((diff-hl-change)
+      :foreground ,(doom-blend (doom-color 'bg) (doom-color 'blue) 0.5))
+    `((diff-hl-insert)
+      :foreground ,(doom-blend (doom-color 'bg) (doom-color 'green) 0.5)))
+  )
+#+end_src
+
 * Editing configurations
 ** Evil
 #+begin_src emacs-lisp
