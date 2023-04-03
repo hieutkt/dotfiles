@@ -1153,6 +1153,13 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
   :commands org-babel-execute:julia)
 #+end_src
 
+*** Org-cite
+#+begin_src emacs-lisp
+(use-package! oc
+  :config
+  (setq org-cite-csl-styles-dir (concat dropbox-directory "Documents/Zotero/styles/")))
+#+end_src
+
 *** Org-roam
 **** Fundemental settings
 #+begin_src emacs-lisp
