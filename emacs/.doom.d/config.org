@@ -700,7 +700,8 @@ The configurations for =svg-tag-mode= go here, too:
   :hook
   (org-mode . org-appear-mode)
   :config
-  (setq org-hide-emphasis-markers t))
+  (setq org-hide-emphasis-markers t
+        org-appear-autolinks 'just-brackets))
 #+end_src
 
 **** Org-CSL-activate
