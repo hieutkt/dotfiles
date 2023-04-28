@@ -1677,7 +1677,12 @@ It support Org-mode out of the box.
 (after! cdlatex
   (setq cdlatex-math-modify-alist
         '((?d "\\mathbb" nil t nil nil)
-          (?D "\\mathbbm" nil t nil nil))))
+          (?D "\\mathbbm" nil t nil nil))
+        cdlatex-env-alist
+        '(("cases" "\\begin{cases} ? \\end{cases}" nil)
+          ("matrix" "\\begin{matrix} ? \\end{matrix}" nil)
+          ("pmatrix (parenthesis)" "\\begin{pmatrix} ? \\end{pmatrix}" nil)
+          ("bmatrix [braces]" "\\begin{bmatrix} ? \\end{bmatrix}" nil))))
 #+end_src
 
 =laas-mode= automates /even more/.
