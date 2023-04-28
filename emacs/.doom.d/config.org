@@ -1709,19 +1709,24 @@ The list of snippets enabled by this package is enormous, best to check their RE
     ;; Condition: Math environment
     :cond #'laas-org-mathp
     "qed" "\\blacksquare"
-    "; "  "\\quad"
-    ";; " "\\qquad"
     ",,"  "\\,,"
     ".,"  "\\,."
-    ";;p" "\\psi"
-    ";;P" "\\Psi"
     ";0" "\\emptyset"
-    ",." nil
+    ",." nil                            ;disable the annoying \vec{} modifier
+    "||" nil
+    "lr||" (lambda () (interactive) (yas-expand-snippet "\\lVert $0 \\rVert"))
+    "pdv" (lambda () (interactive) (yas-expand-snippet "\\frac{\\partial $1}{\\partial $2}"))
     ;; Condition: Math environment, modify last object on the left
     :cond #'laas-object-on-left-condition
     "hat" (lambda () (interactive) (laas-wrap-previous-object "hat"))
+    "ubar" (lambda () (interactive) (laas-wrap-previous-object "underline"))
+    "bar" (lambda () (interactive) (laas-wrap-previous-object "bar"))
     "dot" (lambda () (interactive) (laas-wrap-previous-object "dot"))
+    "tilde" (lambda () (interactive) (laas-wrap-previous-object "tilde"))
+    "TX"  (lambda () (interactive) (laas-wrap-previous-object "text"))
     "ON"  (lambda () (interactive) (laas-wrap-previous-object "operatorname"))
+    "BON" (lambda () (interactive) (laas-wrap-previous-object
+                                    '("\\operatorname{\\mathbf{" . "}}")))
     "tt"  "_{t}"
     "tp1" "_{t+1}"
     "tm1" "_{t-1}"
