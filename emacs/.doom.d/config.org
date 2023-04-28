@@ -184,35 +184,38 @@ Now to set all this up:
 
 #+begin_src emacs-lisp
 (when (doom-font-exists-p "Iosevka Custom")
-    (setq doom-font                (font-spec :name "Iosevka Custom" :size 18)))
+    (setq doom-font                (font-spec :name "Iosevka Custom" :size 17)))
 (when (doom-font-exists-p "Alegreya Sans")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya Sans"  :size 20)))
-(when (doom-font-exists-p "JuliaMono")
-    (setq doom-unicode-font        (font-spec :name "JuliaMono"      :size 20)))
+(when (doom-font-exists-p "Noto Color Emoji")
+    (setq doom-unicode-font        (font-spec :name "Noto Color Emoji")))
 #+end_src
 
 Fallback font for non-ascii glyphs:
 
 #+begin_src emacs-lisp
-(use-package! unicode-fonts
-  :config
-  ;; Common math symbols
-  (dolist (unicode-block '("Greek and Coptic"))
-    (push "Sarasa Mono CL" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-  ;; CJK characters
-  (dolist (unicode-block '("CJK Unified Ideographs" "CJK Symbols and Punctuation" "CJK Radicals Supplement" "CJK Compatibility Ideographs"))
-    (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-  (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
-    (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping)))))
+  (use-package! unicode-fonts
+    :config
+    ;; Common math symbols
+    (dolist (unicode-block '("Mathematical Alphanumeric Symbols"))
+      (push "JuliaMono" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+    (dolist (unicode-block '("Greek and Coptic"))
+      (push "Sarasa Mono CL" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+    ;; CJK characters
+    (dolist (unicode-block '("CJK Unified Ideographs" "CJK Symbols and Punctuation" "CJK Radicals Supplement" "CJK Compatibility Ideographs"))
+      (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+    (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
+      (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+    )
 #+end_src
 
 Emacs (since version 28 I think) handles ligatures pretty well.
 However, sometimes we still need to manually fix some ligature composition:
 
 #+begin_src emacs-lisp
-;; For Sarasa Mono
+;; For Iosevka
 (set-char-table-range composition-function-table ?+ '(["\\(?:++++\\)" 0 font-shape-gstring]))
-;; For Alegreya
+;; For Alegreya/Alegreya Sans
 (set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijltkbh]\\)" 0 font-shape-gstring]))
 ;; (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 #+end_src
