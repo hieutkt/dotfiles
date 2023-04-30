@@ -345,6 +345,7 @@ However, I find them to be a little bit too intrusive, so let's change how they 
 #+end_src
 
 ** Completions
+*** Corfu defaults
 Enable corfu in the minibuffer:
 
 #+begin_src emacs-lisp
@@ -360,7 +361,7 @@ Enable corfu in the minibuffer:
   (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
 #+end_src
 
-Set orderless matching styles:
+Set orderless matching styles to include =char-fold-to-regexp=.
 
 #+begin_src emacs-lisp
 (use-package! orderless
@@ -368,6 +369,22 @@ Set orderless matching styles:
   (add-to-list 'orderless-matching-styles 'char-fold-to-regexp))
 #+end_src
 
+*** Smaller popup text
+Automatic documentation popup while autocompleting is nice, but let's reduce the font size a little bit so that it doesn't cover the screen too much and makes it easier to skim for information:
+
+#+begin_src emacs-lisp
+(custom-set-faces! '((corfu-popupinfo) :height 0.9))
+#+end_src
+
+*** Corfu-Yasnippet
+Suggest yasnippet as completion.
+
+#+begin_src emacs-lisp
+(use-package! cape-yasnippet
+  :after (corfu yasnippet)
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-yasnippet))
+#+end_src
 ** Language server protocol (LSP)
 #+begin_src emacs-lisp
 (use-package! lsp-ui

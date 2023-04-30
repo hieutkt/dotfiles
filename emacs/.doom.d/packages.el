@@ -87,3 +87,7 @@
   :recipe (:host nil :repo "https://git.sr.ht/~bzg/org-contrib"
            :files ("lisp/*.el"))
   :pin "6422b265f1150204f024e33d54f2dcfd8323005c")
+
+;Corfu
+(package! cape-yasnippet
+  :recipe (:host github :repo "elken/cape-yasnippet"))
