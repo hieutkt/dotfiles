@@ -1573,6 +1573,57 @@ Here's the relevent part:
            ) "\n"))
   (citar-org-roam-mode))
 #+end_src
+**** Backlinks count display
+
+#+begin_src emacs-lisp
+(defface hp/org-roam-count-overlay-face
+  '((t :inherit org-list-dt :height 0.8))
+  "Face for Org Roam count overlay.")
+
+(defun hp/org-roam--count-overlay-make (pos count)
+  (let* ((overlay-value (propertize
+                         (concat "·" (format "%d" count) " ")
+                         'face 'hp/org-roam-count-overlay-face 'display '(raise 0.2)))
+         (ov (make-overlay pos pos (current-buffer) nil t)))
+    (overlay-put ov 'roam-backlinks-count count)
+    (overlay-put ov 'priority 1)
+    (overlay-put ov 'after-string overlay-value)))
+
+(defun hp/org-roam--count-overlay-remove-all ()
+  (dolist (ov (overlays-in (point-min) (point-max)))
+    (when (overlay-get ov 'roam-backlinks-count)
+      (delete-overlay ov))))
+
+(defun hp/org-roam--count-overlay-make-all ()
+  (hp/org-roam--count-overlay-remove-all)
+  (org-element-map (org-element-parse-buffer) 'link
+    (lambda (elem)
+      (when (string-equal (org-element-property :type elem) "id")
+        (let* ((id (org-element-property :path elem))
+               (count (caar
+                       (org-roam-db-query
+                        [:select (funcall count source)
+                         :from links
+                         :where (= dest $s1)
+                         :and (= type "id")]
+                        id))))
+          (when (< 0 count)
+            (hp/org-roam--count-overlay-make
+             (org-element-property :end elem)
+             count)))))))
+
+(define-minor-mode hp/org-roam-count-overlay-mode
+  "Display backlink count for org-roam links."
+  :after-hook
+  (if hp/org-roam-count-overlay-mode
+      (progn
+        (hp/org-roam--count-overlay-make-all)
+        (add-hook 'after-save-hook #'hp/org-roam--count-overlay-make-all nil t))
+    (hp/org-roam--count-overlay-remove-all)
+    (remove-hook 'after-save-hook #'hp/org-roam--count-overlay-remove-all t)))
+
+(add-hook 'org-mode-hook #'hp/org-roam-count-overlay-mode)
+#+end_src
 
 *** Miscellaneous
 Gonna clean this up later
