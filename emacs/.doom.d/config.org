@@ -945,6 +945,8 @@ Add KOMA-scripts classes to org export:
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+
+(setq org-latex-default-class "koma-article")
 #+end_src
 
 This part controls how code blocks (verbatims) are handled.
