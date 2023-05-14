@@ -970,6 +970,33 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
   (plist-put org-hugo-citations-plist :bibliography-section-heading ""))
 #+end_src
 
+***** Exporting footnotes as sidenotes
+My website features Tufte-CSS-style sidenotes.
+With =hugo=, this is implemented by wrapping text around the =sidenote= shortcode.
+It would be nice if footnotes are exported as sidenotes here for Hugo export and as regular footnotes elsewhere[fn:1].
+Here's the code to implement this, in courtesy of [[https://takeonrules.com/2023/01/22/hacking-org-mode-export-for-footnotes-as-sidenotes/][this blog post]]:
+
+#+begin_src emacs-lisp
+(defun hp/org-export-to-hugo-sidenote (footnote-reference _contents info)
+  "Transcode a FOOTNOTE-REFERENCE element from Org to Hugo sidenote shortcode.
+CONTENTS is nil.  INFO is a plist holding contextual information."
+  (let* ((element (car (org-export-get-footnote-definition footnote-reference info)))
+         (beg (org-element-property :contents-begin element))
+         (end (org-element-property :contents-end element)))
+    (format "{{< sidenote >}}%s{{< /sidenote >}}"
+            (s-trim (buffer-substring-no-properties beg end)))))
+
+;; Over-write the custom blackfriday export for footnote links.
+(advice-add #'org-blackfriday-footnote-reference
+            :override #'hp/org-export-to-hugo-sidenote
+            '((name . "wrapper")))
+
+;; Don't render the section for export
+(advice-add #'org-blackfriday-footnote-section
+            :override (lambda (&rest rest) ())
+            '((name . "wrapper")))
+#+end_src
+
 *** Org-agenda
 #+begin_src emacs-lisp
 (use-package! org-agenda
@@ -1930,3 +1957,7 @@ Like Org-roam, Elfeed should be opened in it's own workspace:
   (when (modulep! :ui workspaces)
     (+workspace-switch "Elfeeds" t))))
 #+end_src
+
+* Footnotes
+
+[fn:1] For example, this is a footnote. But on website this should be rendered beside main text (as sidenotes).
