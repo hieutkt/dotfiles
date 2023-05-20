@@ -346,6 +346,10 @@ However, I find them to be a little bit too intrusive, so let's change how they 
 
 ** Completions
 *** Corfu defaults
+#+begin_src emacs-lisp
+(setq corfu-auto-delay 0.5)
+#+end_src
+
 Enable corfu in the minibuffer:
 
 #+begin_src emacs-lisp
