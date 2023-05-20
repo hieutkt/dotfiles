@@ -500,6 +500,8 @@ It's just that good.
 #+begin_src emacs-lisp
 (use-package! org
   :config
+  (setq org-highlight-links
+        '(bracket angle plain tag date footnote))
   ;; Setup custom links
   (+org-init-custom-links-h))
 #+end_src
@@ -558,7 +560,7 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
         org-image-actual-width (min (/ (display-pixel-width) 3) 800)))
 #+end_src
 
-****  Font-lock settings
+**** Font-lock settings
 
 #+begin_src emacs-lisp
 (after! org
@@ -569,8 +571,8 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   (font-lock-add-keywords 'org-mode '(("(\\?)" . 'error)))
 
   ;; Highlight first letter of a paragraph
-  (font-lock-add-keywords 'org-mode '(("^\\(?:\n\\)\\([[:digit:][:upper:][:lower:]]\\)" . 'org-warning))))
-
+  ;; (font-lock-add-keywords 'org-mode '(("^\\(?:\n\\)\\([[:digit:][:upper:][:lower:]]\\)" . 'org-warning)))
+  )
 #+end_src
 
 **** Prettify symbols
@@ -606,7 +608,7 @@ To remedy this problem, we need to write a custom function and set it to =pretti
     (modify-syntax-entry ? " ")
     (prettify-symbols-mode 1)
     ;; Now, set the value of this
-    (setq prettify-symbols-compose-predicate 'prettify-symbols-compose-in-text-mode-p)
+    (setq-local prettify-symbols-compose-predicate 'prettify-symbols-compose-in-text-mode-p)
     )
   (when (not IS-WINDOWS)
     (add-hook 'org-mode-hook 'hp/org-mode-load-prettify-symbols)))
@@ -616,7 +618,7 @@ Highlight mode is nice.
 However, in an Org-mode buffer, I feel like it might be too much.
 Let's turn off =hl-line-mode= in Org-mode buffers for now.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (add-hook 'org-mode-hook (lambda () (hl-line-mode -1)))
 #+end_src
 
@@ -630,13 +632,11 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
   :config
   (setq
    ;; Edit settings
-   org-auto-align-tags nil
-   org-tags-column 0
    org-catch-invisible-edits 'show-and-error
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
    ;; Appearance
-   org-modern-radio-target    '("" t "")
+   org-modern-radio-target    '("❰" t "❱")
    org-modern-internal-target '("↪ " t "")
    org-modern-todo nil
    org-modern-tag nil
@@ -674,10 +674,10 @@ The configurations for =svg-tag-mode= go here, too:
     (svg-image (svg-lib-concat
                 (svg-lib-progress-bar
                  (/ (string-to-number value) 100.0) nil
-                 :height 0.8 :background (doom-color 'bg)
+                 :height 0.8 :foreground (doom-color 'fg) :background (doom-color 'bg)
                  :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
                 (svg-lib-tag (concat value "%") nil
-                             :height 0.8 :background (doom-color 'bg)
+                             :height 0.8 :foreground (doom-color 'fg) :background (doom-color 'bg)
                              :stroke 0 :margin 0)) :ascent 'center))
 
   (defun svg-progress-count (value)
@@ -686,9 +686,11 @@ The configurations for =svg-tag-mode= go here, too:
            (total (float (cadr seq))))
       (svg-image (svg-lib-concat
                   (svg-lib-progress-bar (/ count total) nil
+                                        :foreground (doom-color 'fg)
                                         :background (doom-color 'bg) :height 0.8
                                         :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
                   (svg-lib-tag value nil
+                               :foreground (doom-color 'fg)
                                :background (doom-color 'bg)
                                :stroke 0 :margin 0 :height 0.8)) :ascent 'center)))
 
@@ -700,20 +702,20 @@ The configurations for =svg-tag-mode= go here, too:
           ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
                                             (svg-progress-count (substring tag 1 -1)))))
           ;; Task priority e.g. [#A], [#B], or [#C]
-          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error :inverse t :height 1.05
+          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error :inverse t :height .85
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
-          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning :inverse t :height 1.05
+          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning :inverse t :height .85
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
-          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t :height 1.05
+          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t :height .85
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
           ;; Keywords
-          ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face 'org-todo))))
-          ("HOLD" . ((lambda (tag) (svg-tag-make tag :height 1.05 :face 'org-todo))))
-          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face 'org-done))))
-          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-active))))
+          ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("HOLD" . ((lambda (tag) (svg-tag-make tag :height .85 :face 'org-todo))))
+          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-done))))
+          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-active))))
           ("REPEAT\\|EVENT\\|PROJ\\|IDEA" .
-           ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-project))))
-          ("REVIEW" . ((lambda (tag) (svg-tag-make tag :inverse t :height 1.05 :face '+org-todo-onhold))))))
+           ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-project))))
+          ("REVIEW" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-onhold))))))
 
   :hook (org-mode . svg-tag-mode)
   )
@@ -746,6 +748,7 @@ Similarly, for CSL citations formatting in an Org buffer:
               (org-cite-csl-activate-render-all))))
 #+end_src
 *** Previewing LaTeX fragments
+**** General configurations
 This part is about visuals, but it also relates to how Org-export  works(in particular, to LaTeX), so I split this into a separate section.
 
 #+caption: An example of how LaTex equations are rendered in an Org-mode buffer
@@ -788,13 +791,30 @@ With all that set up, let's configure =org-latex-preview=:
         org-startup-with-latex-preview t
         org-latex-preview-width 0.6
         org-latex-preview-processing-indicator 'face
+        ;;live previewing
+        org-latex-preview-live-preview-fragments t
+        org-latex-preview-auto-generate 'live
+        org-latex-preview-debounce 0.5
+        org-latex-preview-throttle 0.2
+        ;;previewing preamble
         org-latex-preview-preamble
         "\\documentclass{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]
 \\usepackage[dvipsnames,svgnames]{xcolor}
 \\usepackage[sfdefault]{AlegreyaSans}
-\\usepackage{newtxsf}"))
+\\usepackage{newtxsf}
+
+\\definecolor{DarkRed}{RGB}{204,36,29}
+\\definecolor{ForestGreen}{RGB}{184,187,38}
+\\definecolor{red}{RGB}{251,73,52}
+\\definecolor{orange}{RGB}{254,128,25}
+\\definecolor{blue}{RGB}{69,133,136}
+\\definecolor{green}{RGB}{184,187,38}
+\\definecolor{yellow}{RGB}{250, 189, 47}
+\\definecolor{purple}{RGB}{211, 134, 155}
+"))
 #+end_src
 
+**** Transparent background for org-block
 However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
 Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with =:inherit default= which will override the background colour.
 
