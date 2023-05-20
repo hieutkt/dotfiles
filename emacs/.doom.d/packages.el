@@ -93,6 +93,9 @@
            :files ("lisp/*.el"))
   :pin "6422b265f1150204f024e33d54f2dcfd8323005c")
 
+(package! gptel
+  :recipe (:host github :repo "karthink/gptel"))
+
 ;Corfu
 (package! cape-yasnippet
   :recipe (:host github :repo "elken/cape-yasnippet"))

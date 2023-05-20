@@ -2030,6 +2030,26 @@ Like Org-roam, Elfeed should be opened in it's own workspace:
   (when (modulep! :ui workspaces)
     (+workspace-switch "Elfeeds" t))))
 #+end_src
+** ChatGPT
+
+#+begin_src emacs-lisp
+(use-package! gptel
+  :bind (("<f7>" . #'gptel)
+         ("S-<f7>" . #'gptel-send))
+  :config
+  (setq! gptel-default-mode #'org-mode)
+  (map! :map gptel-mode-map
+        :g "C-c C-g" #'gptel-send))
+#+end_src
+
+Maybe with a popup rule
+
+#+begin_src emacs-lisp
+(set-popup-rule! "^\\*ChatGPT\\*$" :size 0.5
+    :side 'bottom
+    :ttl nil
+    :select t)
+#+end_src
 
 * Footnotes
 
