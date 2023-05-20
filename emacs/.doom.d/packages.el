@@ -53,6 +53,11 @@
 (package! svg-tag-mode
   :recipe (:host github :repo "rougier/svg-tag-mode"))
 
+(package! calctex :recipe (:host github :repo "johnbcoughlin/calctex"
+                           :files ("*.el" "calctex/*.el" "calctex-contrib/*.el" "org-calctex/*.el" "vendor")))
+;; (package! calc-transient
+;;   :recipe (:host github :repo "karthink/calc-transient"))
+
 (package! laas
   :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
 

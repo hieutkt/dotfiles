@@ -1847,6 +1847,61 @@ The list of snippets enabled by this package is enormous, best to check their RE
     "tm1" "_{t-1}"
     "**"  "^{\\ast}"))
 #+end_src
+** CalC
+*** Basic configs
+In Org-mode, I want to toggle =calc-embedded= by ~SPC m e~, overriding Doom's default keybindings for =org-export-dispatch= (which I normally invoke by ~C-c C-e~):
+
+#+begin_src emacs-lisp
+(map! :map (calc-mode-map org-mode-map latex-mode-map)
+      :after org
+      :localleader
+      :desc "Embedded calc (toggle)" "e" #'calc-embedded)
+#+end_src
+
+*** Experimental packages
+
+#+begin_src emacs-lisp
+(use-package! calctex
+  :commands calctex-mode
+  :init
+  (add-hook 'calc-mode-hook #'calctex-mode)
+  :config
+  (setq calctex-additional-latex-packages "
+\\usepackage[usenames]{xcolor}
+\\usepackage[sfdefault]{AlegreyaSans}
+\\usepackage{newtxsf}
+\\usepackage{soul}
+\\usepackage{adjustbox}
+\\usepackage{amsmath}
+\\usepackage{amssymb}
+\\usepackage{siunitx}
+\\usepackage{cancel}
+\\usepackage{mathtools}
+\\usepackage{mathalpha}
+\\usepackage{xparse}
+\\usepackage{arevmath}")
+  ;; Fix dvichop path error
+  (defadvice! no-messaging-a (orig-fn &rest args)
+    :around #'calctex-default-dispatching-render-process
+    (let ((inhibit-message t) message-log-max)
+      (apply orig-fn args)))
+  ;; Fix hardcoded dvichop path (whyyyyyyy)
+  (let ((vendor-folder (concat (file-truename doom-local-dir)
+                               "straight/"
+                               (format "build-%s" emacs-version)
+                               "/calctex/vendor/")))
+    (setq calctex-dvichop-sty (concat vendor-folder "texd/dvichop")
+          calctex-dvichop-bin (concat vendor-folder "texd/dvichop")))
+  (unless (file-exists-p calctex-dvichop-bin)
+    (message "CalcTeX: Building dvichop binary")
+    (let ((default-directory (file-name-directory calctex-dvichop-bin)))
+      (call-process "make" nil nil nil))))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(use-package! calc-transient
+  :hook (calc-mode . calc-transient-minor-mode))
+#+end_src
 
 ** Elfeeds
 
