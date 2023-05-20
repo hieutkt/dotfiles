@@ -427,6 +427,9 @@ Suggest yasnippet as completion.
 
 #+begin_src emacs-lisp
 (use-package! citar
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
   :config
   (setq
    citar-bibliography (list (concat org-directory "/References/zotero.bib"))
