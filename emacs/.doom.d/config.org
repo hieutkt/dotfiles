@@ -133,15 +133,22 @@ If you are viewing this on my website, you may find that this color scheme is ub
   (setq doom-modeline-persp-name t))
 #+end_src
 
-** Visual lines for writing prose
+** Narrowing and center buffer contents
+On larger screens I like buffer contents to not exceed a certain width and are centered.
+=olivetti-mode= solves this problem nicely.
+There is also an =auto-olivetti-mode=  which automatically turns on =olivetti-mode= in most buffers.
 
 #+begin_src emacs-lisp
-(use-package! visual-fill-column
-  :hook (visual-line-mode . visual-fill-column-mode)
-  :init
-  (setq visual-fill-column-width 120
-        visual-fill-column-center-text t
-        visual-fill-column-fringes-outside-margins nil))
+(use-package! olivetti
+  :config
+  (setq-default olivetti-body-width 130)
+  (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 70))))
+
+(use-package! auto-olivetti
+  :custom
+  (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode))
+  :config
+  (auto-olivetti-mode))
 #+end_src
 
 ** Font configs
