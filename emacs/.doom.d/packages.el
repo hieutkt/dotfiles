@@ -1,7 +1,9 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-(package! visual-fill-column)
+(package! auto-olivetti
+  :recipe (:host sourcehut :repo "ashton314/auto-olivetti"))
+
 (package! lsp-treemacs)
 (package! org-super-agenda)
 (package! benchmark-init)
