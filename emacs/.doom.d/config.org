@@ -26,27 +26,26 @@
 
 * Introduction :ignore:
 Emacs is certainly a strange piece of software.
-It wad created in the 1970s and is still in active development until this day, preserving weird concepts like "buffers" and "frame" and "fontification" in its documentation.
+It was created in the 1970s and is still in active development until this day, preserving weird concepts like "buffers" and "frame" and "fontification" in its documentation.
 It calls the button =Ctrl= on modern keyboards as ~C~ and the =Alt= button as ~M~ (Meta).
 In default settings, you copy text by pressing ~M-w~ , "kill" (in modern language: cut) by ~C-w~, and paste by ~C-y~.
 In order to customize Emacs, you need to use a dedicated programming language called Emacs Lisp.
 
 But despite all that, Emacs has become the central piece of software that I use to interact with my computer.
 It's still just an text editor, but the one that you can spend hours to fine-tune it just the way you want it to be.
-In my journey to study Emacs, I also learnt a lot about how my computer works.
-With it, I learnt to code and I learnt to write.
+In my journey to learn Emacs, I also learnt a lot about how my computer works.
+Along the way, I learnt how to code and I learnt how to write.
 These days, I learn about stuffs beyond the computer, yet Emacs is still my friend.
 
 This document describes how I set up my Emacs, in [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] style, using a plain text format closely related to Emacs called [[https://orgmode.org/][Org-mode]].
-The whole thing is contained in a [[https://raw.githubusercontent.com/hieutkt/dotfiles/main/emacs/.doom.d/config.org][single file]], which generates both the Elisp code and a HTML document.
+The whole thing is contained in a [[https://raw.githubusercontent.com/hieutkt/dotfiles/main/emacs/.doom.d/config.org][single file]], from which both the Elisp code and this HTML document is generated.
 This Emacs configuration is built based on a configuration framework called [[https://github.com/doomemacs/][Doom Emacs]], hence the name of this document.
-:end:
 
 * Prerequisites
 ** Reproducible information
 This configuration is continuingly being improved.
 I build my own Emacs from source in order to take advantage of some experimental features.
-There are also =(packages! ...)=  calls to external Emacs packages that are unpinned to any specific version.
+There are also =(packages! ...)=  calls to external Emacs packages that are not pinned to any specific version.
 As such, there might be incompabilities if one blindly copies codes from this configurations.
 Although I'll try to document which features are based on developing softwares and are likely to be changed in the future, it is inevitable that some bits of information are going to fall through the cracks.
 
@@ -68,7 +67,14 @@ system-configuration-options
 #+end_src
 
 #+RESULTS:
-: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-xwidgets --with-gif --with-x-toolkit=gtk3 --with-tree-sitter=ifavailable
+: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-xwidgets --with-gif --with-x-toolkit=gtk3 --with-tree-sitter
+
+#+begin_src emacs-lisp
+system-configuration-features
+#+end_src
+
+#+RESULTS:
+: CAIRO DBUS FREETYPE GIF GLIB GMP GNUTLS GSETTINGS HARFBUZZ JPEG JSON LIBOTF LIBSELINUX LIBSYSTEMD LIBXML2 M17N_FLT MODULES NATIVE_COMP NOTIFY INOTIFY PDUMPER PNG RSVG SECCOMP SOUND SQLITE3 THREADS TIFF TOOLKIT_SCROLL_BARS TREE_SITTER WEBP X11 XDBE XIM XINPUT2 XPM XWIDGETS GTK3 ZLIB
 
 * Fundamental setups
 ** Some good defaults
@@ -152,10 +158,11 @@ There is also an =auto-olivetti-mode=  which automatically turns on =olivetti-mo
 #+end_src
 
 ** Font configs
-Iosevka is a great font with good coverage (excellent if you count its extension Sarasa Gothic).
+*** Font choices
+[[https://typeof.net/Iosevka/][Iosevka]] is a great font with good coverage (excellent if you count its extension Sarasa Gothic).
 The narrow glyphs allow us to save some precious screen real estate.
 This is particularly useful for multitasking with multiple windows open.
-For example, my notetaking workflows typically involved having a small (and possible transparent) Emacs window, along with one or several windows pdf viewer, sometimes on a 13-inch laptop screen.
+For example, my notetaking workflow involved having a small (not maximized) Emacs window, along with one or several windows for pdf viewers, often on a 13-inch laptop screen.
 You can see the benefit here.
 I cannot go back to non-narrow fonts anymore.
 
@@ -163,10 +170,10 @@ It's even better that it allows me to cherry-pick glyphs that I like (or don't l
 My customized Iosevka is based on the Ubuntu Mono style variant (SS12).
 This style brings me that nostalgic feel of my first linux distribution.
 The underscore =_= is more pronounced, which I like.
-The stylized letters (e.g. see =l=, =m=, =n=, =i=, =j=,...) bring forth a humanized, comfy yet quirky aesthetic.
+The stylized letters (e.g. see =l=, =m=, =n=, =i=, =j=,...) bring forth a humanist, comfy yet quirky aesthetic.
 
 Below is my =private-build-plans.toml=, made with this [[https://typeof.net/Iosevka/customizer][lovely customizer]].
-The compilation takes quite a while, though.
+The font compilation takes quite a while, though.
 Make sure to consult with the [[https://github.com/be5invis/Iosevka/blob/main/doc/custom-build.md][instructions]]:
 
 #+begin_src toml :tangle no
@@ -190,6 +197,7 @@ export-glyph-names = false
   inherits = "julia"
 #+end_src
 
+*** Setups
 Now to set all this up:
 
 #+begin_src emacs-lisp
@@ -219,6 +227,7 @@ Fallback font for non-ascii glyphs:
     )
 #+end_src
 
+*** Ligatures
 Emacs (since version 28 I think) handles ligatures pretty well.
 However, sometimes we still need to manually fix some ligature composition:
 
@@ -230,6 +239,7 @@ However, sometimes we still need to manually fix some ligature composition:
 ;; (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 #+end_src
 
+*** Mixed- and fixed-pitch fonts
 We should take care of =mixed-pitch-mode= here, too:
 
 #+begin_src emacs-lisp
@@ -253,7 +263,7 @@ Emacs version 29 added a new frame parameter for "true" transparency, which mean
 
 I set Emacs to be slightly transparent.
 With this setting, I can put Emacs at full screen while still being able to read from the windows behind it.
-This is very useful when screen real-estate is scarce (Which is always the case!)
+This is very useful when screen real-estate is scarce (which is always the case!)
 ** Modeline
 Some tweaks to =doom-modeline=:
 #+begin_src emacs-lisp
@@ -983,7 +993,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
 #+end_src
 
 **** Export to website with =ox-hugo=
-
+***** General config :ignore:
 #+begin_src emacs-lisp
 (use-package! ox-hugo
   :config
@@ -1216,6 +1226,15 @@ channel."
 #+end_src
 
 *** Org-babel
+Org-babel might be nice, but editing inside an Org-buffer means that you have to give up all the nice functionalities of the individual language's major more.
+Luckily, we have  =org-edit-special= (bound to ~SPC m '~ in Doom Emacs).
+
+#+begin_src emacs-lisp
+(setq org-src-window-setup 'current-window)
+#+end_src
+
+Now, to set this up for different languages:
+
 #+begin_src emacs-lisp
 (use-package! ob-julia
   :commands org-babel-execute:julia)
