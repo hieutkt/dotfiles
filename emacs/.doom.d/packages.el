@@ -48,7 +48,7 @@
   :recipe (:host github :repo "sp1ff/elfeed-score"))
 
 (package! ob-julia
-  :recipe (:host github :repo "nico202/ob-julia" :files ("*.el" "julia")))
+  :recipe (:host github :repo "karthink/ob-julia" :files ("*.el" "julia")))
 
 (package! org-modern
   :recipe (:host github :repo "minad/org-modern"))

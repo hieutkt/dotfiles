@@ -1799,6 +1799,11 @@ Economists are picking up on this language.
                 lsp-folding-range-limit 100)))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package! ob-julia
+  :config
+  (setq org-babel-julia-backend 'julia-snail))
+#+end_src
 ** LaTeX
 A good bulk of any good research should go into writing, and once your writing topic gets slightly technical, you need the goodness of LaTeX.
 These days I don't really write =.tex= files directly in Emacs and from what I hear, the built-in [[https://www.gnu.org/software/auctex/][AUCTeX]] is awesome for that.
