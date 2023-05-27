@@ -997,6 +997,7 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
 (use-package! ox-hugo
   :config
   (setq org-hugo-use-code-for-kbd t
+        org-use-tag-inheritance nil
         org-hugo-paired-shortcodes "sidenote marginnote notice"
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt"))
   ;; No reference heading in ox-hugo export
