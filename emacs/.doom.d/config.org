@@ -1849,34 +1849,35 @@ The list of snippets enabled by this package is enormous, best to check their RE
   (aas-set-snippets 'laas-mode
     ;; Condition: Not in math environment and not in a middle of a word
     :cond (lambda nil (and (not (laas-org-mathp)) (memq (char-before) '(10 40 32))))
-    "mk"  (lambda () (interactive) (yas-expand-snippet "\\\\( $0 \\\\)"))
-    "mmk" (lambda () (interactive) (yas-expand-snippet "\\[ $0 \\]"))
-    "citet" (lambda () (interactive) (yas-expand-snippet "\[cite/t:@$0\]"))
+    "mk"     (lambda () (interactive) (yas-expand-snippet "\\\\( $0 \\\\)"))
+    "mmk"    (lambda () (interactive) (yas-expand-snippet "\\[ $0 \\]"))
+    "citet"  (lambda () (interactive) (yas-expand-snippet "\[cite/t:@$0\]"))
+    ";."     "\\( \\rightarrow \\)"
     ;; Condition: Math environment
     :cond #'laas-org-mathp
-    "qed" "\\blacksquare"
-    ",,"  "\\,,"
-    ".,"  "\\,."
-    ";0" "\\emptyset"
-    ",." nil                            ;disable the annoying \vec{} modifier
-    "||" nil
-    "lr||" (lambda () (interactive) (yas-expand-snippet "\\lVert $0 \\rVert"))
-    "pdv" (lambda () (interactive) (yas-expand-snippet "\\frac{\\partial $1}{\\partial $2}"))
+    "qed"    "\\blacksquare"
+    ",,"     "\\,,"
+    ".,"     "\\,."
+    ";0"     "\\emptyset"
+    ",."     nil                     ;disable the annoying \vec{} modifier
+    "||"     nil
+    "lr||"   (lambda () (interactive) (yas-expand-snippet "\\lVert $0 \\rVert"))
+    "pdv"    (lambda () (interactive) (yas-expand-snippet "\\frac{\\partial $1}{\\partial $2}"))
     ;; Condition: Math environment, modify last object on the left
     :cond #'laas-object-on-left-condition
-    "hat" (lambda () (interactive) (laas-wrap-previous-object "hat"))
-    "ubar" (lambda () (interactive) (laas-wrap-previous-object "underline"))
-    "bar" (lambda () (interactive) (laas-wrap-previous-object "bar"))
-    "dot" (lambda () (interactive) (laas-wrap-previous-object "dot"))
-    "tilde" (lambda () (interactive) (laas-wrap-previous-object "tilde"))
-    "TX"  (lambda () (interactive) (laas-wrap-previous-object "text"))
-    "ON"  (lambda () (interactive) (laas-wrap-previous-object "operatorname"))
-    "BON" (lambda () (interactive) (laas-wrap-previous-object
-                                    '("\\operatorname{\\mathbf{" . "}}")))
-    "tt"  "_{t}"
-    "tp1" "_{t+1}"
-    "tm1" "_{t-1}"
-    "**"  "^{\\ast}"))
+    "hat"    (lambda () (interactive) (laas-wrap-previous-object "hat"))
+    "ubar"   (lambda () (interactive) (laas-wrap-previous-object "underline"))
+    "bar"    (lambda () (interactive) (laas-wrap-previous-object "bar"))
+    "dot"    (lambda () (interactive) (laas-wrap-previous-object "dot"))
+    "tilde"  (lambda () (interactive) (laas-wrap-previous-object "tilde"))
+    "TXT"    (lambda () (interactive) (laas-wrap-previous-object "text"))
+    "ON"     (lambda () (interactive) (laas-wrap-previous-object "operatorname"))
+    "BON"    (lambda () (interactive) (laas-wrap-previous-object
+                                  '("\\operatorname{\\mathbf{" . "}}")))
+    "tt"     "_{t}"
+    "tp1"    "_{t+1}"
+    "tm1"    "_{t-1}"
+    "**"     "^{\\ast}"))
 #+end_src
 ** CalC
 *** Basic configs
