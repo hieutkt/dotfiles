@@ -1257,8 +1257,6 @@ Now, to set this up for different languages:
         ;;Functions tags are special types of tags which tells what the node are for
         ;;In the future, this should probably be replaced by categories
         hp/org-roam-function-tags '("compilation" "argument" "journal" "concept" "tool" "data" "bio" "literature" "event" "website"))
-  (add-to-list 'magit-section-initial-visibility-alist
-               '(org-roam-unlinked-references-section . hide))
   :config
   ;; Org-roam interface
   (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
