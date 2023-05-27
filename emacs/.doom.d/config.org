@@ -1186,16 +1186,15 @@ channel."
                "#+author: %n"
                "#+filetags: blog"
                "#+date: %(eval hp/ox-hugo-post--fdate)"
-               "#+export_file_name: %(concat hp/ox-hugo-post--fname \".en.md\")"
                "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
                "#+hugo_section: ./posts/"
                "#+hugo_tags: %?"
-               "#+hugo_url:"
-               "#+hugo_slug:"
+               "#+hugo_url: ./%(eval hp/ox-hugo-post--fname)"
+               "#+hugo_slug: %(eval hp/ox-hugo-post--fname)"
                "#+hugo_custom_front_matter:"
                "#+hugo_draft: false"
                "#+startup: content"
-               "#+options: toc:2 num:t\n")
+               "#+options: toc:2 num:t")
              "\n")
            :create-id t
            :immediate-finish t
@@ -1207,16 +1206,15 @@ channel."
                "#+author: %n"
                "#+filetags: blog"
                "#+date: %(eval hp/ox-hugo-post--fdate)"
-               "#+export_file_name: %(concat hp/ox-hugo-post--fname \".vi.md\")"
                "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
                "#+hugo_section: ./posts/"
                "#+hugo_tags: %?"
-               "#+hugo_url:"
-               "#+hugo_slug:"
+               "#+hugo_url: ./%(eval hp/ox-hugo-post--fname)"
+               "#+hugo_slug: %(eval hp/ox-hugo-post--fname)"
                "#+hugo_custom_front_matter:"
                "#+hugo_draft: false"
                "#+startup: content"
-               "#+options: toc:2 num:t\n")
+               "#+options: toc:2 num:t")
              "\n")
            :create-id t
            :immediate-finish t
