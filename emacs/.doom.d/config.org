@@ -1243,7 +1243,8 @@ Now, to set this up for different languages:
 #+begin_src emacs-lisp
 (use-package! oc
   :config
-  (setq org-cite-csl-styles-dir (concat dropbox-directory "Documents/Zotero/styles/")))
+  (setq org-cite-csl-styles-dir (concat dropbox-directory "Documents/Zotero/styles/")
+        org-cite-biblatex-options "style=authoryear"))
 #+end_src
 
 *** Org-roam
