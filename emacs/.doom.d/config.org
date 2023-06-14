@@ -1359,6 +1359,7 @@ Now, to set this up for different languages:
   )
 #+end_src
 
+***** Capture templates
 #+begin_src emacs-lisp
 (use-package! org-roam-capture
   :config
@@ -1366,9 +1367,8 @@ Now, to set this up for different languages:
         `(("d" "default" plain "%?"
            :target
            (file+head "${slug}_%<%Y-%m-%d--%H-%M-%S>.org"
-                      "#+title: ${title}\n#+created: %U\n#+filetags: %(completing-read \"Function tags: \" hp/org-roam-function-tags)\n#+startup: overview hideblocks")
+                      "#+title: ${title}\n#+created: %U\n#+filetags: %(completing-read \"Function tags: \" hp/org-roam-function-tags)\n#+startup: overview")
            :unnarrowed t))))
-
 
 (use-package! org-roam-dailies
   :config
@@ -1377,7 +1377,7 @@ Now, to set this up for different languages:
         '(("d" "daily" entry "* %?"
            :target
            (file+head "%<%Y-%m-%d>.org"
-                      "#+title: %<%Y-%m-%d %a>\n#+filetags: journal\n#+startup: overview hideblocks\n#+created: %U\n\n")
+                      "#+title: %<%Y-%m-%d %a>\n#+filetags: journal\n#+startup: overview\n#+created: %U\n\n")
            :immediate-finish t)))
   (map! :leader
         :prefix "n"
@@ -1625,7 +1625,6 @@ Here's the relevent part:
          '("${author editor} (${year issued date}) ${title}"
            "#+filetags: literature"
            "#+startup: overview"
-           "#+startup: hideblocks"
            "#+options: toc:2 num:t"
            "#+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/"
            "#+hugo_section: ./notes"
