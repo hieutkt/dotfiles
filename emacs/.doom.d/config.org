@@ -87,8 +87,10 @@ system-configuration-features
       default-input-method 'vietnamese-telex
       +doom-dashboard-banner-dir doom-private-dir
       +doom-dashboard-banner-file "favicon-pixel.png"
-      +doom-dashboard-banner-padding '(0 . 2)
-      pixel-scroll-precision-mode t)
+      +doom-dashboard-banner-padding '(0 . 2))
+
+;; Turn on pixel scrolling
+(pixel-scroll-precision-mode t)
 
 ;; Start Doom fullscreen
 (add-to-list 'default-frame-alist '(width . 92))
