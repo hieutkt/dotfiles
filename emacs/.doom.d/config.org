@@ -6,14 +6,14 @@
 #+filetags: :compilation:tool:blogs:
 #+date: {{{modification-time(%Y-%m-%d)}}}
 #+latex_class: koma-article
+#+latex_compiler: xelatex
 #+latex_header: \usepackage{parskip}
 #+latex_header_extra: \usepackage{AlegreyaSans}
-#+latex_header_extra: \usepackage{libertine}
-#+latex_header_extra: \usepackage{newtxmath}
+#+latex_header_extra: \usepackage{libertinus}
 #+latex_header_extra: \usepackage[scale=0.80]{FiraMono}
 #+latex_header_extra: \addtokomafont{subsubsection}{\color{RoyalBlue!50!black}\AlegreyaSansMedium}
 #+latex_header_extra: \urlstyle{sf}
-#+latex_engraved_theme: doom-gruvbox-light
+#+latex_engraved_theme: doom-nord-light
 #+export_file_name: Doom-Emacs-config.md
 #+hugo_base_dir: ~/Dropbox/Blogs/hieutkt/
 #+hugo_section: ./resources/
@@ -57,8 +57,8 @@ Here's my current build of Emacs:
 #+end_src
 
 #+RESULTS:
-: GNU Emacs 28.2 (build 2, x86_64-pc-linux-gnu, GTK+ Version 3.24.33, cairo version 1.16.0)
-:  of 2022-12-03
+: GNU Emacs 30.0.50 (build 1, x86_64-pc-linux-gnu, GTK+ Version 3.24.33, cairo version 1.16.0)
+:  of 2023-03-08
 
 This Emacs is built with the following configuration options:
 
@@ -94,7 +94,7 @@ system-configuration-features
 
 ;; Start Doom fullscreen
 (add-to-list 'default-frame-alist '(width . 92))
-(add-to-list 'default-frame-alist '(height . 35))
+(add-to-list 'default-frame-alist '(height . 40))
 ;; (add-to-list 'default-frame-alist '(alpha 97 100))
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -229,7 +229,8 @@ We should take care of =mixed-pitch-mode= here, too:
 #+begin_src emacs-lisp
 (use-package! mixed-pitch
   :hook ((org-mode      . mixed-pitch-mode)
-         (org-roam-mode . mixed-pitch-mode))
+         (org-roam-mode . mixed-pitch-mode)
+         (LaTeX-mode    . mixed-pitch-mode))
   :config
   (pushnew! mixed-pitch-fixed-pitch-faces
             'warning
@@ -636,10 +637,10 @@ To remedy this problem, we need to write a custom function and set it to =pretti
 **** Turn off highlighting current line
 Highlight mode is nice.
 However, in an Org-mode buffer, I feel like it might be too much.
-Let's turn off =hl-line-mode= in Org-mode buffers for now.
+Let's turn off =hl-line-mode= in text buffers for now.
 
-#+begin_src emacs-lisp :tangle no
-(add-hook 'org-mode-hook (lambda () (hl-line-mode -1)))
+#+begin_src emacs-lisp
+(add-hook 'text-mode-hook (lambda () (hl-line-mode -1)))
 #+end_src
 
 **** Org-modern and svg-tag-mode
@@ -670,7 +671,7 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-modern-keyword "‣"
    org-modern-list '((43 . "•")
                      (45 . "–")
-                     (42 . "∘")))
+                     (42 . "↪")))
   (custom-set-faces!
     `((org-modern-tag)
       :background ,(doom-blend (doom-color 'blue) (doom-color 'bg) 0.1)
@@ -816,6 +817,7 @@ With all that set up, let's configure =org-latex-preview=:
         org-latex-preview-auto-generate 'live
         org-latex-preview-debounce 0.5
         org-latex-preview-throttle 0.2
+        org-latex-preview-live-preview-fragments nil
         ;;previewing preamble
         org-latex-preview-preamble
         "\\documentclass{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]
@@ -1038,9 +1040,14 @@ However, in recent changes, Org-mode provide its own highlighting backend -- =en
 (use-package! ox-hugo
   :config
   (setq org-hugo-use-code-for-kbd t
-        org-use-tag-inheritance nil
+        org-use-tag-inheritance   t
         org-hugo-paired-shortcodes "sidenote marginnote notice"
         org-hugo-base-dir (concat dropbox-directory "Blogs/hieutkt")))
+#+end_src
+***** Linking between different Org-roam files
+
+#+begin_src emacs-lisp
+(setq org-id-extra-files (directory-files-recursively org-roam-directory "\.org$"))
 #+end_src
 
 ***** Exporting footnotes as sidenotes
@@ -1598,6 +1605,7 @@ Now, to set this up for different languages:
   :commands (org-roam-ui-mode))
 #+end_src
 
+***** Workspace creation
 This is to automate creating a workspace for Org-roam
 
 #+begin_src emacs-lisp
@@ -1613,7 +1621,7 @@ This is to automate creating a workspace for Org-roam
     (+workspace-switch "Org-roam" t))))
 #+end_src
 
-Org-roam-protocol:
+***** Org-roam-protocol
 
 #+begin_src emacs-lisp
 (use-package! org-roam-protocol

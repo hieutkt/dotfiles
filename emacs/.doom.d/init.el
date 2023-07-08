@@ -35,7 +35,7 @@
        doom-quit                       ; DOOM quit-message prompts when you quit Emacs
        ;; hl-todo                         ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
-       indent-guides                   ; highlighted indent columns
+       ;;indent-guides                   ; highlighted indent columns
        ;;minimap                       ; show a map of the code on the side
        modeline                        ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash                     ; blink cursor line after big motions
@@ -96,7 +96,7 @@
        (lookup +dictionary)            ; navigate your code and its documentation
        lsp
        ;;macos                         ; MacOS-specific commands
-       magit                           ; a git porcelain for Emacs
+       (magit +forge)                           ; a git porcelain for Emacs
        ;;make                          ; run make tasks from Emacs
        ;;pass                          ; password manager for nerds
        pdf                             ; pdf enhancements
@@ -150,7 +150,7 @@
             ;; +pretty
             +dragndrop)   ; organize your plain life in plain text
        ;;php                           ; perl's insecure younger brother
-       ;;plantuml                      ; diagrams for confusing people more
+       plantuml                      ; diagrams for confusing people more
        ;;purescript                    ; javascript, but functional
        (python +lsp +pyright +poetry
                +tree-sitter)           ; beautiful is better than ugly
