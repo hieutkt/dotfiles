@@ -1856,13 +1856,14 @@ The list of snippets enabled by this package is enormous, best to check their RE
     "mk"     (lambda () (interactive) (yas-expand-snippet "\\\\( $0 \\\\)"))
     "mmk"    (lambda () (interactive) (yas-expand-snippet "\\[ $0 \\]"))
     "citet"  (lambda () (interactive) (yas-expand-snippet "\[cite/t:@$0\]"))
-    ";."     "\\( \\rightarrow \\)"
+    ";>"     "\\( \\rightarrow \\)"
     ;; Condition: Math environment
     :cond #'laas-org-mathp
     "qed"    "\\blacksquare"
     ",,"     "\\,,"
     ".,"     "\\,."
     ";0"     "\\emptyset"
+    ";."     "\\cdot"
     ",."     nil                     ;disable the annoying \vec{} modifier
     "||"     nil
     "lr||"   (lambda () (interactive) (yas-expand-snippet "\\lVert $0 \\rVert"))
