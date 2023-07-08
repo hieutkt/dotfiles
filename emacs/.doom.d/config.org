@@ -1102,15 +1102,11 @@ channel."
             (todo "NEXT"
                   ((org-super-agenda-groups
                     '((:auto-map hp/agenda-auto-group-title-olp)))))
-            (tags-todo "task"
+            (todo "TODO|HOLD|NEXT|WAIT"
                        ((org-agenda-overriding-header
                          "Every TASKS under the sun")
                         (org-super-agenda-groups
-                         '((:discard (:todo "IDEA"))
-                           (:discard (:todo "REVIEW"))
-                           (:discard (:tag "writings"))
-                           (:discard (:tag "blog"))
-                           (:auto-map hp/agenda-auto-group-title-olp)))))
+                         '((:auto-map hp/agenda-auto-group-title-olp)))))
             (todo "REVIEW"
                   ((org-agenda-overriding-header "Study")
                    (org-super-agenda-groups
