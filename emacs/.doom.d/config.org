@@ -1243,12 +1243,13 @@ Now, to set this up for different languages:
 (use-package! oc
   :config
   (setq org-cite-csl-styles-dir (concat dropbox-directory "Documents/Zotero/styles/")
-        org-cite-export-processors '((latex . (biblatex "authoryear"))
+        org-cite-export-processors '((latex . (biblatex "ext-authoryear"))
                                      (t     . (csl      "chicago-author-date.csl")))))
 #+end_src
 
 *** Org-roam
-**** Fundemental settings
+**** Fundamental settings
+***** Customizing main interface
 #+begin_src emacs-lisp
 (use-package! org-roam
   :after org
