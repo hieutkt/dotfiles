@@ -1031,6 +1031,171 @@ channel."
             '((name . "wrapper")))
 #+end_src
 
+**** Exporting behavior of special blocks
+***** Theorems, proof, definitions
+#+begin_src emacs-lisp
+(use-package! org-special-block-extras
+  :after org
+  :hook (org-mode . org-special-block-extras-mode)
+  :config
+  (org-defblock theorem (name "") (contents "")
+                (format (pcase backend
+                          (`latex "\\begin{theorem}[%s]\n%s\n\\end{theorem}")
+                          (_  "{{< notice info \"Theorem: %s\" >}}\n%s\n{{< /notice >}}"))
+                          name contents))
+  (org-defblock definition (name "") (contents "")
+                (format (pcase backend
+                          (`latex "\\begin{definition}[%s]\n%s\n\\end{definition}")
+                          (_  "{{< notice info \"Definition: %s\" >}}\n%s\n{{< /notice >}}"))
+                          name contents))
+  )
+#+end_src
+***** Simpler =details= blocks
+
+#+begin_src emacs-lisp
+(after! org-special-block-extras
+  (org-defblock detail-summary (title "") (contents "")
+                (format (pcase backend
+                          (_ "<details>\n<summary>%s</summary>%s </details>"))
+                          title contents)))
+#+end_src
+***** Notices
+
+#+begin_src emacs-lisp
+(after! org-special-block-extras
+  (org-defblock warning (frame-title "Warning") (contents "")
+                (format
+                 (pcase backend
+                   (`latex "\\begin{mdframed}[
+frametitlebackgroundcolor=DarkRed!15, backgroundcolor=DarkRed!5,
+hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
+frametitlefont=\\sffamily\\color{DarkRed!60!black}, frametitle=%s]
+                %s
+                \\end{mdframed}")
+                   (_  "{{< notice warning \"%s\" >}}\n%s\n{{< /notice >}}"))
+                 frame-title contents))
+
+
+  (org-defblock info (frame-title "Info") (contents "")
+                (format
+                 (pcase backend
+                   (`latex "\\begin{mdframed}[
+frametitlebackgroundcolor=Teal!15, backgroundcolor=Teal!5,
+hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
+frametitlefont=\\sffamily\\color{Teal!60!black}, frametitle=%s]
+                %s
+        \\end{mdframed}")
+                   (_  "{{< notice info \"%s\" >}}\n%s\n{{< /notice >}}"))
+                 frame-title contents))
+
+
+  (org-defblock tips (frame-title "Tips") (contents "")
+                (format
+                 (pcase backend
+                   (`latex "\\begin{mdframed}[
+frametitlebackgroundcolor=ForestGreen!15, backgroundcolor=ForestGreen!5,
+hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
+frametitlefont=\\sffamily\\color{ForestGreen!60!black}, frametitle=%s]
+                %s
+                \\end{mdframed}")
+                   (_  "{{< notice tip \"%s\" >}}\n%s\n{{< /notice >}}"))
+                 frame-title contents))
+  )
+#+end_src
+
+**** Block color overlays
+Since we're are overdoing it, let's make these blocks /slightly colorful/!
+
+#+begin_src emacs-lisp
+(after! org-special-block-extras
+  (defface hp/org-special-blocks-tips-face
+    `((t :background ,(doom-blend (doom-color 'teal) (doom-color 'bg) 0.1) :extend t))
+    "Face for tip blocks")
+  (defface hp/org-special-blocks-info-face
+    `((t :background ,(doom-blend (doom-color 'blue) (doom-color 'bg) 0.1) :extend t))
+    "Face for info blocks")
+  (defface hp/org-special-blocks-warning-face
+    `((t :background ,(doom-blend (doom-color 'orange) (doom-color 'bg) 0.1) :extend t))
+    "Face for warning blocks")
+  (defface hp/org-special-blocks-note-face
+    `((t :background ,(doom-blend (doom-color 'violet) (doom-color 'bg) 0.1) :extend t))
+    "Face for warning blocks")
+  (defface hp/org-special-blocks-question-face
+    `((t :background ,(doom-blend (doom-color 'green) (doom-color 'bg) 0.1) :extend t))
+    "Face for warning blocks")
+  (defface hp/org-special-blocks-error-face
+    `((t :background ,(doom-blend (doom-color 'red) (doom-color 'bg) 0.1) :extend t))
+    "Face for warning blocks")
+
+  (defun hp/org-add-overlay-tips-blocks ()
+    "Apply overlays to #+begin_tips blocks in the current buffer."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(\\#\\+begin_tips\\)" nil t)
+        (let* ((beg (match-beginning 0))
+               (end (if (re-search-forward "^\\(\\#\\+end_tips\\)" nil t)
+                        (1+ (line-end-position))
+                      (point-max)))
+               (ov (make-overlay beg end)))
+          (overlay-put ov 'face 'hp/org-special-blocks-tips-face)))))
+
+  (defun hp/org-add-overlay-info-blocks ()
+    "Apply overlays to #+begin_info blocks in the current buffer."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(\\#\\+begin_\\(?:info\\|definition\\|theorem\\)\\)" nil t)
+        (let* ((beg (match-beginning 0))
+               (end (if (re-search-forward "^\\(\\#\\+end_\\(?:info\\|definition\\|theorem\\)\\)" nil t)
+                        (1+ (line-end-position))
+                      (point-max)))
+               (ov (make-overlay beg end)))
+          (overlay-put ov 'face 'hp/org-special-blocks-info-face)))))
+
+  (defun hp/org-add-overlay-warning-blocks ()
+    "Apply overlays to #+begin_warning blocks in the current buffer."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(\\#\\+begin_warning\\)" nil t)
+        (let* ((beg (match-beginning 0))
+               (end (if (re-search-forward "^\\(\\#\\+end_warning\\)" nil t)
+                        (1+ (line-end-position))
+                      (point-max)))
+               (ov (make-overlay beg end)))
+          (overlay-put ov 'face 'hp/org-special-blocks-warning-face)))))
+
+  (defun hp/org-add-overlay-note-blocks ()
+    "Apply overlays to #+begin_note blocks in the current buffer."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(\\#\\+begin_note\\)" nil t)
+        (let* ((beg (match-beginning 0))
+               (end (if (re-search-forward "^\\(\\#\\+end_note\\)" nil t)
+                        (1+ (line-end-position))
+                      (point-max)))
+               (ov (make-overlay beg end)))
+          (overlay-put ov 'face 'hp/org-special-blocks-note-face)))))
+
+  (defun hp/org-add-overlay-question-blocks ()
+    "Apply overlays to #+begin_question blocks in the current buffer."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(\\#\\+begin_question\\)" nil t)
+        (let* ((beg (match-beginning 0))
+               (end (if (re-search-forward "^\\(\\#\\+end_question\\)" nil t)
+                        (1+ (line-end-position))
+                      (point-max)))
+               (ov (make-overlay beg end)))
+          (overlay-put ov 'face 'hp/org-special-blocks-question-face)))))
+
+
+  (add-hook! '(org-mode-hook yas-after-exit-snippet-hook)
+             '(hp/org-add-overlay-tips-blocks
+               hp/org-add-overlay-info-blocks
+               hp/org-add-overlay-warning-blocks
+               hp/org-add-overlay-note-blocks
+               hp/org-add-overlay-question-blocks)))
+#+end_src
+
 *** Org-agenda
 #+begin_src emacs-lisp
 (use-package! org-agenda
