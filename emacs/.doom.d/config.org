@@ -1807,6 +1807,13 @@ A good bulk of any good research should go into writing, and once your writing t
 These days I don't really write =.tex= files directly in Emacs and from what I hear, the built-in [[https://www.gnu.org/software/auctex/][AUCTeX]] is awesome for that.
 Most of my writings in Emacs is done in Org-mode.
 However, Org-mode inherits quite a few things from LaTeX-mode, so some configuration is needed here, most of which relates to syntax-highlighting of LaTeX fragments and snippets for fast insertion of math equations.
+*** Better defaults
+#+begin_src emacs-lisp
+(after! tex
+  (setq-default TeX-master nil
+                TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o"))
+                TeX-view-program-selection '((output-pdf "Evince"))))
+#+end_src
 *** Better looks
 Subscript and superscript fontification looks janky to me, so let's turn them off.
 
