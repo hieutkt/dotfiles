@@ -92,6 +92,9 @@ system-configuration-features
 ;; Turn on pixel scrolling
 (pixel-scroll-precision-mode t)
 
+;; Turn on abbrev mode
+(setq-default abbrev-mode t)
+
 ;; Start Doom fullscreen
 (add-to-list 'default-frame-alist '(width . 92))
 (add-to-list 'default-frame-alist '(height . 40))
