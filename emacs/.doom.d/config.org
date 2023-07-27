@@ -1081,74 +1081,86 @@ channel."
 #+end_src
 
 **** Exporting behavior of special blocks
-***** Theorems, proof, definitions
+***** General behaviors
 #+begin_src emacs-lisp
 (use-package! org-special-block-extras
   :after org
   :hook (org-mode . org-special-block-extras-mode)
   :config
-  (org-defblock theorem (name "") (contents "")
-                (format (pcase backend
-                          (`latex "\\begin{theorem}[%s]\n%s\n\\end{theorem}")
-                          (_  "{{< notice info \"Theorem: %s\" >}}\n%s\n{{< /notice >}}"))
-                          name contents))
-  (org-defblock definition (name "") (contents "")
-                (format (pcase backend
-                          (`latex "\\begin{definition}[%s]\n%s\n\\end{definition}")
-                          (_  "{{< notice info \"Definition: %s\" >}}\n%s\n{{< /notice >}}"))
-                          name contents))
+  (setq org-special-block-add-html-extra nil))
+#+end_src
+
+***** Theorems, proof, definitions
+#+begin_src emacs-lisp
+(after! org-special-block-extras
+  (org-defblock theorem
+   (name "")
+   (format (pcase backend
+             (`latex "\\begin{theorem}[%s]\n%s\n\\end{theorem}")
+             (_  "{{< notice info \"Theorem: %s\" >}}\n%s\n{{< /notice >}}"))
+           name contents))
+  (org-defblock definition
+   (name "")
+   (format (pcase backend
+             (`latex "\\begin{definition}[%s]\n%s\n\\end{definition}")
+             (_  "{{< notice info \"Definition: %s\" >}}\n%s\n{{< /notice >}}"))
+           name contents))
   )
 #+end_src
 ***** Simpler =details= blocks
 
 #+begin_src emacs-lisp
 (after! org-special-block-extras
-  (org-defblock detail-summary (title "") (contents "")
-                (format (pcase backend
-                          (_ "<details>\n<summary>%s</summary>%s </details>"))
-                          title contents)))
+  (org-defblock detail-summary
+   (title "")
+   (format (pcase backend
+             (_ "<details>\n<summary>%s</summary>%s </details>"))
+           title contents)))
 #+end_src
 ***** Notices
 
 #+begin_src emacs-lisp
 (after! org-special-block-extras
-  (org-defblock warning (frame-title "Warning") (contents "")
-                (format
-                 (pcase backend
-                   (`latex "\\begin{mdframed}[
+  (org-defblock warning
+   (frame-title "Warning")
+   (format
+    (pcase backend
+      (`latex "\\begin{mdframed}[
 frametitlebackgroundcolor=DarkRed!15, backgroundcolor=DarkRed!5,
 hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
 frametitlefont=\\sffamily\\color{DarkRed!60!black}, frametitle=%s]
                 %s
                 \\end{mdframed}")
-                   (_  "{{< notice warning \"%s\" >}}\n%s\n{{< /notice >}}"))
-                 frame-title contents))
+      (_  "{{< notice warning \"%s\" >}}\n%s\n{{< /notice >}}"))
+    frame-title contents))
 
 
-  (org-defblock info (frame-title "Info") (contents "")
-                (format
-                 (pcase backend
-                   (`latex "\\begin{mdframed}[
+  (org-defblock info
+   (frame-title "Info")
+   (format
+    (pcase backend
+      (`latex "\\begin{mdframed}[
 frametitlebackgroundcolor=Teal!15, backgroundcolor=Teal!5,
 hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
 frametitlefont=\\sffamily\\color{Teal!60!black}, frametitle=%s]
                 %s
         \\end{mdframed}")
-                   (_  "{{< notice info \"%s\" >}}\n%s\n{{< /notice >}}"))
-                 frame-title contents))
+      (_  "{{< notice info \"%s\" >}}\n%s\n{{< /notice >}}"))
+    frame-title contents))
 
 
-  (org-defblock tips (frame-title "Tips") (contents "")
-                (format
-                 (pcase backend
-                   (`latex "\\begin{mdframed}[
+  (org-defblock tips
+   (frame-title "Tips")
+   (format
+    (pcase backend
+      (`latex "\\begin{mdframed}[
 frametitlebackgroundcolor=ForestGreen!15, backgroundcolor=ForestGreen!5,
 hidealllines=true, innertopmargin=\\topskip, roundcorner=5pt,
 frametitlefont=\\sffamily\\color{ForestGreen!60!black}, frametitle=%s]
                 %s
                 \\end{mdframed}")
-                   (_  "{{< notice tip \"%s\" >}}\n%s\n{{< /notice >}}"))
-                 frame-title contents))
+      (_  "{{< notice tip \"%s\" >}}\n%s\n{{< /notice >}}"))
+    frame-title contents))
   )
 #+end_src
 
