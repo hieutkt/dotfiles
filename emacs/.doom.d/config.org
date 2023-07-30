@@ -567,21 +567,37 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
   (custom-set-faces!
     `((org-quote)
       :foreground ,(doom-color 'blue) :extend t)
-    `((org-document-title)
-      :foreground ,(face-attribute 'org-document-title :foreground)
-      :height 1.3 :extend t :weight bold)
-    `((org-level-1)
-      :foreground ,(face-attribute 'outline-1 :foreground)
-      :height 1.1 :weight bold)
-    `((org-level-2)
-      :foreground ,(face-attribute 'outline-2 :foreground)
-      :weight bold)
     `((org-block-begin-line org-block-end-line)
-      :background ,(doom-color 'bg))
-    )
+      :background ,(doom-color 'bg)))
   ;; Change how LaTeX and image previews are shown
   (setq org-highlight-latex-and-related '(native entities script)
         org-image-actual-width (min (/ (display-pixel-width) 3) 800)))
+#+end_src
+
+Emacs version 29 can now tell the difference between 'regular' or  'normal' font weights and 'medium' weights.
+Let's use the medium weights for org-mode headings.
+
+#+begin_src emacs-lisp
+(after! org-mode
+  (custom-set-faces!
+    `((org-document-title)
+      :foreground ,(face-attribute 'org-document-title :foreground)
+      :height 1.3 :weight bold)
+    `((org-level-1)
+      :foreground ,(face-attribute 'outline-1 :foreground)
+      :height 1.1 :weight medium)
+    `((org-level-2)
+      :foreground ,(face-attribute 'outline-2 :foreground)
+      :weight medium)
+    `((org-level-3)
+      :foreground ,(face-attribute 'outline-3 :foreground)
+      :weight medium)
+    `((org-level-4)
+      :foreground ,(face-attribute 'outline-4 :foreground)
+      :weight medium)
+    `((org-level-5)
+      :foreground ,(face-attribute 'outline-5 :foreground)
+      :weight medium)))
 #+end_src
 
 **** Font-lock settings
