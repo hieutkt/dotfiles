@@ -414,6 +414,40 @@ Suggest yasnippet as completion.
   :init
   (add-to-list 'completion-at-point-functions #'cape-yasnippet))
 #+end_src
+*** Kind-icon configurations
+Kind-icon adds icons to =corfu= completions based on the =:company-kind= property.
+Let's add this properties to those that don't provide them.
+
+#+begin_src emacs-lisp
+(after! org-roam
+  ;; Define advise
+  (defun hp/org-roam-capf-add-kind-property (orig-fun &rest args)
+    "Advice around `org-roam-complete-link-at-point' to add :company-kind property."
+    (let ((result (apply orig-fun args)))
+      (append result '(:company-kind (lambda (_) 'org-roam)))))
+  ;; Wraps around the relevant functions
+  (advice-add 'org-roam-complete-link-at-point :around #'hp/org-roam-capf-add-kind-property)
+  (advice-add 'org-roam-complete-everywhere :around #'hp/org-roam-capf-add-kind-property))
+
+(after! citar
+  ;; Define advise
+  (defun hp/citar-capf-add-kind-property (orig-fun &rest args)
+    "Advice around `org-roam-complete-link-at-point' to add :company-kind property."
+    (let ((result (apply orig-fun args)))
+      (append result '(:company-kind (lambda (_) 'reference)))))
+  ;; Wraps around the relevant functions
+  (advice-add 'citar-capf :around #'hp/citar-capf-add-kind-property))
+#+end_src
+
+Now, we can implement custom icons for Org-roam completions:
+
+#+begin_src emacs-lisp
+(after! (org-roam kind-icon)
+  (add-to-list
+   'kind-icon-mapping
+   '(org-roam     "or" :icon "symbol-interface"   :collection "vscode" :face font-lock-type-face)))
+#+end_src
+
 ** Language server protocol (LSP)
 #+begin_src emacs-lisp
 (use-package! lsp-ui
