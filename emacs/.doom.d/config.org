@@ -2049,33 +2049,34 @@ I am happy with most the defaults given in Doom Emacs, so my custom configuratio
 #+end_src
 
 ** Julia
-Economists are picking up on this language.
+=lsp-julia= tries to do the smart thing of auto-detecting the project environment as well as the correct path to the =LanguageServer.jl=.
+I want it to do the dumb-but-simple thing of using the global installation of =LanguageServer.jl=.
 
 #+begin_src emacs-lisp
-(use-package! julia-repl
-  :config
-  ;; Use vterm instead of the defautl term
+(after! lsp-julia
+  (setq lsp-julia-flags '("--startup-file=no" "--history-file=no")))
+#+end_src
+
+The rest of the configurations is straight forward.
+
+#+begin_src emacs-lisp
+(after! julia-mode
+  (add-hook 'julia-mode-hook #'rainbow-delimiters-mode-enable))
+
+(after! julia-repl
+  ;; Use vterm instead of the default term
   (when (modulep! :term vterm)
     (julia-repl-set-terminal-backend 'vterm)
     (map! :map vterm-mode-map :i "C-c C-z" nil))
-  (setq lsp-julia-package-dir nil)
+  ;; Make sure rainbow-delmiters are enabled
   ;; Make popup position similar to `ess'
-  (set-popup-rules!
-    '(("^\\*julia.*\\*$" :side right :size 0.5 :ttl nil))))
+  (set-popup-rules! '(("\\*julia.*\\*" :side right :size 0.5 :ttl nil))))
 
-;; lsp-mode seems to serve an invalid response to the Julia server.
-;; The pseudo-fix is rather simple at least.
-(after! julia-mode
-  (add-hook! 'julia-mode-hook
-    (setq-local lsp-enable-folding t
-                lsp-folding-range-limit 100)))
-#+end_src
-
-#+begin_src emacs-lisp
 (use-package! ob-julia
   :config
   (setq org-babel-julia-backend 'julia-snail))
 #+end_src
+
 ** LaTeX
 A good bulk of any good research should go into writing, and once your writing topic gets slightly technical, you need the goodness of LaTeX.
 These days I don't really write =.tex= files directly in Emacs and from what I hear, the built-in [[https://www.gnu.org/software/auctex/][AUCTeX]] is awesome for that.
