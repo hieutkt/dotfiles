@@ -401,19 +401,10 @@ Set orderless matching styles to include =char-fold-to-regexp=.
 *** Smaller popup text
 Automatic documentation popup while autocompleting is nice, but let's reduce the font size a little bit so that it doesn't cover the screen too much and makes it easier to skim for information:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (custom-set-faces! '((corfu-popupinfo) :height 0.9))
 #+end_src
 
-*** Corfu-Yasnippet
-Suggest yasnippet as completion.
-
-#+begin_src emacs-lisp
-(use-package! cape-yasnippet
-  :after (corfu yasnippet)
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-yasnippet))
-#+end_src
 *** Kind-icon configurations
 Kind-icon adds icons to =corfu= completions based on the =:company-kind= property.
 Let's add this properties to those that don't provide them.
@@ -523,31 +514,6 @@ Now, we can implement custom icons for Org-roam completions:
   (when (modulep! :ui workspaces)
     (+workspace-switch "Configs" t)))
 #+end_src
-
-** Miscellaneous
-Gonna clean this up later:
-
-#+begin_src emacs-lisp
-(use-package! ansi-color
-  :config
-  (defun hp/display-ansi-colors ()
-    (interactive)
-    (ansi-color-apply-on-region (point-min) (point-max))))
-
-(use-package! page-break-lines
-  :hook (prog-mode . page-break-lines-mode)
-  :init
-  (autoload 'turn-on-page-break-lines-mode "page-break-lines")
-  :config
-  (setq page-break-lines-max-width fill-column))
-
-(use-package! pdf-occur)
-
-(use-package! epa
-  :config
-  (epa-file-enable))
-#+end_src
-
 * Major modes and language-specific configurations
 ** Org-mode
 I came to Emacs for coding, but eventually what kept me using it is Org-mode.
@@ -1968,29 +1934,14 @@ Here's the relevent part:
 (add-hook 'org-mode-hook #'hp/org-roam-count-overlay-mode)
 #+end_src
 
-*** Miscellaneous
-Gonna clean this up later
+*** Org-download
 
 #+begin_src emacs-lisp
-(use-package! org-gcal
-  :commands org-gcal-fetch
-  :config
-  (load-file (concat dropbox-directory "/Auths/org-gcal-settings.el.gpg")))
-
 (use-package! org-download
   :config
   (add-hook 'dired-mode-hook 'org-download-enable)
   ;; Change how inline images are displayed
   (setq org-download-display-inline-images nil))
-
-(use-package! org-transclusion
-  :after org
-  :config
-  (setq org-transclusion-include-first-section t)
-  (add-to-list 'org-transclusion-exclude-elements 'keyword)
-  (map! :map global-map "<f9>" #'org-transclusion-mode))
-
-(use-package! clip2org)
 #+end_src
 
 ** R
@@ -2159,62 +2110,6 @@ The list of snippets enabled by this package is enormous, best to check their RE
     "tm1"    "_{t-1}"
     "**"     "^{\\ast}"))
 #+end_src
-** CalC
-*** Basic configs
-In Org-mode, I want to toggle =calc-embedded= by ~SPC m e~, overriding Doom's default keybindings for =org-export-dispatch= (which I normally invoke by ~C-c C-e~):
-
-#+begin_src emacs-lisp
-(map! :map (calc-mode-map org-mode-map latex-mode-map)
-      :after org
-      :localleader
-      :desc "Embedded calc (toggle)" "e" #'calc-embedded)
-#+end_src
-
-*** Experimental packages
-
-#+begin_src emacs-lisp
-(use-package! calctex
-  :commands calctex-mode
-  :init
-  (add-hook 'calc-mode-hook #'calctex-mode)
-  :config
-  (setq calctex-additional-latex-packages "
-\\usepackage[usenames]{xcolor}
-\\usepackage[sfdefault]{AlegreyaSans}
-\\usepackage{newtxsf}
-\\usepackage{soul}
-\\usepackage{adjustbox}
-\\usepackage{amsmath}
-\\usepackage{amssymb}
-\\usepackage{siunitx}
-\\usepackage{cancel}
-\\usepackage{mathtools}
-\\usepackage{mathalpha}
-\\usepackage{xparse}
-\\usepackage{arevmath}")
-  ;; Fix dvichop path error
-  (defadvice! no-messaging-a (orig-fn &rest args)
-    :around #'calctex-default-dispatching-render-process
-    (let ((inhibit-message t) message-log-max)
-      (apply orig-fn args)))
-  ;; Fix hardcoded dvichop path (whyyyyyyy)
-  (let ((vendor-folder (concat (file-truename doom-local-dir)
-                               "straight/"
-                               (format "build-%s" emacs-version)
-                               "/calctex/vendor/")))
-    (setq calctex-dvichop-sty (concat vendor-folder "texd/dvichop")
-          calctex-dvichop-bin (concat vendor-folder "texd/dvichop")))
-  (unless (file-exists-p calctex-dvichop-bin)
-    (message "CalcTeX: Building dvichop binary")
-    (let ((default-directory (file-name-directory calctex-dvichop-bin)))
-      (call-process "make" nil nil nil))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-(use-package! calc-transient
-  :hook (calc-mode . calc-transient-minor-mode))
-#+end_src
-
 ** Elfeeds
 
 #+begin_src emacs-lisp

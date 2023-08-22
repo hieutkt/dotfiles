@@ -1,68 +1,15 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
+;; General
 (package! auto-olivetti
   :recipe (:host sourcehut :repo "ashton314/auto-olivetti"))
 
-(package! lsp-treemacs)
-(package! org-super-agenda)
-(package! benchmark-init)
-
-(package! ox-pandoc)
-(package! org-pandoc-import
-  :recipe (:host github
-           :repo "tecosaur/org-pandoc-import"
-           :files ("*.el" "filters" "preprocessors")))
-
-(package! page-break-lines
-  :recipe (:host github :repo "purcell/page-break-lines"))
-(package! org-appear
-  :recipe (:host github :repo "awth13/org-appear"))
-(package! citeproc-org
-  :recipe (:host github :repo "andras-simonyi/citeproc-org"))
-(package! org-transclusion
-  :recipe (:host github :repo "nobiot/org-transclusion"))
-(package! org-csl-activate
-  :recipe (:host github :repo "andras-simonyi/org-cite-csl-activate"))
-
-(package! ess-stata-mode
-  :recipe (:host github :repo "emacs-ess/ess-stata-mode"))
-
-(package! clip2org
-  :recipe (:host github :repo "thamer/clip2org"))
-
-(package! engrave-faces
-  :recipe (:host github :repo "tecosaur/engrave-faces"))
-
-;;Org-roam
-(package! org-roam-ui
-  :recipe (:host github :repo "org-roam/org-roam-ui"
-           :branch "main" :files ("*.el" "out")))
-
-;;Graphviz
-(package! graphviz-dot-mode
-  :recipe (:host github :repo "ppareit/graphviz-dot-mode"))
-
-;; RSS
-(package! elfeed-score
-  :recipe (:host github :repo "sp1ff/elfeed-score"))
-
-(package! ob-julia
-  :recipe (:host github :repo "karthink/ob-julia" :files ("*.el" "julia")))
-
-(package! org-modern
-  :recipe (:host github :repo "minad/org-modern"))
-(package! svg-tag-mode
-  :recipe (:host github :repo "rougier/svg-tag-mode"))
-
-(package! calctex :recipe (:host github :repo "johnbcoughlin/calctex"
-                           :files ("*.el" "calctex/*.el" "calctex-contrib/*.el" "org-calctex/*.el" "vendor")))
-;; (package! calc-transient
-;;   :recipe (:host github :repo "karthink/calc-transient"))
-
+;; LATEX
 (package! laas
   :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
 
+;; ORG-MODE
 ;; Org-mode from tecosaur's development branch
 (package! org :recipe
   (:host nil :repo "https://git.tecosaur.net/mirrors/org-mode.git" :remote "mirror" :fork
@@ -95,12 +42,34 @@
            :files ("lisp/*.el"))
   :pin "6422b265f1150204f024e33d54f2dcfd8323005c")
 
+(package! org-modern
+  :recipe (:host github :repo "minad/org-modern"))
+
+(package! svg-tag-mode
+  :recipe (:host github :repo "rougier/svg-tag-mode"))
+
+(package! org-appear
+  :recipe (:host github :repo "awth13/org-appear"))
+
+(package! org-super-agenda)
+
+(package! org-csl-activate
+  :recipe (:host github :repo "andras-simonyi/org-cite-csl-activate"))
+
 (package! org-special-block-extras
   :recipe (:host github :repo "alhassy/org-special-block-extras"))
 
-(package! gptel
-  :recipe (:host github :repo "karthink/gptel"))
+(package! ob-julia
+  :recipe (:host github :repo "karthink/ob-julia" :files ("*.el" "julia")))
 
-;Corfu
-(package! cape-yasnippet
-  :recipe (:host github :repo "elken/cape-yasnippet"))
+(package! engrave-faces
+  :recipe (:host github :repo "tecosaur/engrave-faces"))
+
+;; STATA
+(package! ess-stata-mode
+  :recipe (:host github :repo "emacs-ess/ess-stata-mode"))
+
+;; RSS
+(package! elfeed-score
+  :recipe (:host github :repo "sp1ff/elfeed-score"))
+

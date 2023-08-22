@@ -42,7 +42,7 @@
        ;;neotree                       ; a project drawer, like NERDTree for vim
        ophints                         ; highlight the region an operation acts on
        (popup +defaults)               ; tame sudden yet inevitable temporary windows
-       ligatures
+       (ligatures +iosevka)
        ;;tabs                          ; an tab bar for Emacs
        treemacs                      ; a project drawer, like neotree but cooler
        unicode                       ; extended unicode support for various languages
@@ -134,7 +134,7 @@
        ;;json                          ; At least it ain't XML
        ;;(java +meghanada)             ; the poster child for carpal tunnel syndrome
        ;;javascript                    ; all(hope(abandon(ye(who(enter(here))))))
-       (julia +lsp +tree-sitter)        ; a better, faster MATLAB
+       (julia +snail +lsp +tree-sitter); a better, faster MATLAB
        ;;kotlin                        ; a better, slicker Java(Script)
        (latex +latexmk +cdlatex +lsp)  ; writing papers in Emacs has never been so fun
        ;;lean
@@ -145,9 +145,8 @@
        ;;nim                           ; python + lisp at the speed of c
        ;;nix                           ; I hereby declare "nix geht mehr!"
        ;;ocaml                         ; an objective camel
-       (org +roam2 +jupyter +hugo +noter
+       (org +roam2 +jupyter +hugo
             +beamer
-            ;; +pretty
             +dragndrop)   ; organize your plain life in plain text
        ;;php                           ; perl's insecure younger brother
        plantuml                      ; diagrams for confusing people more
@@ -177,9 +176,9 @@
        ;;(wanderlust +gmail)
 
        :app
-       calendar
+       ;;calendar
        ;;irc                           ; how neckbeards socialize
-       (rss +org)                    ; emacs as an RSS reader
+       (rss +org)                      ; emacs as an RSS reader
        ;;twitter                       ; twitter client https://twitter.com/vnought
 
        :config
