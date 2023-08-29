@@ -1660,6 +1660,17 @@ Now, to set this up for different languages:
   )
 #+end_src
 
+Sorting =org-roam-node-find= by last modified time seems the most intuitive for me.
+
+#+begin_src emacs-lisp
+(defun org-roam-node-find-by-mtime ()
+  (find-file
+   (org-roam-node-file
+    (org-roam-node-read nil nil #'org-roam-node-read-sort-by-file-mtime))))
+
+(advice-add 'org-roam-node-find :override #'org-roam-node-find-by-mtime)
+#+end_src
+
 ***** Capture templates
 #+begin_src emacs-lisp
 (use-package! org-roam-capture
