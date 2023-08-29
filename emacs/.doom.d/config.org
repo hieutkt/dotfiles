@@ -2107,11 +2107,14 @@ The list of snippets enabled by this package is enormous, best to check their RE
     "||"     nil
     "lr||"   (lambda () (interactive) (yas-expand-snippet "\\lVert $0 \\rVert"))
     "pdv"    (lambda () (interactive) (yas-expand-snippet "\\frac{\\partial $1}{\\partial $2}"))
+    "dd"    (lambda () (interactive) (yas-expand-snippet "~\\mathrm{d}"))
     ;; Condition: Math environment, modify last object on the left
     :cond #'laas-object-on-left-condition
     "hat"    (lambda () (interactive) (laas-wrap-previous-object "hat"))
-    "ubar"   (lambda () (interactive) (laas-wrap-previous-object "underline"))
+    "ubar"   (lambda () (interactive) (laas-wrap-previous-object "underbar"))
     "bar"    (lambda () (interactive) (laas-wrap-previous-object "bar"))
+    "uline"   (lambda () (interactive) (laas-wrap-previous-object "underline"))
+    "oline"   (lambda () (interactive) (laas-wrap-previous-object "overline"))
     "dot"    (lambda () (interactive) (laas-wrap-previous-object "dot"))
     "tilde"  (lambda () (interactive) (laas-wrap-previous-object "tilde"))
     "TXT"    (lambda () (interactive) (laas-wrap-previous-object "text"))
