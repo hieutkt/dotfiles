@@ -59,11 +59,14 @@
 (package! org-special-block-extras
   :recipe (:host github :repo "alhassy/org-special-block-extras"))
 
-(package! ob-julia
-  :recipe (:host github :repo "karthink/ob-julia" :files ("*.el" "julia")))
-
 (package! engrave-faces
   :recipe (:host github :repo "tecosaur/engrave-faces"))
+
+;; Julia
+(unpin! julia-snail)
+
+(package! ob-julia
+  :recipe (:host github :repo "karthink/ob-julia" :files ("*.el" "julia")))
 
 ;; STATA
 (package! ess-stata-mode

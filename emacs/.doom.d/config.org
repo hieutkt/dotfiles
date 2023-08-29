@@ -2027,18 +2027,40 @@ The rest of the configurations is straight forward.
 (after! julia-mode
   (add-hook 'julia-mode-hook #'rainbow-delimiters-mode-enable))
 
-(after! julia-repl
-  ;; Use vterm instead of the default term
-  (when (modulep! :term vterm)
-    (julia-repl-set-terminal-backend 'vterm)
-    (map! :map vterm-mode-map :i "C-c C-z" nil))
-  ;; Make sure rainbow-delmiters are enabled
-  ;; Make popup position similar to `ess'
-  (set-popup-rules! '(("\\*julia.*\\*" :side right :size 0.5 :ttl nil))))
-
 (use-package! ob-julia
   :config
   (setq org-babel-julia-backend 'julia-snail))
+#+end_src
+
+Julia-snail is good.
+
+#+begin_src emacs-lisp
+(after! julia-snail
+  (map! :map julia-snail-mode-map
+        :g "C-c C-z" #'julia-snail
+        :g "C-c C-l" #'julia-snail-send-line
+        :map julia-repl-mode-map
+        "C-c C-a" nil ;julia-snail-package-activate
+        "C-c C-z" nil ;julia-snail
+        "C-c C-c" nil ;julia-snail-send-top-level-form
+        "C-c C-d" nil ;julia-snail-doc-lookup
+        "C-c C-e" nil ;julia-snail-send-dwim
+        "C-c C-k" nil ;julia-snail-send-buffer-file
+        "C-c C-l" nil ;julia-snail-send-line
+        :map vterm-mode-map
+        :i "C-c C-z" nil
+        :map markdown-view-mode-map
+        :n "q" #'kill-this-buffer))
+#+end_src
+
+Some popup rules to make workflows more consistent.
+
+#+begin_src emacs-lisp
+(after! julia-repl
+  (set-popup-rules!
+  '(("^\\*julia.*\\*$" :side right :size 0.5 :ttl nil :quit nil)
+    ("^\\*julia.*\\* documentation" :side bottom :size 0.4 :ttl nil)
+    ("^\\*julia.*\\* mm" :select t :size #'+popup-shrink-to-fit :modeline t))))
 #+end_src
 
 ** LaTeX
