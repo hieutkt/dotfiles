@@ -211,6 +211,9 @@ Fallback font for non-ascii glyphs:
       (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
     (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
       (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+    ;; Other unicode block
+    (dolist (unicode-block '("Braille Patterns"))
+      (push "Iosevka Custom" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
     )
 #+end_src
 
@@ -218,9 +221,13 @@ Fallback font for non-ascii glyphs:
 Emacs (since version 28 I think) handles ligatures pretty well.
 However, sometimes we still need to manually fix some ligature composition:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; For Iosevka
-(set-char-table-range composition-function-table ?+ '(["\\(?:++++\\)" 0 font-shape-gstring]))
+;; (set-char-table-range composition-function-table ?+ '(["\\(?:+[\\*]\\)" 0 font-shape-gstring]))
+(set-char-table-range composition-function-table ?* '(["\\(?:\\*?[=+>]\\)" 0 font-shape-gstring]))
+;; (set-char-table-range composition-function-table ?= '(["\\(?:=?[=\\*]\\)" 0 font-shape-gstring]))
+;; (set-char-table-range composition-function-table ?= '(["\\(?:=?[\\*:]\\)" 0 font-shape-gstring]))
+;; (set-char-table-range composition-function-table ?: '(["\\(?::=\\)" 0 font-shape-gstring]))
 ;; For Alegreya/Alegreya Sans
 (set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijltkbh]\\)" 0 font-shape-gstring]))
 ;; (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
@@ -297,6 +304,19 @@ Show page number when viewing PDFs:
   '(bar window-number pdf-pages pdf-icon buffer-name)
   '(misc-info matches major-mode process vcs))
 #+end_src
+
+Recent version of [[https://github.com/seagle0128/doom-modeline/pull/622][doom-modeline]] features [[github:rainstormstudio/nerd-icons.el][nerd-icons.el]] instead of [[github:domtronn/all-the-icons.el][all-the-icons.el]].
+I like this change, however different parts of Doom are still using =all-the-icons= under the hood.
+Some custom configurations is needed for now.
+
+#+begin_src emacs-lisp
+(use-package! nerd-icons
+  :custom
+  (nerd-icons-font-family  "Iosevka Nerd Font Mono")
+  (nerd-icons-scale-factor 2.0)
+  (nerd-icons-default-adjust -.075))
+#+end_src
+
 ** Narrowing and center buffer contents
 On larger screens I like buffer contents to not exceed a certain width and are centered.
 =olivetti-mode= solves this problem nicely.
@@ -368,6 +388,17 @@ However, I find them to be a little bit too intrusive, so let's change how they 
       :extend t)
     ))
 #+end_src
+*** Hack: load evil keybindings
+For some reasons =evil= keybindings are usually not loaded along with emacs.
+The simple solution is forcing emacs to load this file.
+
+#+begin_src emacs-lisp
+(defun hp/load-evil-keybindings ()
+  (interactive)
+  (load-file "~/.config/emacs/modules/config/default/+evil-bindings.el"))
+
+(add-hook 'doom-after-init-hook #'hp/load-evil-keybindings)
+#+end_src
 
 ** Completions
 *** Corfu defaults
@@ -436,7 +467,7 @@ Now, we can implement custom icons for Org-roam completions:
 (after! (org-roam kind-icon)
   (add-to-list
    'kind-icon-mapping
-   '(org-roam     "or" :icon "symbol-interface"   :collection "vscode" :face font-lock-type-face)))
+   '(org-roam     "or" :icon "hubspot"   :collection "material" :face font-lock-type-face)))
 #+end_src
 
 ** Language server protocol (LSP)
