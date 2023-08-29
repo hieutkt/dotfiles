@@ -1122,18 +1122,34 @@ channel."
 ***** Theorems, proof, definitions
 #+begin_src emacs-lisp
 (after! org-special-block-extras
+  ;; Theorem
   (org-defblock theorem
    (name "")
    (format (pcase backend
-             (`latex "\\begin{theorem}[%s]\n%s\n\\end{theorem}")
+             (`latex "\\begin{theorem}%s\n%s\n\\end{theorem}")
              (_  "{{< notice info \"Theorem: %s\" >}}\n%s\n{{< /notice >}}"))
-           name contents))
+           (if (eq name "") "" (format "[%s]" name)) contents))
+  ;; Proposition
+  (org-defblock proposition
+   (name "")
+   (format (pcase backend
+             (`latex "\\begin{proposition}%s\n%s\n\\end{proposition}")
+             (_  "{{< notice info \"Proposition: %s\" >}}\n%s\n{{< /notice >}}"))
+           (if (eq name "") "" (format "[%s]" name)) contents))
+  ;; Lemma
+  (org-defblock lemma
+   (name "")
+   (format (pcase backend
+             (`latex "\\begin{lemma}%s\n%s\n\\end{lemma}")
+             (_  "{{< notice info \"Lemma: %s\" >}}\n%s\n{{< /notice >}}"))
+           (if (eq name "") "" (format "[%s]" name)) contents))
+  ;;Definitions
   (org-defblock definition
    (name "")
    (format (pcase backend
-             (`latex "\\begin{definition}[%s]\n%s\n\\end{definition}")
+             (`latex "\\begin{definition}%s\n%s\n\\end{definition}")
              (_  "{{< notice info \"Definition: %s\" >}}\n%s\n{{< /notice >}}"))
-           name contents))
+           (if (eq name "") "" (format "[%s]" name)) contents))
   )
 #+end_src
 ***** Simpler =details= blocks
@@ -1233,9 +1249,9 @@ Since we're are overdoing it, let's make these blocks /slightly colorful/!
     "Apply overlays to #+begin_info blocks in the current buffer."
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^\\(\\#\\+begin_\\(?:info\\|definition\\|theorem\\)\\)" nil t)
+      (while (re-search-forward "^\\(\\#\\+begin_\\(?:info\\|theorem\\)\\)" nil t)
         (let* ((beg (match-beginning 0))
-               (end (if (re-search-forward "^\\(\\#\\+end_\\(?:info\\|definition\\|theorem\\)\\)" nil t)
+               (end (if (re-search-forward "^\\(\\#\\+end_\\(?:info\\|theorem\\)\\)" nil t)
                         (1+ (line-end-position))
                       (point-max)))
                (ov (make-overlay beg end)))
@@ -1257,9 +1273,9 @@ Since we're are overdoing it, let's make these blocks /slightly colorful/!
     "Apply overlays to #+begin_note blocks in the current buffer."
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^\\(\\#\\+begin_note\\)" nil t)
+      (while (re-search-forward "^\\(\\#\\+begin_\\(?:note\\|definition\\)\\)" nil t)
         (let* ((beg (match-beginning 0))
-               (end (if (re-search-forward "^\\(\\#\\+end_note\\)" nil t)
+               (end (if (re-search-forward "^\\(\\#\\+end_\\(?:note\\|definition\\)\\)" nil t)
                         (1+ (line-end-position))
                       (point-max)))
                (ov (make-overlay beg end)))
@@ -1269,9 +1285,9 @@ Since we're are overdoing it, let's make these blocks /slightly colorful/!
     "Apply overlays to #+begin_question blocks in the current buffer."
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^\\(\\#\\+begin_question\\)" nil t)
+      (while (re-search-forward "^\\(\\#\\+begin_\\(?:question\\|proposition\\)\\)" nil t)
         (let* ((beg (match-beginning 0))
-               (end (if (re-search-forward "^\\(\\#\\+end_question\\)" nil t)
+               (end (if (re-search-forward "^\\(\\#\\+end_\\(?:question\\|proposition\\)\\)" nil t)
                         (1+ (line-end-position))
                       (point-max)))
                (ov (make-overlay beg end)))
