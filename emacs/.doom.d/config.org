@@ -902,6 +902,19 @@ INFO is a plist containing export properties."
             "Creating LaTeX Image..." nil processing-type)
       (buffer-string))))
 #+end_src
+**** Default previewing in =lualatex=-based buffers to use =latex=
+The new previewing system is great, but only for =pdflatex=.
+Sometimes I need to write LaTeX document that contains Unicode inputs, whether it's for Julia code exports with =engraved-faces= or for my own Vietnamese typing needs.
+As of now, a good compromise is to use =lualatex= for latex exports but keeps using =latex= for the previewing system.
+Remember that this may break if you have complicated custom latex preables in Org-mode.
+
+#+begin_src emacs-lisp
+(setq org-latex-preview-compiler-command-map
+      '(("pdflatex" . "latex")
+        ("xelatex"  . "xelatex -no-pdf") ;Not working now, use lualatex instead
+        ("lualatex" . "latex")))
+#+end_src
+
 *** Org-export
 **** General
 #+begin_src emacs-lisp
