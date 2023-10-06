@@ -368,6 +368,11 @@ However, I find them to be a little bit too intrusive, so let's change how they 
 * Editing configurations
 ** Evil
 #+begin_src emacs-lisp
+(use-package! evil
+  :init
+  (setq evil-move-beyond-eol t
+        evil-move-cursor-back nil))
+
 (use-package! evil-escape
   :config
   (setq evil-esc-delay 0.25))
