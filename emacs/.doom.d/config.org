@@ -954,6 +954,36 @@ INFO is a plist containing export properties."
             "Creating LaTeX Image..." nil processing-type)
       (buffer-string))))
 #+end_src
+**** Ugly patch =--bbox=preview=
+#+begin_src emacs-lisp
+(setq org-latex-preview-process-alist
+      `((dvipng :programs
+         ("latex" "dvipng")
+         :description "dvi > png" :message "you need to install the programs: latex and dvipng." :image-input-type "dvi" :image-output-type "png" :latex-compiler
+         ("%l -interaction nonstopmode -output-directory %o %f")
+         :latex-precompiler
+         ("%l -output-directory %o -ini -jobname=%b \"&%L\" mylatexformat.ltx %f")
+         :image-converter
+         ("dvipng --follow -D %D -T tight --depth --height -o %B-%%09d.png %f")
+         :transparent-image-converter
+         ("dvipng --follow -D %D -T tight -bg Transparent --depth --height -o %B-%%09d.png %f"))
+        (dvisvgm :programs
+                 ("latex" "dvisvgm")
+                 :description "dvi > svg" :message "you need to install the programs: latex and dvisvgm." :image-input-type "dvi" :image-output-type "svg" :latex-compiler
+                 ("%l -interaction nonstopmode -output-directory %o %f")
+                 :latex-precompiler
+                 ("%l -output-directory %o -ini -jobname=%b \"&%L\" mylatexformat.ltx %f")
+                 :image-converter
+                 ("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -o %B-%%9p.svg %f"))
+        (imagemagick :programs
+                     ("pdflatex" "convert")
+                     :description "pdf > png" :message "you need to install the programs: latex and imagemagick." :image-input-type "pdf" :image-output-type "png" :latex-compiler
+                     ("pdflatex -interaction nonstopmode -output-directory %o %f")
+                     :latex-precompiler
+                     ("pdftex -output-directory %o -ini -jobname=%b \"&pdflatex\" mylatexformat.ltx %f")
+                     :image-converter
+                     ("convert -density %D -trim -antialias %f -quality 100 %B-%%09d.png"))))
+#+end_src
 **** Default previewing in =lualatex=-based buffers to use =latex=
 The new previewing system is great, but only for =pdflatex=.
 Sometimes I need to write LaTeX document that contains Unicode inputs, whether it's for Julia code exports with =engraved-faces= or for my own Vietnamese typing needs.
@@ -966,7 +996,6 @@ Remember that this may break if you have complicated custom latex preables in Or
         ("xelatex"  . "xelatex -no-pdf") ;Not working now, use lualatex instead
         ("lualatex" . "latex")))
 #+end_src
-
 *** Org-export
 **** General
 #+begin_src emacs-lisp
