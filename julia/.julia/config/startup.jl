@@ -1,6 +1,6 @@
 # Import
 using Revise
-using BenchmarkTools, ProfileView
+using BenchmarkTools
 using OhMyREPL; colorscheme!("GruvboxDark")
 
 # Eviroment
