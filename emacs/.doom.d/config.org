@@ -1082,7 +1082,7 @@ This allows ignoring headlines when exporting by adding the tag =:ignore:=  to a
   ;; Default packages
   (setq org-export-headline-levels 5
         org-latex-default-packages-alist
-        '(("AUTO" "inputenc" t ("pdflatex"))
+        '(("AUTO" "inputenc" t ("pdflatex" "lualatex"))
           ("T1" "fontenc" t ("pdflatex"))
           ;;Microtype
           ;;- pdflatex: full microtype features, fast, however no fontspec
