@@ -175,10 +175,12 @@ export-glyph-names = false
   inherits = "ss12"
 
     [buildPlans.iosevka-custom.variants.design]
+    v = "straight-serifed"
     lower-alpha = "crossing"
     capital-gamma = "top-right-serifed"
     zero = "dotted"
     ampersand = "et-toothed"
+    lig-ltgteq = "slanted"
 
   [buildPlans.iosevka-custom.ligations]
   inherits = "julia"
@@ -248,6 +250,14 @@ We should take care of =mixed-pitch-mode= here, too:
             'corfu-default 'font-latex-math-face)
   (setq mixed-pitch-set-height t))
 #+end_src
+** Icons
+Some nerd-icons related stuffs
+
+#+begin_src emacs-lisp
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+#+end_src
 
 ** Slightly transparent Emacs
 Emacs version 29 added a new frame parameter for "true" transparency, which means that only the blackground is transparent while the text is not.
@@ -275,12 +285,12 @@ Show page number when viewing PDFs:
    (doom-modeline--buffer-name)))
 
 (doom-modeline-def-segment pdf-icon
-  "PDF icon from all-the-icons."
+  "PDF icon from nerd-icons."
   (concat
    doom-modeline-spc
-   (doom-modeline-icon 'material "picture_as_pdf" nil nil
+   (doom-modeline-icon 'mdicon "nf-md-file_pdf_box" nil nil
                        :face (if (doom-modeline--active)
-                                 'all-the-icons-red
+                                 'nerd-icons-red
                                'mode-line-inactive))))
 
 (defun doom-modeline-update-pdf-pages ()
@@ -312,11 +322,17 @@ Some custom configurations is needed for now.
 #+begin_src emacs-lisp
 (use-package! nerd-icons
   :custom
-  (nerd-icons-font-family  "Iosevka Nerd Font Mono")
-  (nerd-icons-scale-factor 2.0)
-  (nerd-icons-default-adjust -.075))
+  ;; (nerd-icons-font-family  "Iosevka Nerd Font Mono")
+  ;; (nerd-icons-scale-factor 2)
+  ;; (nerd-icons-default-adjust -.075)
+  (doom-modeline-major-mode-icon t))
 #+end_src
 
+For compability
+
+#+begin_src emacs-lisp
+(use-package! all-the-icons :after nerd-icons)
+#+end_src
 ** Narrowing and center buffer contents
 On larger screens I like buffer contents to not exceed a certain width and are centered.
 =olivetti-mode= solves this problem nicely.
@@ -326,11 +342,11 @@ There is also an =auto-olivetti-mode=  which automatically turns on =olivetti-mo
 (use-package! olivetti
   :config
   (setq-default olivetti-body-width 130)
-  (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 70))))
+  (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 80))))
 
 (use-package! auto-olivetti
   :custom
-  (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode))
+  (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode ibuffer-mode))
   :config
   (auto-olivetti-mode))
 #+end_src
@@ -467,7 +483,7 @@ Now, we can implement custom icons for Org-roam completions:
 (after! (org-roam kind-icon)
   (add-to-list
    'kind-icon-mapping
-   '(org-roam     "or" :icon "hubspot"   :collection "material" :face font-lock-type-face)))
+   `(org-roam ,(nerd-icons-codicon "nf-cod-symbol_interface") :face font-lock-type-face)))
 #+end_src
 
 ** Language server protocol (LSP)
@@ -1569,14 +1585,14 @@ Now, to set this up for different languages:
            (shortentitle (if (> (length filetitle-or-name) 20) (concat (substring filetitle-or-name 0 20)  "...") filetitle-or-name))
            (separator (concat " " (all-the-icons-material "chevron_right") " ")))
       (cond
-       ((= level 1) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'all-the-icons-dyellow))
+       ((= level 1) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-dyellow))
                             (propertize shortentitle 'face 'org-roam-olp) separator title))
-       ((= level 2) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'all-the-icons-dsilver))
+       ((= level 2) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-dsilver))
                             (propertize (concat shortentitle separator (string-join olp separator)) 'face 'org-roam-olp) separator title))
        ((> level 2) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'org-roam-olp))
                             (propertize (concat shortentitle separator (string-join olp separator)) 'face 'org-roam-olp) separator title))
-       (t (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'all-the-icons-yellow))
-                  (if filetitle title (propertize filetitle-or-name 'face 'all-the-icons-dyellow)))))))
+       (t (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-yellow))
+                  (if filetitle title (propertize filetitle-or-name 'face 'nerd-icons-dyellow)))))))
 
   (cl-defmethod org-roam-node-functiontag ((node org-roam-node))
     "Return the FUNCTION TAG for each node. These tags are intended to be unique to each file, and represent the note's function.
@@ -1586,29 +1602,29 @@ Now, to set this up for different languages:
        ;; Argument or compilation
        (cond
         ((member "argument" tags)
-         (propertize "=f:argument=" 'display (all-the-icons-material "forum" :face 'all-the-icons-dred)))
+         (propertize "=f:argument=" 'display (all-the-icons-material "forum" :face 'nerd-icons-dred)))
         ((member "compilation" tags)
-         (propertize "=f:compilation=" 'display (all-the-icons-material "collections" :face 'all-the-icons-dyellow)))
+         (propertize "=f:compilation=" 'display (all-the-icons-material "collections" :face 'nerd-icons-dyellow)))
         (t (propertize "=f:empty=" 'display (all-the-icons-material "remove" :face 'org-hide))))
        ;; concept, bio, data or event
        (cond
         ((member "concept" tags)
-         (propertize "=f:concept=" 'display (all-the-icons-material "blur_on" :face 'all-the-icons-dblue)))
+         (propertize "=f:concept=" 'display (all-the-icons-material "blur_on" :face 'nerd-icons-dblue)))
         ((member "tool" tags)
-         (propertize "=f:tool=" 'display (all-the-icons-material "build" :face 'all-the-icons-dblue)))
+         (propertize "=f:tool=" 'display (all-the-icons-material "build" :face 'nerd-icons-dblue)))
         ((member "bio" tags)
-         (propertize "=f:bio=" 'display (all-the-icons-material "people" :face 'all-the-icons-dblue)))
+         (propertize "=f:bio=" 'display (all-the-icons-material "people" :face 'nerd-icons-dblue)))
         ((member "event" tags)
-         (propertize "=f:event=" 'display (all-the-icons-material "event" :face 'all-the-icons-dblue)))
+         (propertize "=f:event=" 'display (all-the-icons-material "event" :face 'nerd-icons-dblue)))
         ((member "data" tags)
-         (propertize "=f:data=" 'display (all-the-icons-material "data_usage" :face 'all-the-icons-dblue)))
+         (propertize "=f:data=" 'display (all-the-icons-material "data_usage" :face 'nerd-icons-dblue)))
         (t (propertize "=f:nothing=" 'display (all-the-icons-material "format_shapes" :face 'org-hide))))
        ;; literature
        (cond
         ((member "literature" tags)
-         (propertize "=f:literature=" 'display (all-the-icons-material "book" :face 'all-the-icons-dcyan)))
+         (propertize "=f:literature=" 'display (all-the-icons-material "book" :face 'nerd-icons-dcyan)))
         ((member "website" tags)
-         (propertize "=f:website=" 'display (all-the-icons-material "move_to_inbox" :face 'all-the-icons-dsilver)))
+         (propertize "=f:website=" 'display (all-the-icons-material "move_to_inbox" :face 'nerd-icons-dsilver)))
         (t (propertize "=f:nothing=" 'display (all-the-icons-material "book" :face 'org-hide))))
        ;; journal
        )))
@@ -1621,8 +1637,8 @@ Now, to set this up for different languages:
        (propertize
         (string-join
          (append '(" ") othertags)
-         (propertize "#" 'display (all-the-icons-material "label" :face 'all-the-icons-dgreen)))
-        'face 'all-the-icons-dgreen)))
+         (propertize "#" 'display (nerd-icons-faicon "nf-fa-hashtag" :face 'nerd-icons-dgreen)))
+        'face 'nerd-icons-dgreen)))
 
   (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
     (let* ((count (caar (org-roam-db-query
@@ -1632,16 +1648,16 @@ Now, to set this up for different languages:
                           :and (= type "id")]
                          (org-roam-node-id node)))))
       (if (> count 0)
-          (concat (propertize "=has:backlinks=" 'display (all-the-icons-material "link" :face 'all-the-icons-blue)) (format "%d" count))
-        (concat (propertize "=not-backlinks=" 'display (all-the-icons-material "link" :face 'org-hide))  " "))))
+          (concat (propertize "=has:backlinks=" 'display (nerd-icons-mdicon "nf-md-link" :face 'nerd-icons-blue)) (format "%d" count))
+        (concat " " (propertize "=not-backlinks=" 'display (nerd-icons-mdicon "nf-md-link" :face 'org-hide))  " "))))
 
   (cl-defmethod org-roam-node-directories ((node org-roam-node))
     (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
         (concat
          (if (string= "journal/" dirs)
-             (all-the-icons-material "edit" :face 'all-the-icons-dsilver)
-           (all-the-icons-material "folder" :face 'all-the-icons-dsilver))
-         (propertize (string-join (f-split dirs) "/") 'face 'all-the-icons-dsilver) " ")
+             (all-the-icons-material "edit" :face 'nerd-icons-dsilver)
+           (all-the-icons-material "folder" :face 'nerd-icons-dsilver))
+         (propertize (string-join (f-split dirs) "/") 'face 'nerd-icons-dsilver) " ")
       ""))
 
   (defun +marginalia--time-colorful (time)
