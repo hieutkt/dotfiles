@@ -99,7 +99,7 @@ class FileSearchExtension(Extension):
 
     def get_open_at_search_position(self, path, query):
         """ Returns open pdf file at query location"""
-        cmd = f"evince '{path}' --find='{query}'"
+        cmd = f"xdg-open '{path}'"
         LOGGING.info(cmd)
         return RunScriptAction(cmd)
 
