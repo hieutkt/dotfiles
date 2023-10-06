@@ -9,6 +9,10 @@
 (package! laas
   :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
 
+;; Icons
+(package! nerd-icons-ibuffer
+  :recipe (:host github :repo "seagle0128/nerd-icons-ibuffer"))
+
 ;; ORG-MODE
 ;; Org-mode from tecosaur's development branch
 (package! org :recipe
@@ -76,3 +80,6 @@
 (package! elfeed-score
   :recipe (:host github :repo "sp1ff/elfeed-score"))
 
+;;Testing
+(package! indent-bars
+  :recipe (:host github :repo "jdtsmith/indent-bars"))
