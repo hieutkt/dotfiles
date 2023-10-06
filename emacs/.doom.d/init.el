@@ -22,11 +22,11 @@
 
        :completion
        ;; (company +childframe)           ; the ultimate code completion backend
-       (corfu-LuigiPiucco +icons)
+       (corfu-LuigiPiucco +icons +orderless)
        ;;helm                          ; the *other* search engine for love and life
        ;;ido                           ; the other *other* search engine...
        ;; (ivy)                        ; a search engine for love and life
-       (vertico)
+       (vertico +icons)
 
        :ui
        ;;deft                          ; notational velocity for Emacs
@@ -42,7 +42,7 @@
        ;;neotree                       ; a project drawer, like NERDTree for vim
        ophints                         ; highlight the region an operation acts on
        (popup +defaults)               ; tame sudden yet inevitable temporary windows
-       (ligatures +iosevka)
+       (ligatures)
        ;;tabs                          ; an tab bar for Emacs
        treemacs                      ; a project drawer, like neotree but cooler
        unicode                       ; extended unicode support for various languages
@@ -68,7 +68,7 @@
        word-wrap                    ; soft wrapping with language-aware indent
 
        :emacs
-       dired                           ; making dired pretty [functional]
+       (dired +icons)                  ; making dired pretty [functional]
        electric                        ; smarter, keyword-based electric-indent
        (ibuffer + icons)                       ; interactive buffer management
        undo                            ; persistent, smarter undo for your inevitable mistakes
