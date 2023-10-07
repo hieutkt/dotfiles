@@ -79,7 +79,3 @@
 ;; RSS
 (package! elfeed-score
   :recipe (:host github :repo "sp1ff/elfeed-score"))
-
-;;Testing
-(package! indent-bars
-  :recipe (:host github :repo "jdtsmith/indent-bars"))

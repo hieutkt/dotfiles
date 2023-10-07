@@ -328,11 +328,6 @@ Some custom configurations is needed for now.
   (doom-modeline-major-mode-icon t))
 #+end_src
 
-For compability
-
-#+begin_src emacs-lisp
-(use-package! all-the-icons :after nerd-icons)
-#+end_src
 ** Narrowing and center buffer contents
 On larger screens I like buffer contents to not exceed a certain width and are centered.
 =olivetti-mode= solves this problem nicely.
@@ -538,10 +533,6 @@ Now, we can implement custom icons for Org-roam completions:
    citar-notes-paths (list(concat org-directory "/Org-roam/literature/"))
    citar-library-paths (list (concat org-directory "/Org-roam/"))
    citar-file-variable "file"
-   citar-symbols
-   `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-red :v-adjust -0.1) . " ")
-     (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
-     (link ,(all-the-icons-material "link" :face 'all-the-icons-blue) . " "))
    citar-symbol-separator "  "
    org-cite-global-bibliography citar-bibliography)
   ;; Search contents of PDFs
@@ -1691,15 +1682,20 @@ Now, to set this up for different languages:
            (filetitle (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
            (filetitle-or-name (if filetitle filetitle (file-name-nondirectory (org-roam-node-file node))))
            (shortentitle (if (> (length filetitle-or-name) 20) (concat (substring filetitle-or-name 0 20)  "...") filetitle-or-name))
-           (separator (concat " " (all-the-icons-material "chevron_right") " ")))
+           (separator (concat " " (nerd-icons-octicon "nf-oct-chevron_right") " ")))
       (cond
-       ((= level 1) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-dyellow))
+       ((= level 1) (concat (propertize (format "=level:%d=" level) 'display
+                                        (nerd-icons-faicon "nf-fa-file" :face 'nerd-icons-dyellow))
                             (propertize shortentitle 'face 'org-roam-olp) separator title))
-       ((= level 2) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-dsilver))
+       ((= level 2) (concat (propertize (format "=level:%d=" level) 'display
+                                        (nerd-icons-faicon "nf-fa-file" :face 'nerd-icons-dsilver))
+                            (propertize (concat shortentitle separator (string-join olp separator)) 'face 'org-roam-olp)
+                            separator title))
+       ((> level 2) (concat (propertize (format "=level:%d=" level) 'display
+                                        (nerd-icons-faicon "nf-fa-file" :face 'org-roam-olp))
                             (propertize (concat shortentitle separator (string-join olp separator)) 'face 'org-roam-olp) separator title))
-       ((> level 2) (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'org-roam-olp))
-                            (propertize (concat shortentitle separator (string-join olp separator)) 'face 'org-roam-olp) separator title))
-       (t (concat (propertize (format "=level:%d=" level) 'display (all-the-icons-material "insert_drive_file" :face 'nerd-icons-yellow))
+       (t (concat (propertize (format "=level:%d=" level) 'display
+                              (nerd-icons-faicon "nf-fa-file" :face 'nerd-icons-yellow))
                   (if filetitle title (propertize filetitle-or-name 'face 'nerd-icons-dyellow)))))))
 
   (cl-defmethod org-roam-node-functiontag ((node org-roam-node))
@@ -1710,30 +1706,42 @@ Now, to set this up for different languages:
        ;; Argument or compilation
        (cond
         ((member "argument" tags)
-         (propertize "=f:argument=" 'display (all-the-icons-material "forum" :face 'nerd-icons-dred)))
+         (propertize "=f:argument=" 'display
+                     (nerd-icons-mdicon "nf-md-forum" :face 'nerd-icons-dred)))
         ((member "compilation" tags)
-         (propertize "=f:compilation=" 'display (all-the-icons-material "collections" :face 'nerd-icons-dyellow)))
-        (t (propertize "=f:empty=" 'display (all-the-icons-material "remove" :face 'org-hide))))
+         (propertize "=f:compilation=" 'display
+                     (nerd-icons-mdicon "nf-md-format_list_text" :face 'nerd-icons-dyellow)))
+        (t (propertize "=f:empty=" 'display
+                       (nerd-icons-codicon "nf-cod-remove" :face 'org-hide))))
        ;; concept, bio, data or event
        (cond
         ((member "concept" tags)
-         (propertize "=f:concept=" 'display (all-the-icons-material "blur_on" :face 'nerd-icons-dblue)))
+         (propertize "=f:concept=" 'display
+                     (nerd-icons-mdicon "nf-md-blur" :face 'nerd-icons-dblue)))
         ((member "tool" tags)
-         (propertize "=f:tool=" 'display (all-the-icons-material "build" :face 'nerd-icons-dblue)))
+         (propertize "=f:tool=" 'display
+                     (nerd-icons-mdicon "nf-md-tools" :face 'nerd-icons-dblue)))
         ((member "bio" tags)
-         (propertize "=f:bio=" 'display (all-the-icons-material "people" :face 'nerd-icons-dblue)))
+         (propertize "=f:bio=" 'display
+                     (nerd-icons-octicon "nf-oct-people" :face 'nerd-icons-dblue)))
         ((member "event" tags)
-         (propertize "=f:event=" 'display (all-the-icons-material "event" :face 'nerd-icons-dblue)))
+         (propertize "=f:event=" 'display
+                     (nerd-icons-codicon "nf-cod-symbol_event" :face 'nerd-icons-dblue)))
         ((member "data" tags)
-         (propertize "=f:data=" 'display (all-the-icons-material "data_usage" :face 'nerd-icons-dblue)))
-        (t (propertize "=f:nothing=" 'display (all-the-icons-material "format_shapes" :face 'org-hide))))
+         (propertize "=f:data=" 'display
+                     (nerd-icons-mdicon "nf-md-chart_arc" :face 'nerd-icons-dblue)))
+        (t (propertize "=f:nothing=" 'display
+                       (nerd-icons-codicon "nf-cod-remove" :face 'org-hide))))
        ;; literature
        (cond
         ((member "literature" tags)
-         (propertize "=f:literature=" 'display (all-the-icons-material "book" :face 'nerd-icons-dcyan)))
+         (propertize "=f:literature=" 'display
+                     (nerd-icons-mdicon "nf-md-bookshelf" :face 'nerd-icons-dcyan)))
         ((member "website" tags)
-         (propertize "=f:website=" 'display (all-the-icons-material "move_to_inbox" :face 'nerd-icons-dsilver)))
-        (t (propertize "=f:nothing=" 'display (all-the-icons-material "book" :face 'org-hide))))
+         (propertize "=f:website=" 'display
+                     (nerd-icons-mdicon "nf-md-web" :face 'nerd-icons-dsilver)))
+        (t (propertize "=f:nothing=" 'display
+                       (nerd-icons-codicon "nf-cod-remove" :face 'org-hide))))
        ;; journal
        )))
 
@@ -1745,7 +1753,8 @@ Now, to set this up for different languages:
        (propertize
         (string-join
          (append '(" ") othertags)
-         (propertize "#" 'display (nerd-icons-faicon "nf-fa-hashtag" :face 'nerd-icons-dgreen)))
+         (propertize "#" 'display
+                     (nerd-icons-faicon "nf-fa-hashtag" :face 'nerd-icons-dgreen)))
         'face 'nerd-icons-dgreen)))
 
   (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
@@ -1756,15 +1765,17 @@ Now, to set this up for different languages:
                           :and (= type "id")]
                          (org-roam-node-id node)))))
       (if (> count 0)
-          (concat (propertize "=has:backlinks=" 'display (nerd-icons-mdicon "nf-md-link" :face 'nerd-icons-blue)) (format "%d" count))
-        (concat " " (propertize "=not-backlinks=" 'display (nerd-icons-mdicon "nf-md-link" :face 'org-hide))  " "))))
+          (concat (propertize "=has:backlinks=" 'display
+                              (nerd-icons-mdicon "nf-md-link" :face 'nerd-icons-blue)) (format "%d" count))
+        (concat " " (propertize "=not-backlinks=" 'display
+                                (nerd-icons-mdicon "nf-md-link" :face 'org-hide))  " "))))
 
   (cl-defmethod org-roam-node-directories ((node org-roam-node))
     (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
         (concat
          (if (string= "journal/" dirs)
-             (all-the-icons-material "edit" :face 'nerd-icons-dsilver)
-           (all-the-icons-material "folder" :face 'nerd-icons-dsilver))
+             (nerd-icons-mdicon	"nf-md-fountain_pen_tip" :face 'nerd-icons-dsilver)
+           (nerd-icons-mdicon	"nf-md-folder" :face 'nerd-icons-dsilver))
          (propertize (string-join (f-split dirs) "/") 'face 'nerd-icons-dsilver) " ")
       ""))
 
@@ -2458,32 +2469,6 @@ Like Org-roam, Elfeed should be opened in it's own workspace:
     (+workspace-switch "Elfeeds" t))))
 #+end_src
 
-* Testing
-** Indent bar
-
-#+begin_src emacs-lisp
-(use-package indent-bars
-  :custom
-  (indent-bars-treesit-support t)
-  (indent-bars-no-descend-string t)
-  (indent-bars-treesit-ignore-blank-lines-types '("module"))
-  (indent-bars-treesit-wrap
-   '((python argument_list parameters ; for python, as an example
-      list list_comprehension
-      dictionary dictionary_comprehension
-      parenthesized_expression subscript)))
-  :config
-  (setq
-   indent-bars-color '(highlight :face-bg t :blend 0.15)
-   indent-bars-pattern "."
-   indent-bars-width-frac 0.1
-   indent-bars-pad-frac 0.1
-   indent-bars-zigzag nil
-   indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 1) ; blend=1: blend with BG only
-   indent-bars-highlight-current-depth '(:blend 0.5) ; pump up the BG blend on current
-   indent-bars-display-on-blank-lines t)
-  :hook ((python-base-mode julia-mode yaml-mode) . indent-bars-mode))
-#+end_src
 * Footnotes
 
 [fn:1] For example, this is a footnote. But on website this should be rendered beside main text (as sidenotes).
