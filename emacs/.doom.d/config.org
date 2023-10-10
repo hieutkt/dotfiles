@@ -195,28 +195,30 @@ Now to set all this up:
 (when (doom-font-exists-p "Alegreya Sans")
     (setq doom-variable-pitch-font (font-spec :name "Alegreya Sans"  :size 16)))
 (when (doom-font-exists-p "Noto Color Emoji")
-    (setq doom-unicode-font        (font-spec :name "Noto Color Emoji")))
+    (setq doom-emoji-font          (font-spec :name "Noto Color Emoji")))
+(when (doom-font-exists-p "Iosevka Custom")
+    (setq doom-symbol-font         (font-spec :name "Iosevka Custom")))
 #+end_src
 
 Fallback font for non-ascii glyphs:
 
 #+begin_src emacs-lisp
-  (use-package! unicode-fonts
-    :config
-    ;; Common math symbols
-    (dolist (unicode-block '("Mathematical Alphanumeric Symbols"))
-      (push "JuliaMono" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-    (dolist (unicode-block '("Greek and Coptic"))
-      (push "Sarasa Mono CL" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-    ;; CJK characters
-    (dolist (unicode-block '("CJK Unified Ideographs" "CJK Symbols and Punctuation" "CJK Radicals Supplement" "CJK Compatibility Ideographs"))
-      (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-    (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
-      (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-    ;; Other unicode block
-    (dolist (unicode-block '("Braille Patterns"))
-      (push "Iosevka Custom" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
-    )
+(use-package! unicode-fonts
+  :config
+  ;; Common math symbols
+  (dolist (unicode-block '("Mathematical Alphanumeric Symbols"))
+    (push "JuliaMono" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  (dolist (unicode-block '("Greek and Coptic"))
+    (push "Iosevka Custom" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  ;; CJK characters
+  (dolist (unicode-block '("CJK Unified Ideographs" "CJK Symbols and Punctuation" "CJK Radicals Supplement" "CJK Compatibility Ideographs"))
+    (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
+    (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  ;; Other unicode block
+  (dolist (unicode-block '("Braille Patterns"))
+    (push "Iosevka Custom" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  )
 #+end_src
 
 *** Ligatures
@@ -341,7 +343,7 @@ There is also an =auto-olivetti-mode=  which automatically turns on =olivetti-mo
 
 (use-package! auto-olivetti
   :custom
-  (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode ibuffer-mode))
+  (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode ibuffer-mode image-mode))
   :config
   (auto-olivetti-mode))
 #+end_src
@@ -484,6 +486,21 @@ Now, we can implement custom icons for Org-roam completions:
   (add-to-list
    'kind-icon-mapping
    `(org-roam ,(nerd-icons-codicon "nf-cod-symbol_interface") :face font-lock-type-face)))
+#+end_src
+
+For now:
+
+#+begin_src emacs-lisp
+(add-to-list
+   '+corfu-icon-mapping
+   `(org-roam ,(nerd-icons-codicon "nf-cod-symbol_interface") :face nerd-icons-dyellow))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(after! (org-roam nerd-icons-corfu)
+  (add-to-list
+   'nerd-icons-corfu-mapping
+   '(org-roam :style "cod" :icon "symbol_interface" :face font-lock-type-face)))
 #+end_src
 
 ** Language server protocol (LSP)
