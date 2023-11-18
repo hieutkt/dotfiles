@@ -551,7 +551,10 @@ For now:
    citar-library-paths (list (concat org-directory "/Org-roam/"))
    citar-file-variable "file"
    citar-symbol-separator "  "
-   org-cite-global-bibliography citar-bibliography)
+   ;; The global bibliography source may be set to something,
+   ;; but now let's set it on a per-file basis
+   ;; org-cite-global-bibliography citar-bibliography
+   )
   ;; Search contents of PDFs
   (after! (embark pdf-occur)
     (defun citar/search-pdf-contents (keys-entries &optional str)
