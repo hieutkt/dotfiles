@@ -67,14 +67,14 @@ system-configuration-options
 #+end_src
 
 #+RESULTS:
-: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-xwidgets --with-gif --with-pgtk --with-tree-sitter
+: --with-modules --with-json --with-mailutils --with-rsvg --with-native-compilation --with-xinput2 --with-gif --with-pgtk --with-tree-sitter
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :exports output :tangle no :eval t
 system-configuration-features
 #+end_src
 
 #+RESULTS:
-: ACL CAIRO DBUS FREETYPE GIF GLIB GMP GNUTLS GPM GSETTINGS HARFBUZZ JPEG JSON LCMS2 LIBSYSTEMD LIBXML2 MODULES NATIVE_COMP NOTIFY INOTIFY PDUMPER PGTK PNG RSVG SECCOMP SOUND SQLITE3 THREADS TIFF TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM XWIDGETS GTK3 ZLIB
+: ACL CAIRO DBUS FREETYPE GIF GLIB GMP GNUTLS GPM GSETTINGS HARFBUZZ JPEG JSON LCMS2 LIBSYSTEMD LIBXML2 MODULES NATIVE_COMP NOTIFY INOTIFY PDUMPER PGTK PNG RSVG SECCOMP SOUND SQLITE3 THREADS TIFF TOOLKIT_SCROLL_BARS TREE_SITTER WEBP XIM GTK3 ZLIB
 
 * Fundamental setups
 ** Some good defaults
