@@ -256,7 +256,7 @@ We should take care of =mixed-pitch-mode= here, too:
 Some nerd-icons related stuffs
 
 #+begin_src emacs-lisp
-(use-package nerd-icons-ibuffer
+(use-package! nerd-icons-ibuffer
   :ensure t
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 #+end_src
@@ -454,7 +454,7 @@ Automatic documentation popup while autocompleting is nice, but let's reduce the
 (custom-set-faces! '((corfu-popupinfo) :height 0.9))
 #+end_src
 
-*** Kind-icon configurations
+*** Icons
 Kind-icon adds icons to =corfu= completions based on the =:company-kind= property.
 Let's add this properties to those that don't provide them.
 
@@ -482,25 +482,10 @@ Let's add this properties to those that don't provide them.
 Now, we can implement custom icons for Org-roam completions:
 
 #+begin_src emacs-lisp
-(after! (org-roam kind-icon)
-  (add-to-list
-   'kind-icon-mapping
-   `(org-roam ,(nerd-icons-codicon "nf-cod-symbol_interface") :face font-lock-type-face)))
-#+end_src
-
-For now:
-
-#+begin_src emacs-lisp
-(add-to-list
-   '+corfu-icon-mapping
-   `(org-roam ,(nerd-icons-codicon "nf-cod-symbol_interface") :face nerd-icons-dyellow))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
 (after! (org-roam nerd-icons-corfu)
   (add-to-list
    'nerd-icons-corfu-mapping
-   '(org-roam :style "cod" :icon "symbol_interface" :face font-lock-type-face)))
+   '(org-roam :style "cod" :icon "notebook" :face font-lock-type-face)))
 #+end_src
 
 ** Language server protocol (LSP)
@@ -706,8 +691,9 @@ To remedy this problem, we need to write a custom function and set it to =pretti
   (defun hp/org-mode-load-prettify-symbols ()
     (interactive)
     (pushnew! prettify-symbols-alist
+              '(":PROPERTIES:" . "")
               '("--"  . "–") '("---" . "—")
-              '("(?)" . "") '("(?)." . "") '("(?)," . ""))
+              '("(?)" . "") '("(?)." . ".") '("(?)," . ","))
     (modify-syntax-entry ? " ")
     (prettify-symbols-mode 1)
     ;; Now, set the value of this
