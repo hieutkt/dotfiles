@@ -1504,13 +1504,11 @@ Since we're are overdoing it, let's make these blocks /slightly colorful/!
         org-agenda-start-with-log-mode t)
   (org-clock-persistence-insinuate))
 
+
 (use-package! org-habit
   :config
   (setq org-habit-show-all-today t))
 
-(use-package! org-timer
-  :config
-  (setq org-clock-sound (concat doom-private-dir "OOT_Secret.wav")))
 
 (use-package! org-super-agenda
   :after org-agenda
