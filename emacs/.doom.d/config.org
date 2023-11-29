@@ -136,7 +136,8 @@ I have done a fair share of theme-hopping. In the end, I always come back the th
 If you are viewing this on my website, you may find that this color scheme is ubiquitous here.
 
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-gruvbox
+(setq doom-theme 'doom-everforest
+      doom-everforest-background  "medium"
       doom-themes-treemacs-enable-variable-pitch nil)
 
 (use-package! doom-modeline
