@@ -2332,6 +2332,29 @@ Some popup rules to make workflows more consistent.
     ("^\\*julia.*\\* documentation" :side bottom :size 0.4 :ttl nil)
     ("^\\*julia.*\\* mm" :select t :size #'+popup-shrink-to-fit :modeline t))))
 #+end_src
+** MATLAB
+Rudimentary =matlab-mode= setups.
+
+#+begin_src emacs-lisp
+(use-package! matlab
+  :commands (matlab-shell matlab-mode)
+  :mode ("\\.m\\'" . matlab-mode)
+  :hook (matlab-mode . rainbow-delimiters-mode)
+  :config
+  ;; LSP integration
+  (add-to-list 'lsp-language-id-configuration '(matlab-mode . "matlab"))
+  ;; setup matlab-shell
+  (setq matlab-shell-command (executable-find "matlab"))
+  (setq matlab-shell-command-switches '("-nodesktop"))
+  ;; popup rules
+  (set-popup-rules!
+    '(("^\\*MATLAB.*\\*$" :side right :size 0.5 :ttl nil :quit nil)))
+  ;; Keybindings
+  (map! :map matlab-mode-map
+        :g "C-c C-z" #'matlab-show-matlab-shell-buffer
+        :map matlab-shell-mode-map
+        :i "C-c C-z" #'other-window))
+#+end_src
 
 ** LaTeX
 A good bulk of any good research should go into writing, and once your writing topic gets slightly technical, you need the goodness of LaTeX.
