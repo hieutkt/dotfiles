@@ -2144,7 +2144,79 @@ Here's the relevent part:
 
 (add-hook 'org-mode-hook #'hp/org-roam-count-overlay-mode)
 #+end_src
+**** Carrying todos forwards
+=org-roam-daily.el= provides a nice interface for daily journaling/note-taking in Emacs.
+However, I want to make two related improvements.
 
+The first is that, due to habitual behavior, I've ended up with an excessive number of empty journal files.
+We write a handy command to automatically search for empty Org-files in a folder and delete them.
+
+#+begin_src emacs-lisp
+(defun hp/delete-empty-org-files (directory)
+  "Delete Org files in DIRECTORY that contain only drawers or keywords.
+This function is meant to clean out empty org-roam-dailies files."
+  (interactive "DDirectory: ")
+  (let ((files (directory-files-recursively directory "\\.org$")))
+    (dolist (file files)
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        ;; Check if the file contains only drawers and keywords
+        (if (not (re-search-forward "^[^#+:].+$" nil t))
+            (delete-file file))))))
+#+end_src
+
+The second problem is something I want from Org-journal: =org-journal-carryover-items= which moves all TODO headings from a previous journal entry to today's.
+We are going to implement that by advising =org-roam-dailies-goto-today=.
+
+#+begin_src emacs-lisp
+(defun hp/org-roam-get-previous-dailies-file ()
+  "Get the file name for the most recent previous day's Org-roam dailies file."
+  (let ((files (org-roam-dailies--list-files))
+        (today (format-time-string "%Y-%m-%d")))
+    (cond ((> (length files) 1)
+           ;; Get the last and second-last files
+           (let ((last-file (nth (- (length files) 1) files))
+                 (second-last-file (nth (- (length files) 2) files)))
+             ;; Check if the last file is for today
+             (if (string-suffix-p (concat today ".org") last-file)
+                 second-last-file
+               last-file)))
+          (t nil)))) ; Return nil if there's only one file (or none).
+
+
+(defun hp/org-roam-migrate-todos (&rest _)
+  "Migrate TODOs from the previous day's Org-roam file to today's file."
+  (interactive)
+  (let ((yesterday-file (hp/org-roam-get-previous-dailies-file))
+        (today-file (buffer-file-name))
+        (todo-regexp (concat "^\\*+ " (regexp-opt org-not-done-keywords))))
+    (when (and yesterday-file (file-exists-p yesterday-file))
+      (with-current-buffer (find-file-noselect yesterday-file)
+        (goto-char (point-min))
+        (while (re-search-forward todo-regexp nil t)
+          (let ((element (org-element-at-point)))
+            (when (eq (car element) 'headline)
+              (let ((tree (buffer-substring (org-element-property :begin element)
+                                            (org-element-property :end element))))
+                (with-current-buffer (find-file-noselect today-file)
+                  (goto-char (point-max))
+                  (insert "\n" tree)
+                  (save-buffer))
+                ;; After inserting, delete the tree from the original file
+                (delete-region (org-element-property :begin element)
+                               (org-element-property :end element)))))
+        (save-buffer)
+        ;; Delete the empty file if needed
+        (hp/delete-empty-org-files (file-name-directory yesterday-file))
+        (message " Found TODO(s) from the last journal entry... carried them over!"))))
+    (save-buffer)))
+
+
+(advice-add 'org-roam-dailies-goto-today :after #'hp/org-roam-migrate-todos)
+#+end_src
+
+After carrying all todos forwards, this advise delete the previous journal entry if they ended up in an empty state.
 *** Org-download
 
 #+begin_src emacs-lisp
