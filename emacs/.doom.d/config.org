@@ -420,12 +420,9 @@ The simple solution is forcing emacs to load this file.
 #+end_src
 
 ** Completions
-*** Corfu defaults
-#+begin_src emacs-lisp
-(setq corfu-auto-delay 0.5)
-#+end_src
-
-Enable corfu in the minibuffer:
+*** Enable corfu in the minibuffer
+Having completion in the minibuffer is useful for when you want to run small elisp command to temporary modify the state of Emacs.
+This has been getting more and more useful the longer I have been using Emacs.
 
 #+begin_src emacs-lisp
 (use-package! corfu
@@ -440,7 +437,10 @@ Enable corfu in the minibuffer:
   (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
 #+end_src
 
-Set orderless matching styles to include =char-fold-to-regexp=.
+*** Narrow down queries for non-ASCII characters
+Sometimes my queries return results in Vietnamese which include letters with diacritics (e.g. =ă= or =đ= or =ê=).
+In these cases, I want to be able to narrow the search down by typing their ASCII equivalents (e.g. =a= or =d= or =e=).
+The implementation is simple: set matching styles in =orderless.el= to include the function =char-fold-to-regexp=.
 
 #+begin_src emacs-lisp
 (use-package! orderless
