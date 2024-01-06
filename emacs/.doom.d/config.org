@@ -956,7 +956,10 @@ INFO is a plist containing export properties."
       (buffer-string))))
 #+end_src
 **** Ugly patch =--bbox=preview=
-#+begin_src emacs-lisp
+Seems like this is not needed anymore.
+I'm keeping it here maybe until when this feature officially lands on Org-mode 9.7.
+
+#+begin_src emacs-lisp :tangle no
 (setq org-latex-preview-process-alist
       `((dvipng :programs
          ("latex" "dvipng")
