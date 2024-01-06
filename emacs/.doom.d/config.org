@@ -2371,11 +2371,24 @@ However, Org-mode inherits quite a few things from LaTeX-mode, so some configura
                 TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o"))
                 TeX-view-program-selection '((output-pdf "Evince"))))
 #+end_src
-*** Better looks
+*** Turning off script fontification
 Subscript and superscript fontification looks janky to me, so let's turn them off.
 
 #+begin_src emacs-lisp
 (setq font-latex-fontify-script nil)
+#+end_src
+
+*** Make math mode delimiters less visible.
+We're going to apply this to Org-mode as well.
+
+#+begin_src emacs-lisp
+(defface unimportant-latex-face
+  '((t :inherit font-lock-comment-face :weight extra-light))
+  "Face used to make \\(\\), \\[\\] less visible."
+  :group 'LaTeX-math)
+
+(font-lock-add-keywords 'latex-mode `(("\\\\[]()[]" 0 'unimportant-latex-face prepend)) 'end)
+(font-lock-add-keywords 'org-mode `(("\\\\[]()[]" 0 'unimportant-latex-face prepend)) 'end)
 #+end_src
 
 *** CDLatex-mode and LaTeX-auto-activating-snippets
