@@ -216,6 +216,9 @@ Fallback font for non-ascii glyphs:
     (push "Sarasa Mono SC" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
   (dolist (unicode-block '("Hangul Syllables" "Hangul Jamo Extended-A" "Hangul Jamo Extended-B"))
     (push "Sarasa Mono K" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
+  ;; Emojis
+  (dolist (unicode-block '("Miscellaneous Symbols"))
+    (push "Noto Color Emoji" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
   ;; Other unicode block
   (dolist (unicode-block '("Braille Patterns"))
     (push "Iosevka Custom" (cadr (assoc unicode-block unicode-fonts-block-font-mapping))))
