@@ -127,6 +127,7 @@
        ;;erlang                        ; an elegant language for a more civilized age
        (ess +lsp)                      ; emacs speaks statistics
        ;;faust                         ; dsp, but you get to keep your soul
+       (fortran +lsp +intel)
        ;;fsharp                        ; ML stands for Microsoft's Language
        ;;fstar                         ; (dependent) types and (monadic) effects and Z3
        ;;gdscript                      ; the language you waited for
