@@ -1,7 +1,7 @@
-;;; completion/corfu/autoload/commands.el -*- lexical-binding: t; -*-
+;;; completion/corfu/autoload.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
-(defun corfu-move-to-minibuffer ()
+(defun +corfu-move-to-minibuffer ()
   ;; Taken from corfu's README.
   ;; TODO: extend this to other completion front-ends.
   (interactive)
@@ -10,9 +10,16 @@
     (apply #'consult-completion-in-region completion-in-region--data)))
 
 ;;;###autoload
-(defun +corfu-insert-wildcard-separator ()
-  ;; I had to rename this command so that it doesn't start with "corfu-".
-  ;; Otherwise, it does not insert the completion when +tng is enabled.
+(defun +corfu-smart-sep-toggle-escape ()
+  "Insert `corfu-separator' or toggle escape if it's already there."
   (interactive)
-  (setq this-command #'corfu-insert-separator)
-  (call-interactively #'corfu-insert-separator))
+  (cond ((and (char-equal (char-before) corfu-separator)
+              (char-equal (char-before (1- (point))) ?\\))
+         (save-excursion (delete-char -2)))
+        ((char-equal (char-before) corfu-separator)
+         (save-excursion (backward-char 1)
+                         (insert-char ?\\)))
+        (t
+         ;; Without this corfu quits immediately.
+         (setq this-command #'corfu-insert-separator)
+         (call-interactively #'corfu-insert-separator))))
