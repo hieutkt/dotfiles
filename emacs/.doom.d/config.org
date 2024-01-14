@@ -1,7 +1,7 @@
 :PROPERTIES:
 :ID:       21f80d7d-00f7-4959-9ea2-d7e4b680b272
 :END:
-#+title: My Doom Emacs configurations
+#+title: My Doom Emacs configuration
 #+startup: hideblocks content
 #+filetags: :compilation:tool:blogs:
 #+date: {{{modification-time(%Y-%m-%d)}}}
@@ -129,16 +129,13 @@ system-configuration-features
 #+end_src
 
 ** Theme
-#+caption: Colors declarations in the dark variant of the Gruvbox color schemes.
-[[file:pics/gruvbox-colorscheme.png]]
-
-I have done a fair share of theme-hopping. In the end, I always come back the the dark variant of the [[https://github.com/morhetz/gruvbox][Gruvbox color scheme]].
+I have done a fair share of theme-hopping. In the end, I always come back to a variant of the [[https://github.com/morhetz/gruvbox][Gruvbox color scheme]].
 If you are viewing this on my website, you may find that this color scheme is ubiquitous here.
 
 #+begin_src emacs-lisp
+;; The custom doom-everforest theme is a green-accented variant of gruvbox-material
 (setq doom-theme 'doom-everforest
-      doom-everforest-background  "medium"
-      doom-themes-treemacs-enable-variable-pitch nil)
+      doom-everforest-background  "medium")
 
 (use-package! doom-modeline
   :config
@@ -852,12 +849,14 @@ There are three supported backends for creating these previews: =dvipng=, =dvisv
 So, =dvisvgm= is my choice.
 The rendered SVGs also looks extra cripsy, which I like.
 One small caveat is that Emacs has to be build with support for SVG, with the =--with-rsvg= flag.
-If not then =imagemagick= is fine, although it's very slow.
+I prefer to compile and use =dvisvgm= version 3.1+, which properly renders TikZ figures (see [[https://github.com/tecosaur/org-latex-preview-todos/issues/6][this issue]]).
+
+If that sounds like too much work then =imagemagick= is slow but fine for most purposes.
 
 #+begin_src emacs-lisp
 (if (string-match-p "RSVG" system-configuration-features)
-    (setq org-latex-preview-default-process 'dvisvgm)
-    (setq org-latex-preview-default-process 'dvipng))
+    (setq org-preview-latex-default-process 'dvisvgm)
+    (setq org-preview-latex-default-process 'dvipng))
 #+end_src
 
 If we use =imagemagick=, remember that you have to comment out this line in =/etc/ImageMagick-6/policy.xml=:
