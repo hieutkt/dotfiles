@@ -878,24 +878,26 @@ With all that set up, let's configure =org-latex-preview=:
   :after org
   :hook ((org-mode . org-latex-preview-auto-mode))
   :config
+  ;; Increase preview width
+  (plist-put org-latex-preview-appearance-options
+             :page-width 0.8)
+
+  ;; Block C-n and C-p from opening up previews when using auto-mode
+  (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
+  (add-hook 'org-latex-preview-auto-ignored-commands 'previous-line)
+  ;; Ignored faces
   (pushnew! org-latex-preview--ignored-faces 'org-list-dt 'fixed-pitch)
-  (setq org-latex-preview-numbered     t
+
+  ;; Enable consistent equation numbering
+  (setq org-latex-preview-numbered t
         org-startup-with-latex-preview t
-        org-latex-preview-width 0.6
-        org-latex-preview-processing-indicator 'face
-        ;;live previewing
-        org-latex-preview-live-preview-fragments t
-        org-latex-preview-auto-generate 'live
-        org-latex-preview-debounce 0.5
-        org-latex-preview-throttle 0.2
-        org-latex-preview-live-preview-fragments nil
-        ;;previewing preamble
-        org-latex-preview-preamble
-        "\\documentclass{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]
+        org-latex-preview-live t
+        org-latex-preview-preamble "\\documentclass{article}
+[DEFAULT-PACKAGES]
+[PACKAGES]
 \\usepackage[dvipsnames,svgnames]{xcolor}
 \\usepackage[sfdefault]{AlegreyaSans}
 \\usepackage{newtxsf}
-
 \\definecolor{DarkRed}{RGB}{204,36,29}
 \\definecolor{ForestGreen}{RGB}{184,187,38}
 \\definecolor{red}{RGB}{251,73,52}
@@ -903,8 +905,7 @@ With all that set up, let's configure =org-latex-preview=:
 \\definecolor{blue}{RGB}{69,133,136}
 \\definecolor{green}{RGB}{184,187,38}
 \\definecolor{yellow}{RGB}{250, 189, 47}
-\\definecolor{purple}{RGB}{211, 134, 155}
-"))
+\\definecolor{purple}{RGB}{211, 134, 155}"))
 #+end_src
 
 **** Transparent background for org-block
@@ -917,7 +918,7 @@ Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, b
 #+end_src
 **** Ugly patch for Ox-hugo export
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun org-html-format-latex (latex-frag processing-type info)
   "Format a LaTeX fragment LATEX-FRAG into HTML.
 PROCESSING-TYPE designates the tool used for conversion.  It can
