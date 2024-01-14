@@ -55,7 +55,7 @@
 (package! org-appear
   :recipe (:host github :repo "awth13/org-appear"))
 
-(package! org-super-agenda)
+(package! org-roam-ui)
 
 (package! org-csl-activate
   :recipe (:host github :repo "andras-simonyi/org-cite-csl-activate"))
