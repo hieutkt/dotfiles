@@ -265,7 +265,7 @@ Some nerd-icons related stuffs
 ** Slightly transparent Emacs
 Emacs version 29 added a new frame parameter for "true" transparency, which means that only the blackground is transparent while the text is not.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (add-to-list 'default-frame-alist '(alpha-background . 96))
 #+end_src
 
@@ -340,7 +340,7 @@ There is also an =auto-olivetti-mode=  which automatically turns on =olivetti-mo
 (use-package! olivetti
   :config
   (setq-default olivetti-body-width 130)
-  (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 80))))
+  (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 90))))
 
 (use-package! auto-olivetti
   :custom
@@ -362,7 +362,21 @@ However, I find them to be a little bit too intrusive, so let's change how they 
       :foreground ,(doom-blend (doom-color 'bg) (doom-color 'green) 0.5)))
   )
 #+end_src
+** Alignment in popup fix (=which-key= and =marginalia=)
+The default character for ellipsis breaks alignment in =which-key= tables, so let's fix that
 
+#+begin_src emacs-lisp
+(use-package! which-key
+  :init
+  (setq which-key-ellipsis "..."))
+
+#+end_src
+
+Similarly for marginalia
+
+#+begin_src emacs-lisp
+(setq marginalia--ellipsis "...")
+#+end_src
 * Editing configurations
 ** Evil
 #+begin_src emacs-lisp
@@ -579,6 +593,13 @@ It's just that good.
   (+org-init-custom-links-h))
 #+end_src
 
+Need to check if ellipsis icon works properly before committing:
+
+#+begin_src emacs-lisp
+(after! (org nerd-icons)
+  (setq org-ellipsis ""))
+#+end_src
+
 *** Org-tempo
 #+begin_src emacs-lisp
 (use-package! org-tempo
@@ -631,22 +652,22 @@ Let's use the medium weights for org-mode headings.
   (custom-set-faces!
     `((org-document-title)
       :foreground ,(face-attribute 'org-document-title :foreground)
-      :height 1.3 :weight bold)
+      :height 1.4 :weight 'semi-bold)
     `((org-level-1)
       :foreground ,(face-attribute 'outline-1 :foreground)
-      :height 1.1 :weight medium)
+      :height 1.3 :weight 'semi-bold)
     `((org-level-2)
       :foreground ,(face-attribute 'outline-2 :foreground)
-      :weight medium)
+      :height 1.2 :weight 'semi-bold)
     `((org-level-3)
       :foreground ,(face-attribute 'outline-3 :foreground)
-      :weight medium)
+      :height 1.1 :weight 'semi-bold)
     `((org-level-4)
       :foreground ,(face-attribute 'outline-4 :foreground)
-      :weight medium)
+      :weight 'medium)
     `((org-level-5)
       :foreground ,(face-attribute 'outline-5 :foreground)
-      :weight medium)))
+      :weight 'medium)))
 #+end_src
 
 **** Font-lock settings
