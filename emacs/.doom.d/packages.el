@@ -83,3 +83,6 @@
 ;; Matlab
 (package! matlab-mode
   :recipe (:repo "https://git.code.sf.net/p/matlab-emacs/src"))
+
+;; Fix
+(unpin! doom-themes)
