@@ -8,9 +8,9 @@ fi
 # Variables
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
-export PATH="/usr/local/stata15:$PATH"
+export PATH="/usr/local/stata_now:$PATH"
 export PATH="$HOME/.config/emacs/bin:$PATH"
-export PATH="/usr/local/texlive/2023/bin/x86_64-linux:$PATH"
+export PATH="/usr/local/texlive/2024/bin/x86_64-linux:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export POP_PLUGINS_PATH="$HOME/.local/share/pop-launcher/plugins"
 export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden --exclude .git --color=always"
@@ -25,7 +25,7 @@ if which fdfind &> /dev/null ; then alias  fd="fdfind"; fi
 
 # Critical external app setup
 # Oh-my-Zsh
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # fzf integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
