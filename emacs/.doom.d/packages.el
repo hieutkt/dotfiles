@@ -86,3 +86,7 @@
 
 ;; Fix
 (unpin! doom-themes)
+
+;; Magit
+(package! magit-file-icons
+  :recipe (:host github :repo "gekoke/magit-file-icons"))
