@@ -166,7 +166,7 @@ Make sure to consult with the [[https://github.com/be5invis/Iosevka/blob/main/do
 family = "Iosevka Custom"
 spacing = "normal"
 serifs = "sans"
-no-cv-ss = true
+noCvSs = true
 export-glyph-names = false
 
   [buildPlans.iosevka-custom.variants]
