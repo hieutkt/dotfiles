@@ -261,10 +261,9 @@ Some nerd-icons related stuffs
   :ensure t
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
-(use-package! magit-file-icons
-  :ensure t
-  :init
-  (magit-file-icons-mode 1))
+;; (use-package! magit-file-icons
+;;   :init
+;;   (magit-file-icons-mode 1))
 #+end_src
 
 ** Slightly transparent Emacs

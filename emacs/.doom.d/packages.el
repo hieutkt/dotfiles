@@ -84,9 +84,6 @@
 (package! matlab-mode
   :recipe (:repo "https://git.code.sf.net/p/matlab-emacs/src"))
 
-;; Fix
-(unpin! doom-themes)
-
 ;; Magit
-(package! magit-file-icons
-  :recipe (:host github :repo "gekoke/magit-file-icons"))
+;; (package! magit-file-icons
+;;   :recipe (:host github :repo "gekoke/magit-file-icons"))
