@@ -382,6 +382,20 @@ Similarly for marginalia
 (setq marginalia--ellipsis "...")
 #+end_src
 * Editing configurations
+** Handy functions
+The =hp/fill-to-end= function function in Emacs Lisp fills the remaining space on the current line with a specified character until the line reaches the column defined by =fill-column=.
+When executed interactively, the function prompts the user to input the character to be used for filling.
+The cursor position is temporarily saved and restored to its original location after the line is filled.
+
+#+begin_src emacs-lisp
+(defun hp/fill-to-end (char)
+  (interactive "cFill Character:")
+  (save-excursion
+    (end-of-line)
+    (while (< (current-column) fill-column)
+      (insert-char char))))
+#+end_src
+
 ** Evil
 #+begin_src emacs-lisp
 (use-package! evil
