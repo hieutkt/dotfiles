@@ -89,9 +89,6 @@ system-configuration-features
       +doom-dashboard-banner-file "favicon-pixel.png"
       +doom-dashboard-banner-padding '(0 . 2))
 
-;; Turn on pixel scrolling
-(pixel-scroll-precision-mode t)
-
 ;; Turn on abbrev mode
 (setq-default abbrev-mode t)
 
@@ -381,6 +378,74 @@ Similarly for marginalia
 #+begin_src emacs-lisp
 (setq marginalia--ellipsis "...")
 #+end_src
+** Precision scrolling
+
+Turn on pixel scrolling:
+
+#+begin_src emacs-lisp
+(pixel-scroll-precision-mode t)
+#+end_src
+
+The following code replace all scrolling and recenter commands with the precision-scrolling version.
+
+#+begin_src emacs-lisp
+(defun hp/pixel-recenter (&optional arg redisplay)
+  "Similar to `recenter' but with pixel scrolling.
+ARG and REDISPLAY are identical to the original function."
+  ;; See the links in line 6676 in window.c for
+  (when-let* ((current-pixel (pixel-posn-y-at-point))
+              (target-pixel (if (numberp arg)
+                                (* (line-pixel-height) arg)
+                              (* 0.5 (window-body-height nil t))))
+              (distance-in-pixels 0)
+              (pixel-scroll-precision-interpolation-total-time
+               (/ pixel-scroll-precision-interpolation-total-time 2.0)))
+    (setq target-pixel
+          (if (<= 0 target-pixel)
+              target-pixel
+            (- (window-body-height nil t) (abs target-pixel))))
+    (setq distance-in-pixels (- target-pixel current-pixel))
+    (condition-case err
+        (pixel-scroll-precision-interpolate distance-in-pixels nil 1)
+      (error (message "[hp/pixel-recenter] %s" (error-message-string err))))
+    (when redisplay (redisplay t))))
+
+(defun hp/pixel-scroll-up (&optional arg)
+  "(Nearly) drop-in replacement for `scroll-up'."
+  (cond
+   ((eq this-command 'scroll-up-line)
+    (funcall (ad-get-orig-definition 'scroll-up) (or arg 1)))
+   (t
+    (unless (eobp) ; Jittery window if trying to go down when already at bottom
+      (pixel-scroll-precision-interpolate
+       (- (* (line-pixel-height)
+             (or arg (- (window-text-height) next-screen-context-lines))))
+       nil 1)))))
+
+(defun hp/pixel-scroll-down (&optional arg)
+  "(Nearly) drop-in replacement for `scroll-down'."
+  (cond
+   ((eq this-command 'scroll-down-line)
+    (funcall (ad-get-orig-definition 'scroll-down) (or arg 1)))
+   (t
+    (pixel-scroll-precision-interpolate
+     (* (line-pixel-height)
+        (or arg (- (window-text-height) next-screen-context-lines)))
+     nil 1))))
+
+(add-hook 'pixel-scroll-precision-mode-hook
+          (lambda ()
+            (cond
+             (pixel-scroll-precision-mode
+              (advice-add 'scroll-up :override 'hp/pixel-scroll-up)
+              (advice-add 'scroll-down :override 'hp/pixel-scroll-down)
+              (advice-add 'recenter :override 'hp/pixel-recenter))
+             (t
+              (advice-remove 'scroll-up 'hp/pixel-scroll-up)
+              (advice-remove 'scroll-down 'hp/pixel-scroll-down)
+              (advice-remove 'recenter 'hp/pixel-recenter)))))
+#+end_src
+
 * Editing configurations
 ** Handy functions
 The =hp/fill-to-end= function function in Emacs Lisp fills the remaining space on the current line with a specified character until the line reaches the column defined by =fill-column=.
