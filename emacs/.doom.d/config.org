@@ -1241,7 +1241,17 @@ Add KOMA-scripts classes to org export:
                  ("\\chapter{%s}" . "\\chapter*{%s}")
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+  ;; Add the custom cheatsheet class
+  (add-to-list 'org-latex-classes
+               '("hpcheatsheet" "\\documentclass[columns=4,bgcolor=white,fgcolor=black]{hpcheatsheet}"
+                 ("\\boxtitle{%s}" . "\\boxtitle{%s}")
+                 ("\\sectiontitle{%s}" . "\\sectiontitle{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  )
 
 (setq org-latex-default-class "koma-article")
 #+end_src
