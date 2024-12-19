@@ -80,9 +80,9 @@
 (package! elfeed-score
   :recipe (:host github :repo "sp1ff/elfeed-score"))
 
-;; Matlab
-(package! matlab-mode
-  :recipe (:repo "https://git.code.sf.net/p/matlab-emacs/src"))
+;; ;; Matlab
+;; (package! matlab-mode
+;;   :recipe (:repo "https://git.code.sf.net/p/matlab-emacs/src"))
 
 ;; Magit
 ;; (package! magit-file-icons
