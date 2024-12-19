@@ -2268,12 +2268,30 @@ We are going to implement that by advising =org-roam-dailies-goto-today=.
         (hp/delete-empty-org-files (file-name-directory yesterday-file))
         (message " Found TODO(s) from the last journal entry... carried them over!"))))
     (save-buffer)))
-
-
-(advice-add 'org-roam-dailies-goto-today :after #'hp/org-roam-migrate-todos)
 #+end_src
 
 After carrying all todos forwards, this advise delete the previous journal entry if they ended up in an empty state.
+
+#+begin_src emacs-lisp :tangle no
+(advice-add 'org-roam-dailies-goto-today :after #'hp/org-roam-migrate-todos)
+#+end_src
+
+**** Handy command for journaling
+The following comand create a new heading and add current time to it.
+
+#+begin_src emacs-lisp
+(defun hp/org-insert-timestamped-bullet ()
+  "Insert a new bullet in Org-mode with the current timestamp."
+  (interactive)
+  (+org/insert-item-below 1)
+  (insert (format-time-string "%H:%M ")))
+
+;; Bind the function to a key combination, for example C-c t
+(define-key org-mode-map (kbd "C-c t") 'hp/org-insert-timestamped-bullet)
+#+end_src
+
+#+RESULTS:
+: hp/org-insert-timestamped-bullet
 *** Org-download
 
 #+begin_src emacs-lisp
