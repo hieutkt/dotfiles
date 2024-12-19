@@ -1,7 +1,7 @@
 # Import
 using Revise
 using BenchmarkTools
-using OhMyREPL; colorscheme!("GruvboxDark")
+# using OhMyREPL; colorscheme!("GruvboxDark")
 
 # Eviroment
 push!(LOAD_PATH, homedir()*"/Dropbox/Codes/Julia")
