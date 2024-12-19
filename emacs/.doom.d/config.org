@@ -85,7 +85,7 @@ system-configuration-features
 (setq user-full-name "Hieu Phay"
       user-mail-address "hieunguyen31371@gmail.com"
       default-input-method 'vietnamese-telex
-      +doom-dashboard-banner-dir doom-private-dir
+      +doom-dashboard-banner-dir doom-user-dir
       +doom-dashboard-banner-file "favicon-pixel.png"
       +doom-dashboard-banner-padding '(0 . 2))
 
@@ -131,8 +131,7 @@ If you are viewing this on my website, you may find that this color scheme is ub
 
 #+begin_src emacs-lisp
 ;; The custom doom-everforest theme is a green-accented variant of gruvbox-material
-(setq doom-theme 'doom-everforest
-      doom-everforest-background  "medium")
+(setq doom-theme 'doom-gruvbox)
 
 (use-package! doom-modeline
   :config
@@ -481,7 +480,7 @@ The cursor position is temporarily saved and restored to its original location a
   (setq evil-goggles-enable-change t
         evil-goggles-enable-delete t
         evil-goggles-pulse         t
-        evil-goggles-duration      0.25)
+        evil-goggles-duration      0.5)
   :config
   (custom-set-faces!
     `((evil-goggles-yank-face evil-goggles-surround-face)
@@ -671,7 +670,8 @@ It's just that good.
 (use-package! org
   :config
   (setq org-highlight-links
-        '(bracket angle plain tag date footnote))
+        '(bracket angle plain tag date footnote)
+        org-image-align 'center)
   ;; Setup custom links
   (+org-init-custom-links-h))
 #+end_src
@@ -723,14 +723,14 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
     `((org-block-begin-line org-block-end-line)
       :background ,(doom-color 'bg)))
   ;; Change how LaTeX and image previews are shown
-  (setq org-highlight-latex-and-related '(native entities script)
+  (setq org-highlight-latex-and-related '(native entities)
         org-image-actual-width (min (/ (display-pixel-width) 3) 800)))
 #+end_src
 
 Emacs version 29 can now tell the difference between 'regular' or  'normal' font weights and 'medium' weights.
 Let's use the medium weights for org-mode headings.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org-mode
   (custom-set-faces!
     `((org-document-title)
@@ -747,10 +747,10 @@ Let's use the medium weights for org-mode headings.
       :height 1.1 :weight 'semi-bold)
     `((org-level-4)
       :foreground ,(face-attribute 'outline-4 :foreground)
-      :weight 'medium)
+      :weight 'semi-bold)
     `((org-level-5)
       :foreground ,(face-attribute 'outline-5 :foreground)
-      :weight 'medium)))
+      :weight 'semi-bold)))
 #+end_src
 
 **** Font-lock settings
@@ -835,12 +835,12 @@ The only downside is it doesn't play well with =org-indent-mode= (for now).
    org-modern-todo nil
    org-modern-tag nil
    org-modern-timestamp t
-   org-modern-statistics nil
    org-modern-progress nil
    org-modern-priority nil
    org-modern-horizontal-rule "──────────"
    org-modern-hide-stars "·"
-   org-modern-star ["⁖"]
+   org-modern-star 'fold
+   org-modern-fold-stars '(("⁛" . "⁖"))
    org-modern-keyword "‣"
    org-modern-list '((43 . "•")
                      (45 . "–")
@@ -984,7 +984,7 @@ With all that set up, let's configure =org-latex-preview=:
   :config
   ;; Increase preview width
   (plist-put org-latex-preview-appearance-options
-             :page-width 0.8)
+             :page-width 0.6)
 
   ;; Block C-n and C-p from opening up previews when using auto-mode
   (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
@@ -1016,7 +1016,7 @@ With all that set up, let's configure =org-latex-preview=:
 However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
 Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with =:inherit default= which will override the background colour.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! org-src
   (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
 #+end_src
@@ -1886,7 +1886,7 @@ Sorting =org-roam-node-find= by last modified time seems the most intuitive for 
         '(("d" "daily" entry "* %?"
            :target
            (file+head "%<%Y-%m-%d>.org"
-                      "#+title: %<%Y-%m-%d %a>\n#+filetags: journal\n#+startup: overview\n#+created: %U\n\n")
+                      "#+title: %<%Y-%m-%d %a>\n#+filetags: journal\n#+startup: content\n#+created: %U\n\n")
            :immediate-finish t)))
   (map! :leader
         :prefix "n"
