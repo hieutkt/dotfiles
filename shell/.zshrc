@@ -22,6 +22,11 @@ export EDITOR='emacsclient'
 if which bat    &> /dev/null ; then alias cat="bat"   ; fi
 if which batcat &> /dev/null ; then alias cat="batcat"; fi
 if which fdfind &> /dev/null ; then alias  fd="fdfind"; fi
+if which eza    &> /dev/null ;
+  then alias ls='eza --icons --color=always --group-directories-first';
+       alias la='eza -a --icons --color=always --group-directories-first';
+       alias ll='eza -alF --icons --color=always --group-directories-first';
+fi
 
 # Critical external app setup
 # Oh-my-Zsh
