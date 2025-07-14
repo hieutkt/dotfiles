@@ -13,6 +13,10 @@
 (package! nerd-icons-ibuffer
   :recipe (:host github :repo "seagle0128/nerd-icons-ibuffer"))
 
+;; LLM
+(package! inline-diff
+  :recipe (:repo "https://code.tecosaur.net/tec/inline-diff"))
+
 ;; ORG-MODE
 ;; Org-mode from tecosaur's development branch
 (package! org :recipe
@@ -79,6 +83,7 @@
 ;; RSS
 (package! elfeed-score
   :recipe (:host github :repo "sp1ff/elfeed-score"))
+
 
 ;; ;; Matlab
 ;; (package! matlab-mode
