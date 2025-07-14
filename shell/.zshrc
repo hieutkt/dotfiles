@@ -10,7 +10,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 export PATH="/usr/local/stata_now:$PATH"
 export PATH="$HOME/.config/emacs/bin:$PATH"
-export PATH="/usr/local/texlive/2024/bin/x86_64-linux:$PATH"
+export PATH="/usr/local/texlive/2025/bin/x86_64-linux:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export POP_PLUGINS_PATH="$HOME/.local/share/pop-launcher/plugins"
 export FZF_DEFAULT_COMMAND="fd --type file --follow --hidden --exclude .git --color=always"
@@ -34,7 +34,6 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 # fzf integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH=$PATH:/home/hieuphay/.spicetify
 
 rga-fzf() {
     RG_PREFIX="rga --files-with-matches"
