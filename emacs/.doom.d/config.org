@@ -628,14 +628,14 @@ Now, we can implement custom icons for Org-roam completions:
   (org-mode . citar-capf-setup)
   :config
   (setq
-   citar-bibliography (list (concat org-directory "/References/zotero.bib"))
+   citar-bibliography (list (concat org-directory "/References/zotero-bibtex.bib"))
    citar-notes-paths (list(concat org-directory "/Org-roam/literature/"))
    citar-library-paths (list (concat org-directory "/Org-roam/"))
    citar-file-variable "file"
    citar-symbol-separator "  "
    ;; The global bibliography source may be set to something,
    ;; but now let's set it on a per-file basis
-   ;; org-cite-global-bibliography citar-bibliography
+   org-cite-global-bibliography citar-bibliography
    )
   ;; Search contents of PDFs
   (after! (embark pdf-occur)
@@ -769,7 +769,7 @@ Since I spend most of my time writing in Org-mode, might as well make it looks n
       :background ,(doom-color 'bg)))
   ;; Change how LaTeX and image previews are shown
   (setq org-highlight-latex-and-related '(native entities)
-        org-image-actual-width (min (/ (display-pixel-width) 3) 800)))
+        org-image-actual-width nil))
 #+end_src
 
 Emacs version 29 can now tell the difference between 'regular' or  'normal' font weights and 'medium' weights.
@@ -1002,7 +1002,7 @@ I prefer to compile and use =dvisvgm= version 3.1+, which properly renders TikZ 
 
 If that sounds like too much work then =imagemagick= is slow but fine for most purposes.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (if (string-match-p "RSVG" system-configuration-features)
     (setq org-preview-latex-default-process 'dvisvgm)
     (setq org-preview-latex-default-process 'dvipng))
@@ -1025,12 +1025,8 @@ With all that set up, let's configure =org-latex-preview=:
 #+begin_src emacs-lisp
 (use-package! org-latex-preview
   :after org
-  :hook ((org-mode . org-latex-preview-auto-mode))
+  :hook ((org-mode . org-latex-preview-mode))
   :config
-  ;; Increase preview width
-  (plist-put org-latex-preview-appearance-options
-             :page-width 0.6)
-
   ;; Block C-n and C-p from opening up previews when using auto-mode
   (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
   (add-hook 'org-latex-preview-auto-ignored-commands 'previous-line)
@@ -1061,7 +1057,7 @@ With all that set up, let's configure =org-latex-preview=:
 However, by using native highlighting the org-block face is added, and that doesn’t look too great — particularly when the fragments are previewed.
 Ideally =org-src-font-lock-fontify-block= wouldn’t add the =org-block= face, but we can avoid advising that entire function by just adding another face with =:inherit default= which will override the background colour.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (after! org-src
   (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t))))
 #+end_src
@@ -1143,7 +1139,7 @@ Sometimes I need to write LaTeX document that contains Unicode inputs, whether i
 As of now, a good compromise is to use =lualatex= for latex exports but keeps using =latex= for the previewing system.
 Remember that this may break if you have complicated custom latex preables in Org-mode.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setq org-latex-preview-compiler-command-map
       '(("pdflatex" . "latex")
         ("xelatex"  . "xelatex -no-pdf") ;Not working now, use lualatex instead
