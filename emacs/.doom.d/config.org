@@ -1900,7 +1900,7 @@ Now, to set this up for different languages:
 
 Sorting =org-roam-node-find= by last modified time seems the most intuitive for me.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun org-roam-node-find-by-mtime ()
   (find-file
    (org-roam-node-file
