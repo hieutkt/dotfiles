@@ -45,6 +45,10 @@
 
 (unpin! org) ; there be bugs
 
+
+(package! org-super-agenda
+  :recipe (:host github :repo "alphapapa/org-super-agenda"))
+
 (package! org-contrib
   :recipe (:host nil :repo "https://git.sr.ht/~bzg/org-contrib"
            :files ("lisp/*.el"))
